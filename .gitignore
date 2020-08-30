@@ -1,0 +1,7 @@
+
+*.db
+*.ipch
+*.obj
+*.log
+*.tlog
+.vs/NVHR/v16/.suo

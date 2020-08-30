@@ -1,0 +1,8 @@
+LIBRARY	"d3dx9_38"
+EXPORTS
+nvhr
+nvhr_malloc
+nvhr_calloc
+nvhr_realloc
+nvhr_mem_size
+nvhr_free
