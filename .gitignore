@@ -4,4 +4,7 @@
 *.obj
 *.log
 *.tlog
-.vs/NVHR/v16/.suo
+*.suo
+*.opendb
+/Release
+/heap_replacer/Release

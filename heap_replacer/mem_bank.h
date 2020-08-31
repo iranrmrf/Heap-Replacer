@@ -149,12 +149,16 @@ public:
 	{
 		this->free_size->remove_node(cell->size_node);
 		this->free_addr->remove_node(cell->addr_node);
+		//cell->size_node = nullptr;
+		//cell->addr_node = nullptr;
 	}
 
 	void rmv_dead_cell(mem_cell* cell)
 	{
 		this->dead_size->remove_node(cell->size_node);
 		this->dead_addr->remove_node(cell->addr_node);
+		//cell->size_node = nullptr;
+		//cell->addr_node = nullptr;
 	}
 
 	void add_free_cell(mem_cell* cell)
@@ -266,10 +270,15 @@ public:
 		{
 			this->rmv_cache_array(curr->data);
 			cell = curr->data->split(size);
+
 			mem_cell* old_cell = curr->data;
 			this->free_size->remove_node(curr->data->size_node);
 			old_cell->size_node = this->insert_free_size(old_cell);
 			this->add_cache_array(old_cell);
+
+			/*mem_cell* old_cell = curr->data;
+			this->rmv_free_cell(curr->data);
+			this->add_free_cell(old_cell);*/
 		}
 		this->add_used(cell);
 		return cell;
@@ -376,7 +385,7 @@ public:
 		this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = nullptr;
 		return cell;
 	}
-
+	
 	bool free_is_empty()
 	{
 		return (this->free_size->is_empty() && this->free_addr->is_empty());
