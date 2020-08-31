@@ -369,21 +369,32 @@ public:
 	void add_used(mem_cell* cell)
 	{
 		size_t desc = this->get_desc(cell->desc.addr);
-		this->used_mem_cells[desc][((uintptr_t)cell->desc.addr - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = cell;
+		if (desc != -1)
+		{
+			this->used_mem_cells[desc][((uintptr_t)cell->desc.addr - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = cell;
+		}
 	}
 
 	mem_cell* get_used(void* address)
 	{
 		size_t desc = this->get_desc(address);
-		return this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size];
+		if (desc != -1)
+		{
+			return this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size];
+		}
+		return nullptr;
 	}
 
 	mem_cell* rmv_used(void* address)
 	{
 		size_t desc = this->get_desc(address);
-		mem_cell* cell = this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size];
-		this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = nullptr;
-		return cell;
+		if (desc != -1)
+		{
+			mem_cell* cell = this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size];
+			this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = nullptr;
+			return cell;
+		}
+		return nullptr;
 	}
 	
 	bool free_is_empty()

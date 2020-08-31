@@ -116,7 +116,6 @@ void patch_old_NVSE()
 		patch_BYTE((DWORD)address, 0x8);
 		return;
 	}
-	printf("NVHR - Outdated or custom NVSE detected (xNVSE)\n");
 }
 
 void apply_heap_hooks()
