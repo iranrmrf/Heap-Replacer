@@ -113,7 +113,7 @@ public:
 	{
 		for (auto curr = this->free_addr->get_head(); curr; curr = curr->next)
 		{
-			if (((curr->data->desc.size == cell->desc.size) && (curr->data->desc.addr > cell->desc.addr)) || (curr->data->desc.size > cell->desc.size))
+			if (curr->data->desc.addr > cell->desc.addr)
 			{
 				return this->free_addr->insert_before(curr, cell);
 			}	
@@ -125,7 +125,7 @@ public:
 	{
 		for (auto curr = this->dead_size->get_head(); curr; curr = curr->next)
 		{
-			if (curr->data->desc.size > cell->desc.size)
+			if (((curr->data->desc.size == cell->desc.size) && (curr->data->desc.addr > cell->desc.addr)) || (curr->data->desc.size > cell->desc.size))
 			{
 				return this->dead_size->insert_before(curr, cell);
 			}
@@ -137,7 +137,7 @@ public:
 	{
 		for (auto curr = this->dead_addr->get_head(); curr; curr = curr->next)
 		{
-			if (curr->data->desc.size > cell->desc.size)
+			if (curr->data->desc.addr > cell->desc.addr)
 			{
 				return this->dead_addr->insert_before(curr, cell);
 			}
