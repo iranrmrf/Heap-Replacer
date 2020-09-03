@@ -10,6 +10,9 @@
 #pragma warning(disable:6031)
 #pragma warning(disable:6250)
 
+#define TtFParam( self, ... ) self, void* _, __VA_ARGS__ // thiscall to fastcall
+#define TtFCall( self, ... ) self, nullptr, __VA_ARGS__ // thiscall to fastcall
+
 constexpr size_t KB = 1024 * 1u;
 constexpr size_t MB = 1024 * KB;
 constexpr size_t GB = 1024 * MB;
@@ -20,9 +23,23 @@ void	__fastcall	nvhr_free(void* address);
 
 FILE* file = fopen("log.log", "w");
 
+void* try_valloc(void* lpAddress, size_t dwSize, DWORD flAllocationType, DWORD flProtect, size_t count)
+{
+	void* address;
+	while (count--)
+	{
+		if (address = VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect))
+		{
+			return address;
+		}	
+		Sleep(1u);
+	}
+	return nullptr;
+}
+
 void* winapi_alloc(size_t size)
 {
-	return VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	return try_valloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE, INFINITE);
 }
 
 void patch_bytes(uintptr_t address, BYTE* data, DWORD size)
@@ -108,21 +125,6 @@ void patch_nops(uintptr_t address, size_t count)
 	memset((void*)address, 0x90, count);
 	VirtualProtect((void*)address, count, p, &p);
 	FlushInstructionCache(GetCurrentProcess(), (void*)address, count);
-}
-
-size_t next_power_of_2(size_t size)
-{
-	if (size & (size - 1))
-	{
-		size--;
-		size |= size >> 1;
-		size |= size >> 2;
-		size |= size >> 4;
-		size |= size >> 8;
-		size |= size >> 16;
-		size++;
-	}
-	return size;
 }
 
 void* get_IAT_address(BYTE* base, const char* dll_name, const char* search)

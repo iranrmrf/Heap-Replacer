@@ -56,17 +56,17 @@ void*	__fastcall	nvhr_realloc(void* address, size_t size)
 	return new_address;
 }
 
-void*	__fastcall	game_heap_allocate(void* self, void* _, size_t size)
+void*	__fastcall	game_heap_allocate(TtFParam(void* self, size_t size))
 {
 	return nvhr_malloc(size);
 }
 
-void*	__fastcall	game_heap_reallocate(void* self, void* _, void* address, size_t size)
+void*	__fastcall	game_heap_reallocate(TtFParam(void* self, void* address, size_t size))
 {
 	return nvhr_realloc(address, size);
 }
 
-void	__fastcall	game_heap_free(void* self, void* _, void* address)
+void	__fastcall	game_heap_free(TtFParam(void* self, void* address))
 {
 	nvhr_free(address);
 }
@@ -96,7 +96,7 @@ size_t	__cdecl		crt_msize(void* address)
 	return nvhr_mem_size(address);
 }
 
-void patch_old_NVSE()
+/*void patch_old_NVSE()
 {
 	HMODULE base = GetModuleHandleA("nvse_1_4.dll");	
 	if (!base) { return; }
@@ -116,7 +116,7 @@ void patch_old_NVSE()
 		patch_BYTE((DWORD)address, 0x8);
 		return;
 	}
-}
+}*/
 
 void apply_heap_hooks()
 {
@@ -181,8 +181,8 @@ void apply_heap_hooks()
 	patch_bytes(0x86C563, (BYTE*)"\xEB\x12", 2);
 	patch_bytes(0xEC16F8, (BYTE*)"\xEB\x0F", 2);
 
-	patch_call(0x86CF64, &patch_old_NVSE);
-	patch_nops(0x86CF69, 2);
+	/*patch_call(0x86CF64, &patch_old_NVSE);
+	patch_nops(0x86CF69, 2);*/
 
 	printf("NVHR - Heap hooks applied.\n");
 

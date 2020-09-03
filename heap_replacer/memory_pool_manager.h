@@ -26,13 +26,7 @@ public:
 
 	~memory_pools_manager()
 	{
-		for (int i = 0; i < POOL_ARRAY_SIZE; i++)
-		{
-			if (this->pools_by_size[i])
-			{
-				delete this->pools_by_size[i];
-			}
-		}
+
 	}
 
 private:
@@ -68,9 +62,24 @@ private:
 		}
 	}
 
+	size_t next_power_of_2(size_t size)
+	{
+		if (size & (size - 1))
+		{
+			size--;
+			size |= size >> 1;
+			size |= size >> 2;
+			size |= size >> 4;
+			size |= size >> 8;
+			size |= size >> 16;
+			size++;
+		}
+		return size;
+	}
+	
 	memory_pool* pool_from_size(size_t size)
 	{
-		size = next_power_of_2(size);
+		size = this->next_power_of_2(size);
 		return this->pools_by_size[(size >> 2) - 1];
 	}
 

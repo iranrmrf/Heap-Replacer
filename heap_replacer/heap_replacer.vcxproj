@@ -64,6 +64,8 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>true</MapExports>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"</Command>
@@ -82,7 +84,7 @@
     <ClInclude Include="memory_pool_manager.h">
       <FileType>CppHeader</FileType>
     </ClInclude>
-    <ClInclude Include="mem_bank.h" />
+    <ClInclude Include="default_heap.h" />
     <ClInclude Include="mem_cell.h" />
     <ClInclude Include="scrap_heap_manager.h" />
     <ClInclude Include="util.h" />

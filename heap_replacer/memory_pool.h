@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-#define POOL_GROWTH 0x00100000
+#define POOL_GROWTH 0x00010000
 #define POOL_ALIGNMENT 0x01000000
 
 class memory_pool
@@ -47,7 +47,7 @@ public:
 
 		this->max_item_count = this->block_count * this->block_item_count;
 
-		this->free_cells = (cell*)winapi_alloc(max_item_count * sizeof(cell));
+		this->free_cells = (cell*)winapi_alloc(this->max_item_count * sizeof(cell));
 		this->next_free = this->free_cells;
 
 		InitializeCriticalSectionAndSpinCount(&this->critical_section, INFINITE);
@@ -55,8 +55,7 @@ public:
 
 	~memory_pool()
 	{
-		VirtualFree(this->block_bgn, NULL, MEM_RELEASE);
-		DeleteCriticalSection(&this->critical_section);
+		
 	}
 
 	void* memory_pool_init()
@@ -64,7 +63,7 @@ public:
 		size_t i = 0x80;
 		while (!this->block_bgn)
 		{
-			this->block_bgn = VirtualAlloc((void*)(i * POOL_ALIGNMENT), this->max_size, MEM_RESERVE, PAGE_READWRITE);
+			this->block_bgn = try_valloc((void*)(i * POOL_ALIGNMENT), this->max_size, MEM_RESERVE, PAGE_READWRITE, 1);
 			if (++i == 0xFF) { i = 0x80; }
 		}
 		return this->block_bgn;
@@ -74,7 +73,7 @@ private:
 
 	void setup_new_block(void* address)
 	{
-		this->block_end = VirtualAlloc(address, this->block_size, MEM_COMMIT, PAGE_READWRITE);
+		this->block_end = try_valloc(address, this->block_size, MEM_COMMIT, PAGE_READWRITE, 1);
 		size_t bank_offset = ((uintptr_t)this->block_end - (uintptr_t)this->block_bgn) / this->block_size * this->block_item_count;
 		this->free_cells[bank_offset].next = nullptr;
 		for (size_t i = 0; i < this->block_item_count - 1; i++)

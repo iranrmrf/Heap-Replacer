@@ -17,7 +17,7 @@ struct light_critical_section
 	size_t lock_count;
 };
 
-void __fastcall enter_light_critical_section(light_critical_section* self, void* _, const char* name)
+void __fastcall enter_light_critical_section(TtFParam(light_critical_section* self, const char* name))
 {
 	DWORD id = GetCurrentThreadId();
 	if (self->thread_id == id)
@@ -42,7 +42,7 @@ void __fastcall enter_light_critical_section(light_critical_section* self, void*
 	}
 }
 
-void __fastcall leave_light_critical_section(light_critical_section* self)
+void __fastcall leave_light_critical_section(TtFParam(light_critical_section* self))
 {
 	if (!--self->lock_count)
 	{
@@ -50,12 +50,12 @@ void __fastcall leave_light_critical_section(light_critical_section* self)
 	}
 }
 
-void __fastcall sh_grow(void* self, void* _, void* address, size_t offset, size_t size)
+void __fastcall sh_grow(TtFParam(void* self, void* address, size_t offset, size_t size))
 {
-	VirtualAlloc((void*)((uintptr_t)address + offset), size, MEM_COMMIT, PAGE_READWRITE);
+	try_valloc((void*)((uintptr_t)address + offset), size, MEM_COMMIT, PAGE_READWRITE, 1);
 }
 
-void __fastcall sh_shrink(void* self, void* _, void* address, size_t offset, size_t size)
+void __fastcall sh_shrink(TtFParam(void* self, void* address, size_t offset, size_t size))
 {
 	VirtualFree((void*)((uintptr_t)address + offset - size), size, MEM_DECOMMIT);
 }
@@ -96,7 +96,7 @@ scrap_heap_manager* shm_get_singleton()
 	return shm;
 }
 
-void __fastcall shm_swap_buffers(scrap_heap_manager* self, void* _, size_t index)
+void __fastcall shm_swap_buffers(TtFParam(scrap_heap_manager* self, size_t index))
 {
 	--self->scrap_heap_count;
 	self->total_free_bytes -= self->buffers[index].size;
@@ -107,20 +107,20 @@ void __fastcall shm_swap_buffers(scrap_heap_manager* self, void* _, size_t index
 	}
 }
 
-void* __fastcall shm_create_buffer(scrap_heap_manager* self, void* _, size_t size)
+void* __fastcall shm_create_buffer(TtFParam(scrap_heap_manager* self, size_t size))
 {
-	void* address = VirtualAlloc(NULL, BUFFER_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE);
-	VirtualAlloc(address, size, MEM_COMMIT, PAGE_READWRITE);
+	void* address = try_valloc(nullptr, BUFFER_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE, INFINITE);
+	try_valloc(address, size, MEM_COMMIT, PAGE_READWRITE, INFINITE);
 	return address;
 }
 
-void* __fastcall shm_request_buffer(scrap_heap_manager* self, void* _, size_t* size)
+void* __fastcall shm_request_buffer(TtFParam(scrap_heap_manager* self, size_t* size))
 {
 	if (!self->scrap_heap_count)
 	{
-		return shm_create_buffer(self, nullptr, *size);
+		return shm_create_buffer(TtFCall(self, *size));
 	}
-	enter_light_critical_section(&self->critical_section, nullptr, nullptr);
+	enter_light_critical_section(TtFCall(&self->critical_section, nullptr));
 	if (self->scrap_heap_count)
 	{
 		size_t max_index = 0;
@@ -131,8 +131,8 @@ void* __fastcall shm_request_buffer(scrap_heap_manager* self, void* _, size_t* s
 			{
 				*size = self->buffers[i].size;
 				void* address = self->buffers[i].address;
-				shm_swap_buffers(self, nullptr, i);
-				leave_light_critical_section(&self->critical_section);
+				shm_swap_buffers(TtFCall(self, i));
+				leave_light_critical_section(TtFCall(&self->critical_section));
 				return address;
 			}
 			if (self->buffers[i].size > max_size)
@@ -141,28 +141,28 @@ void* __fastcall shm_request_buffer(scrap_heap_manager* self, void* _, size_t* s
 				max_index = i;
 			}
 		}
-		shm_swap_buffers(self, nullptr, max_index);
-		sh_grow(self, nullptr, self->buffers[max_index].address, max_size, *size - max_size);
-		leave_light_critical_section(&self->critical_section);
+		shm_swap_buffers(TtFCall(self, max_index));
+		sh_grow(TtFCall(self, self->buffers[max_index].address, max_size, *size - max_size));
+		leave_light_critical_section(TtFCall(&self->critical_section));
 		return self->buffers[max_index].address;
 	}
-	void* address = shm_create_buffer(self, nullptr, *size);
-	leave_light_critical_section(&self->critical_section);
+	void* address = shm_create_buffer(TtFCall(self, *size));
+	leave_light_critical_section(TtFCall(&self->critical_section));
 	return address;
 }
 
-void __fastcall shm_free_buffer(scrap_heap_manager* self, void* _, void* address, size_t size)
+void __fastcall shm_free_buffer(TtFParam(scrap_heap_manager* self, void* address, size_t size))
 {
 	VirtualFree(address, 0, MEM_RELEASE);
 }
 
-void __fastcall shm_release_buffer(scrap_heap_manager* self, void* _, void* address, size_t size)
+void __fastcall shm_release_buffer(TtFParam(scrap_heap_manager* self, void* address, size_t size))
 {
 	if (self->scrap_heap_count >= BUFFER_COUNT)
 	{
-		shm_free_buffer(self, nullptr, address, size);
+		shm_free_buffer(TtFCall(self, address, size));
 	}
-	enter_light_critical_section(&self->critical_section, nullptr, nullptr);
+	enter_light_critical_section(TtFCall(&self->critical_section, nullptr));
 	if (self->scrap_heap_count < BUFFER_COUNT)
 	{
 		self->buffers[self->scrap_heap_count].address = address;
@@ -172,23 +172,23 @@ void __fastcall shm_release_buffer(scrap_heap_manager* self, void* _, void* addr
 	}
 	else
 	{
-		shm_free_buffer(self, nullptr, address, size);
+		shm_free_buffer(TtFCall(self, address, size));
 	}
-	leave_light_critical_section(&self->critical_section);
+	leave_light_critical_section(TtFCall(&self->critical_section));
 }
 
 void __fastcall shm_free_all_buffers(scrap_heap_manager* self)
 {
 	if (self->scrap_heap_count)
 	{
-		enter_light_critical_section(&self->critical_section, nullptr, nullptr);
+		enter_light_critical_section(TtFCall(&self->critical_section, nullptr));
 		for (size_t i = 0; i < self->scrap_heap_count; ++i)
 		{
-			shm_free_buffer(self, nullptr, self->buffers[i].address, self->buffers[i].size);
+			shm_free_buffer(TtFCall(self, self->buffers[i].address, self->buffers[i].size));
 		}
 		self->scrap_heap_count = 0;
 		self->total_free_bytes = 0;
-		leave_light_critical_section(&self->critical_section);
+		leave_light_critical_section(TtFCall(&self->critical_section));
 	}
 }
 
@@ -208,9 +208,9 @@ struct scrap_heap
 
 sh_array* mt_sh_array;
 
-void __fastcall sh_init(scrap_heap* self, void* _, size_t size)
+void __fastcall sh_init(TtFParam(scrap_heap* self, size_t size))
 {
-	self->commit_bgn = shm_request_buffer(shm, nullptr, &size);
+	self->commit_bgn = shm_request_buffer(TtFCall(shm, &size));
 	self->unused = self->commit_bgn;
 	self->commit_end = (void*)((uintptr_t)self->commit_bgn + size);
 	self->last_chunk = nullptr;
@@ -218,20 +218,20 @@ void __fastcall sh_init(scrap_heap* self, void* _, size_t size)
 
 void __fastcall sh_init_0x10000(scrap_heap* self)
 {
-	sh_init(self, nullptr, BUFFER_MIN_SIZE);
+	sh_init(TtFCall(self, BUFFER_MIN_SIZE));
 }
 
-void __fastcall sh_init_var(scrap_heap* self, void* _, size_t size)
+void __fastcall sh_init_var(TtFParam(scrap_heap* self, size_t size))
 {
 	if (size & 0x0000FFFF)
 	{
 		size += 0x10000;
 		size &= 0xFFFF0000;
 	}
-	sh_init(self, nullptr, size);
+	sh_init(TtFCall(self, size));
 }
 
-void* __fastcall sh_add_chunk(scrap_heap* self, void* _, size_t size, size_t alignment)
+void* __fastcall sh_add_chunk(TtFParam(scrap_heap* self, size_t size, size_t alignment))
 {
 	uintptr_t body = (uintptr_t)self->unused + sizeof(scrap_heap_chunk);
 	body += alignment - (alignment ? body & (alignment - 1) : alignment);
@@ -252,7 +252,7 @@ void* __fastcall sh_add_chunk(scrap_heap* self, void* _, size_t size, size_t ali
 				return nullptr;
 			}
 		}
-		sh_grow(self, nullptr, self->commit_bgn, old_size, grow_size);
+		sh_grow(TtFCall(self, self->commit_bgn, old_size, grow_size));
 		self->commit_end = (void*)((uintptr_t)self->commit_end + grow_size);
 	}
 	header->size = size;
@@ -262,7 +262,7 @@ void* __fastcall sh_add_chunk(scrap_heap* self, void* _, size_t size, size_t ali
 	return (void*)body;
 }
 
-void __fastcall sh_remove_chunk(scrap_heap* self, void* _, uintptr_t address)
+void __fastcall sh_remove_chunk(TtFParam(scrap_heap* self, uintptr_t address))
 {
 	scrap_heap_chunk* chunk = (scrap_heap_chunk*)(address - sizeof(scrap_heap_chunk));
 	if (address && !(chunk->size & FREE_FLAG))
@@ -272,13 +272,13 @@ void __fastcall sh_remove_chunk(scrap_heap* self, void* _, uintptr_t address)
 		size_t new_size = ((uintptr_t)self->commit_end - (uintptr_t)self->commit_bgn) >> 1;
 		if ((((uintptr_t)self->commit_end - (uintptr_t)self->unused) > new_size) && (new_size >= BUFFER_MIN_SIZE))
 		{
-			sh_shrink(self, nullptr, self->commit_bgn, new_size << 1, new_size);
+			sh_shrink(TtFCall(self, self->commit_bgn, new_size << 1, new_size));
 			self->commit_end = (void*)((uintptr_t)self->commit_end - new_size);
 		}
 	}
 }
 
-void __fastcall shm_create_mt(void* self, void* _, size_t num_buckets)
+void __fastcall shm_create_mt(TtFParam(void* self, size_t num_buckets))
 {
 	mt_sh_array = new sh_array(16);
 }
