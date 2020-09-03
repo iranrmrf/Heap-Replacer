@@ -21,7 +21,7 @@ void*	__fastcall	nvhr_malloc(size_t size);
 void*	__fastcall	nvhr_calloc(size_t count, size_t size);
 void	__fastcall	nvhr_free(void* address);
 
-FILE* file = fopen("log.log", "w");
+// FILE* file = fopen("log.log", "w");
 
 void* try_valloc(void* lpAddress, size_t dwSize, DWORD flAllocationType, DWORD flProtect, size_t count)
 {
