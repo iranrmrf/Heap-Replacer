@@ -48,12 +48,10 @@ void	__fastcall	nvhr_free(void* address)
 
 void*	__fastcall	nvhr_realloc(void* address, size_t size)
 {
-	if (address == nullptr) { return nvhr_malloc(size); }
-	size_t old_size = nvhr_mem_size(address);
-	if (old_size >= size) { return address; }
 	void* new_address = nvhr_malloc(size);
+	size_t old_size = nvhr_mem_size(address);
 	size = (size < old_size) ? size : old_size;
-	memmove(new_address, address, size);
+	memcpy(new_address, address, size);
 	nvhr_free(address);
 	return new_address;
 }

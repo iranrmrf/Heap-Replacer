@@ -37,10 +37,10 @@ private:
 
 		pool_data pools[POOL_COUNT] =
 		{
-			{ 4	, 0x01000000u },
-			{ 8	, 0x04000000u },
+			{ 4		, 0x01000000u },
+			{ 8		, 0x04000000u },
 			{ 16	, 0x04000000u },
-			{ 32	, 0x08000000u },
+			{ 32	, 0x10000000u },
 			{ 64	, 0x04000000u },
 			{ 128	, 0x10000000u },
 			{ 256	, 0x08000000u },
@@ -79,6 +79,7 @@ private:
 	
 	memory_pool* pool_from_size(size_t size)
 	{
+		size = this->next_power_of_2(size);
 		return this->pools_by_size[(size >> 2) - 1];
 	}
 
@@ -92,13 +93,12 @@ public:
 	void* malloc(size_t size)
 	{
 		void* address = nullptr;
-		size_t power_size = this->next_power_of_2(size);
 		while (size <= 2048)
 		{
-			memory_pool* pool = this->pool_from_size(power_size);
+			memory_pool* pool = this->pool_from_size(size);
 			if (!pool) { return nullptr; }
 			if (address = pool->malloc()) {	return address; }
-			power_size <<= 1;
+			size <<= 1;
 		}
 		return address;
 	}
@@ -106,13 +106,12 @@ public:
 	void* calloc(size_t size)
 	{
 		void* address = nullptr;
-		size_t power_size = this->next_power_of_2(size);
 		while (size <= 2048)
 		{
-			memory_pool* pool = this->pool_from_size(power_size);
+			memory_pool* pool = this->pool_from_size(size);
 			if (!pool) { return nullptr; }
 			if (address = pool->calloc()) { return address; }
-			power_size <<= 1;
+			size <<= 1;
 		}
 		return address;
 	}
@@ -126,7 +125,7 @@ public:
 
 	bool free(void* address)
 	{	
-		memory_pool* pool = this->pool_from_addr(address);
+		memory_pool* pool = pool_from_addr(address);
 		if (!pool) { return false; }
 		return pool->free(address);
 	}
