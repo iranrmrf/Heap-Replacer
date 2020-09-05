@@ -16,8 +16,6 @@ private:
 	list<mem_cell*>* dead_size;
 	list<mem_cell*>* dead_addr;
 
-	mem_cell** cache_array;
-
 private:
 
 	size_t item_size;
@@ -30,7 +28,12 @@ private:
 	size_t max_desc;
 	size_t desc_item_count;
 	cell_desc** used_cell_desc;
-	mem_cell*** used_mem_cells;
+	size_t** used_mem_cells;
+
+private:
+
+	mem_cell** size_array; // [size / item_size]
+	mem_cell*** addr_array; // [desc][index]
 
 public:
 
@@ -47,9 +50,10 @@ public:
 		this->desc_item_count = this->reserve_size / this->item_size;
 
 		this->used_cell_desc = (cell_desc**)winapi_alloc(this->max_desc * sizeof(cell_desc*));
-		this->used_mem_cells = (mem_cell***)winapi_alloc(this->max_desc * sizeof(mem_cell**));
+		this->used_mem_cells = (size_t**)winapi_alloc(this->max_desc * sizeof(size_t*));
 
-		this->cache_array = (mem_cell**)winapi_alloc(this->reserve_size / this->item_size * sizeof(mem_cell*));
+		this->size_array = (mem_cell**)winapi_alloc(this->reserve_size / this->item_size * sizeof(mem_cell*));
+		this->addr_array = (mem_cell***)winapi_alloc(this->max_desc * sizeof(mem_cell**));
 	}
 
 	~default_heap()
@@ -57,34 +61,34 @@ public:
 
 	}
 
-	int get_cache_index(size_t size)
+	int get_size_index(size_t size)
 	{
 		return (size / this->item_size) - 1;
 	}
 
-	void add_cache_array(mem_cell* cell)
+	void add_size_array(mem_cell* cell)
 	{
-		int index = this->get_cache_index(cell->desc.size);
+		int index = this->get_size_index(cell->desc.size);
 		while (index >= 0)
 		{
-			mem_cell* elem = this->cache_array[index];	
+			mem_cell* elem = this->size_array[index];
 			if ((elem && (cell->desc.size >= elem->desc.size) && ((cell->desc.size != elem->desc.size) || (cell->desc.addr >= elem->desc.addr)))) { return; }
-			this->cache_array[index--] = cell;
+			this->size_array[index--] = cell;
 		}
 	}
 
-	void rmv_cache_array(mem_cell* cell)
+	void rmv_size_array(mem_cell* cell)
 	{
 		int index, pos;
-		if (cell != this->cache_array[index = this->get_cache_index(cell->desc.size)]) { return; }
+		if (cell != this->size_array[index = this->get_size_index(cell->desc.size)]) { return; }
 		mem_cell* data = cell->size_node->next ? cell->size_node->next->data : nullptr;
-		for (pos = index; (pos >= 0) && (this->cache_array[pos] == cell); this->cache_array[pos--] = data);
-		for (pos = index + 1; (pos < (int)(this->reserve_size / this->item_size)) && (this->cache_array[pos] == cell); this->cache_array[pos++] = data);
+		for (pos = index; (pos >= 0) && (this->size_array[pos] == cell); this->size_array[pos--] = data);
+		for (pos = index + 1; (pos < (int)(this->reserve_size / this->item_size)) && (this->size_array[pos] == cell); this->size_array[pos++] = data);
 	}
 
 	node<mem_cell*>* best_free_fit(size_t size)
 	{		
-		if (auto elem = this->cache_array[this->get_cache_index(size)]) { return elem->size_node; }
+		if (auto elem = this->size_array[this->get_size_index(size)]) { return elem->size_node; }
 		for (auto curr = this->free_size->get_head(); curr; curr = curr->next)
 		{
 			if (curr->data->desc.size >= size) { return curr; }
@@ -103,7 +107,7 @@ public:
 
 	node<mem_cell*>* insert_free_size(mem_cell* cell)
 	{
-		mem_cell* elem = this->cache_array[this->get_cache_index(cell->desc.size)];
+		mem_cell* elem = this->size_array[this->get_size_index(cell->desc.size)];
 		for (auto curr = elem ? elem->size_node : this->free_size->get_head(); curr; curr = curr->next)
 		{
 			if (((curr->data->desc.size == cell->desc.size) && (curr->data->desc.addr > cell->desc.addr)) || (curr->data->desc.size > cell->desc.size))
@@ -181,7 +185,7 @@ public:
 				mem_cell* next_data = cell->addr_node->next->data;
 				if (cell->addr_node->data->is_adjacent_to(next_data) && (this->get_desc(cell->desc.addr) == this->get_desc(next_data->desc.addr)))
 				{
-					this->rmv_cache_array(next_data);
+					this->rmv_size_array(next_data);
 					cell->addr_node->data->join(next_data);
 					this->rmv_free_cell(next_data);
 					delete next_data;
@@ -192,7 +196,7 @@ public:
 				mem_cell* prev_data = cell->addr_node->prev->data;
 				if (cell->addr_node->data->is_adjacent_to(prev_data) && (this->get_desc(cell->desc.addr) == this->get_desc(prev_data->desc.addr)))
 				{
-					this->rmv_cache_array(prev_data);
+					this->rmv_size_array(prev_data);
 					cell->addr_node->data->join(prev_data);
 					this->rmv_free_cell(prev_data);
 					delete prev_data;
@@ -200,7 +204,7 @@ public:
 			}
 			cell->size_node = this->insert_free_size(cell);			
 		}
-		this->add_cache_array(cell);
+		this->add_size_array(cell);
 	}
 
 	void add_dead_cell(mem_cell* cell)
@@ -268,17 +272,17 @@ public:
 		mem_cell* cell;
 		if ((curr->data->desc.size - size) < this->item_size)
 		{
-			this->rmv_cache_array(curr->data);
+			this->rmv_size_array(curr->data);
 			this->rmv_free_cell(cell = curr->data);
 		}
 		else
 		{
 			mem_cell* old_cell = curr->data;
-			this->rmv_cache_array(old_cell);
+			this->rmv_size_array(old_cell);
 			cell = old_cell->split(size);
 			this->free_size->remove_node(curr->data->size_node);
 			old_cell->size_node = this->insert_free_size(old_cell);
-			this->add_cache_array(old_cell);
+			this->add_size_array(old_cell);
 		}
 		this->add_used(cell);
 		return cell;
@@ -349,7 +353,8 @@ public:
 			if (!this->used_cell_desc[i])
 			{
 				this->used_cell_desc[i] = new cell_desc(address, this->reserve_size);;
-				this->used_mem_cells[i] = (mem_cell**)winapi_alloc(this->desc_item_count * sizeof(mem_cell*));
+				this->used_mem_cells[i] = (size_t*)winapi_alloc(this->desc_item_count * sizeof(size_t));
+				this->addr_array[i] = (mem_cell**)winapi_alloc(this->desc_item_count * sizeof(mem_cell*));
 				return new mem_cell(address, this->reserve_size);
 			}
 		}
@@ -371,40 +376,41 @@ public:
 		size_t desc = this->get_desc(cell->desc.addr);
 		if (desc != -1)
 		{
-			this->used_mem_cells[desc][((uintptr_t)cell->desc.addr - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = cell;
+			this->used_mem_cells[desc][((uintptr_t)cell->desc.addr - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = cell->desc.size;
+			delete cell;
 		}
 	}
 
-	mem_cell* get_used(void* address)
+	size_t get_used(void* address)
 	{
 		size_t desc = this->get_desc(address);
 		if (desc != -1)
 		{
 			return this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size];
 		}
-		return nullptr;
+		return 0;
 	}
 
-	mem_cell* rmv_used(void* address)
+	size_t rmv_used(void* address)
 	{
 		size_t desc = this->get_desc(address);
 		if (desc != -1)
 		{
-			mem_cell* cell = this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size];
-			this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = nullptr;
-			return cell;
+			size_t size = this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size];
+			this->used_mem_cells[desc][((uintptr_t)address - (uintptr_t)this->used_cell_desc[desc]->addr) / this->item_size] = 0;
+			return size;
 		}
-		return nullptr;
+		return 0;
 	}
 	
 	bool free_is_empty()
 	{
-		return (this->free_size->is_empty() && this->free_addr->is_empty());
+		return (this->free_size->is_empty() || this->free_addr->is_empty());
 	}
 
 	bool dead_is_empty()
 	{
-		return (this->dead_size->is_empty() && this->dead_addr->is_empty());
+		return (this->dead_size->is_empty() || this->dead_addr->is_empty());
 	}
 
 };
