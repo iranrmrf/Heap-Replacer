@@ -108,6 +108,7 @@ public:
 		{
 			if ((uintptr_t)this->block_bgn + this->max_size <= (uintptr_t)this->block_end)
 			{
+				printf("POOM|%d\n", this->item_size);
 				LeaveCriticalSection(&this->critical_section);
 				return nullptr;
 			}

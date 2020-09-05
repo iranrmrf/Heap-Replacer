@@ -54,16 +54,16 @@ public:
 
 	size_t mem_size(void* address)
 	{
-		mem_cell* cell;
-		return (cell = this->heap->get_used(address)) ? cell->desc.size : 0;
+		return this->heap->get_used(address);
 	}
 
 	bool free(void* address)
 	{
 		EnterCriticalSection(&this->critical_section);
-		mem_cell* cell;
-		if (cell = this->heap->rmv_used(address))
+		size_t size;
+		if (size = this->heap->rmv_used(address))
 		{
+			mem_cell* cell = new mem_cell(address, size);
 			this->heap->add_free_cell(cell);
 		}
 		LeaveCriticalSection(&this->critical_section);
