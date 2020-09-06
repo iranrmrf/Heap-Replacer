@@ -13,6 +13,9 @@
 #define TtFParam( self, ... ) self, void* _, __VA_ARGS__ // thiscall to fastcall
 #define TtFCall( self, ... ) self, nullptr, __VA_ARGS__ // thiscall to fastcall
 
+#define ECS(cs) EnterCriticalSection(cs)
+#define LCS(cs) LeaveCriticalSection(cs)
+
 constexpr size_t KB = 1024 * 1u;
 constexpr size_t MB = 1024 * KB;
 constexpr size_t GB = 1024 * MB;
