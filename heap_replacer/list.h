@@ -75,13 +75,12 @@ public:
 			this->head->prev = new_node;
 			new_node->next = this->head;
 			new_node->prev = nullptr;
-			this->head = new_node;
 		}
 		else
 		{
-			this->head = new_node;
 			this->tail = new_node;
 		}
+		this->head = new_node;
 		return new_node;
 	}
 
@@ -94,13 +93,12 @@ public:
 			this->tail->next = new_node;
 			new_node->prev = this->tail;
 			new_node->next = nullptr;
-			this->tail = new_node;
 		}
 		else
 		{
 			this->head = new_node;
-			this->tail = new_node;
 		}
+		this->tail = new_node;
 		return new_node;
 	}
 
