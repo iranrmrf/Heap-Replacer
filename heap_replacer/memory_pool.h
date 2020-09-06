@@ -103,20 +103,19 @@ public:
 
 	void* malloc()
 	{
-		EnterCriticalSection(&this->critical_section);
+		ECS(&this->critical_section);
 		if (!this->next_free->next)
 		{
 			if ((uintptr_t)this->block_bgn + this->max_size <= (uintptr_t)this->block_end)
 			{
-				LeaveCriticalSection(&this->critical_section);
-				return nullptr;
+				LCS(&this->critical_section); return nullptr;
 			}
 			this->setup_new_block(this->block_end ? this->block_end : this->block_bgn);
 		}
 		cell* old_free = this->next_free;
 		this->next_free = this->next_free->next;
 		old_free->next = nullptr;
-		LeaveCriticalSection(&this->critical_section);
+		LCS(&this->critical_section);
 		return this->free_ptr_to_real(old_free);
 	}
 
@@ -135,14 +134,14 @@ public:
 	bool free(void* address)
 	{
 		if (!this->is_in_range(address)) { return false; }
-		EnterCriticalSection(&this->critical_section);
+		ECS(&this->critical_section);
 		cell* cell;
 		if (!((cell = this->real_to_free_ptr(address))->next))
 		{
 			cell->next = this->next_free;
 			this->next_free = cell;
 		}
-		LeaveCriticalSection(&this->critical_section);
+		LCS(&this->critical_section);
 		return true;
 	}
 
