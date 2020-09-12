@@ -92,10 +92,9 @@ public:
 		for (int i = this->get_size_index(cell->desc.size); (i > -1) && (this->size_array[i] == cell); this->size_array[i--] = data);
 	}
 
-	cell_node* best_free_fit(size_t size)
+	mem_cell* best_free_fit(size_t size)
 	{
-		if (mem_cell* elem = this->size_array[this->get_size_index(size)]) { return elem->size_node; }
-		return nullptr;
+		return this->size_array[this->get_size_index(size)];
 	}
 
 	cell_node* insert_free_size(mem_cell* cell)
@@ -152,42 +151,23 @@ public:
 			size &= ~(this->item_size - 1);
 		}
 		ECS(&this->critical_section);
-		cell_node* size_node;
-		if (this->free_is_empty())
-		{
-			mem_cell* cell = this->commit();
-			this->add_free_cell(cell);
-			size_node = this->size_dlist->get_head();
-		}
-		else if (this->size_dlist->get_tail()->cell->desc.size < size)
-		{
-			do
-			{
-				mem_cell* cell = this->commit();
-				this->add_free_cell(cell);
-				size_node = this->size_dlist->get_tail();
-			}
-			while (size_node->cell->desc.size < size);
-		}
-		else
-		{
-			size_node = this->best_free_fit(size);
-		}
 		mem_cell* cell;
-		if ((size_node->cell->desc.size - size) < this->item_size)
+		while (!(cell = this->best_free_fit(size)))
 		{
-			cell = size_node->cell;
-			this->rmv_size_array(cell);
+			this->add_free_cell(this->commit());
+		}
+		this->rmv_size_array(cell);
+		if (cell->desc.size == size)
+		{
 			this->rmv_free_cell(cell);
 		}
 		else
 		{
-			mem_cell* old_cell = size_node->cell;
-			this->rmv_size_array(old_cell);
-			cell = old_cell->split(size);
-			this->size_dlist->remove_node(size_node);
-			old_cell->size_node = this->insert_free_size(old_cell);
-			this->add_size_array(old_cell);
+			mem_cell* split = cell->split(size);
+			this->size_dlist->remove_node(cell->size_node);
+			cell->size_node = this->insert_free_size(cell);
+			this->add_size_array(cell);
+			cell = split;
 		}
 		LCS(&this->critical_section);
 		return cell;
