@@ -2,52 +2,60 @@
 
 #include "util.h"
 
-#define POOL_GROWTH 0x00010000
-#define POOL_ALIGNMENT 0x01000000
+class memory_pool_container
+{
+public:
+	virtual ~memory_pool_container() { }
+	virtual void* memory_pool_init() = 0;
+	virtual void* malloc() = 0;
+	virtual void* calloc() = 0;
+	virtual size_t mem_size(void*) = 0;
+	virtual bool free(void*) = 0;
+	virtual size_t item_size() = 0;
+	virtual size_t max_size() = 0;
+};
 
-class memory_pool
+template <size_t S, size_t M>
+class memory_pool : public memory_pool_container
 {
 
 private:
 
-	struct cell
+	typedef BYTE cell[S];
+
+	struct free_cell
 	{
-		cell* next;
+		free_cell* next;
 	};
 
 private:
 
-	size_t item_size;
-	size_t max_size;
-	size_t max_item_count;
-
-private:
-
-	size_t block_size;
 	size_t block_count;
-	size_t block_item_count;
+	size_t block_cell_count;
 
-	void* block_bgn;
-	void* block_end;
+	size_t total_cell_count;
+
+	cell* pool_bgn;
+	cell* pool_cur;
+	cell* pool_end;
 
 private:
 
-	cell* free_cells;
-	cell* next_free;
+	free_cell* free_cells;
+	free_cell* next_free;
 
 	CRITICAL_SECTION critical_section;
 
 public:
 
-	memory_pool(size_t item_size, size_t max_size) : item_size(item_size), max_size(max_size), block_bgn(nullptr), block_end(nullptr)
+	memory_pool() : pool_bgn(nullptr), pool_cur(nullptr), pool_end(nullptr)
 	{
-		this->block_size = POOL_GROWTH;
-		this->block_count = this->max_size / this->block_size;
-		this->block_item_count = this->block_size / this->item_size;
+		this->block_count = M / POOL_GROWTH;
+		this->block_cell_count = POOL_GROWTH / S;
 
-		this->max_item_count = this->block_count * this->block_item_count;
+		this->total_cell_count = this->block_count * this->block_cell_count;
 
-		this->free_cells = (cell*)winapi_alloc(this->max_item_count * sizeof(cell));
+		this->free_cells = (free_cell*)winapi_alloc(this->total_cell_count * sizeof(free_cell));
 		this->next_free = this->free_cells;
 
 		InitializeCriticalSectionAndSpinCount(&this->critical_section, INFINITE);
@@ -55,48 +63,40 @@ public:
 
 	~memory_pool()
 	{
-		
+
 	}
 
 	void* memory_pool_init()
 	{
-		size_t i = 0x80;
-		while (!this->block_bgn)
+		size_t i = 0x10;
+		while (!this->pool_bgn)
 		{
-			this->block_bgn = try_valloc((void*)(i * POOL_ALIGNMENT), this->max_size, MEM_RESERVE, PAGE_READWRITE, 1);
-			if (++i == 0xFF) { i = 0x80; }
+			this->pool_bgn = (cell*)try_valloc((void*)(i * POOL_ALIGNMENT), M, MEM_RESERVE, PAGE_READWRITE, 1);
+			if (++i == 0xFF) { i = 0x10; }
 		}
-		return this->block_bgn;
+		this->pool_cur = this->pool_bgn;
+		this->pool_end = this->pool_bgn + this->total_cell_count;
+		return this->pool_bgn;
 	}
 
 private:
 
-	void setup_new_block(void* address)
+	void setup_new_block()
 	{
-		this->block_end = try_valloc(address, this->block_size, MEM_COMMIT, PAGE_READWRITE, 1);
-		size_t bank_offset = ((uintptr_t)this->block_end - (uintptr_t)this->block_bgn) / this->block_size * this->block_item_count;
+		this->pool_cur = (cell*)try_valloc(this->pool_cur, POOL_GROWTH, MEM_COMMIT, PAGE_READWRITE, 1);
+		size_t bank_offset = this->pool_cur - this->pool_bgn;
 		this->free_cells[bank_offset].next = nullptr;
-		for (size_t i = 0; i < this->block_item_count - 1; i++)
+		for (size_t i = 0; i < this->block_cell_count - 1; i++)
 		{
 			this->free_cells[bank_offset + i + 1].next = &this->free_cells[bank_offset + i];
 		}
-		this->block_end = (void*)((uintptr_t)this->block_end + this->block_size);
-		this->next_free = &this->free_cells[bank_offset + this->block_item_count - 1];
-	}
-
-	void* free_ptr_to_real(cell* address)
-	{
-		return (void*)((uintptr_t)this->block_bgn + ((((uintptr_t)address - (uintptr_t)this->free_cells) >> 2) * this->item_size));
-	}
-
-	cell* real_to_free_ptr(void* address)
-	{
-		return (cell*)(((((uintptr_t)address - (uintptr_t)this->block_bgn) / this->item_size) << 2) + (uintptr_t)this->free_cells);
+		this->next_free = &this->free_cells[bank_offset + this->block_cell_count - 1];
+		this->pool_cur += this->block_cell_count;
 	}
 
 	bool is_in_range(void* address)
 	{
-		return ((this->block_bgn <= address) && (address < this->block_end));
+		return ((this->pool_bgn <= address) && (address < this->pool_cur));
 	}
 
 public:
@@ -106,43 +106,48 @@ public:
 		ECS(&this->critical_section);
 		if (!this->next_free->next)
 		{
-			if ((uintptr_t)this->block_bgn + this->max_size <= (uintptr_t)this->block_end)
+			if (this->pool_cur == this->pool_end)
 			{
-				LCS(&this->critical_section); return nullptr;
+				LCS(&this->critical_section);
+				return nullptr;
 			}
-			this->setup_new_block(this->block_end ? this->block_end : this->block_bgn);
+			this->setup_new_block();
 		}
-		cell* old_free = this->next_free;
+		free_cell* old_free = this->next_free;
 		this->next_free = this->next_free->next;
 		old_free->next = nullptr;
 		LCS(&this->critical_section);
-		return this->free_ptr_to_real(old_free);
+		return &this->pool_bgn[old_free - this->free_cells];
 	}
 
 	void* calloc()
 	{
 		void* address = this->malloc();
-		if (address) { memset(address, 0, this->item_size); }
+		if (address) { memset(address, 0, S); }
 		return address;
 	}
 
 	size_t mem_size(void* address)
 	{
-		return (this->is_in_range(address)) ? this->item_size : 0;
+		return (this->is_in_range(address)) ? S : 0;
 	}
 
 	bool free(void* address)
 	{
 		if (!this->is_in_range(address)) { return false; }
 		ECS(&this->critical_section);
-		cell* cell;
-		if (!((cell = this->real_to_free_ptr(address))->next))
+		free_cell* fc = &this->free_cells[(cell*)address - this->pool_bgn];
+		if (!fc->next)
 		{
-			cell->next = this->next_free;
-			this->next_free = cell;
+			fc->next = this->next_free;
+			this->next_free = fc;
 		}
 		LCS(&this->critical_section);
 		return true;
 	}
+
+	size_t item_size() { return S; }
+
+	size_t max_size() { return M; }
 
 };
