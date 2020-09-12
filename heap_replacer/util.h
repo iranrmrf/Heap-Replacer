@@ -5,8 +5,6 @@
 
 #include <stdio.h>
 
-#pragma warning(disable:4244)
-
 #pragma warning(disable:6031)
 #pragma warning(disable:6250)
 
@@ -20,9 +18,9 @@ constexpr size_t KB = 1024 * 1u;
 constexpr size_t MB = 1024 * KB;
 constexpr size_t GB = 1024 * MB;
 
-void*	__fastcall	nvhr_malloc(size_t size);
-void*	__fastcall	nvhr_calloc(size_t count, size_t size);
-void	__fastcall	nvhr_free(void* address);
+void* __fastcall nvhr_malloc(size_t size);
+void* __fastcall nvhr_calloc(size_t count, size_t size);
+void __fastcall nvhr_free(void* address);
 
 // FILE* file = fopen("log.log", "w");
 
