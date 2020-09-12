@@ -15,50 +15,50 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
+    <ClCompile Include="main\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d3dx9_exports.cpp">
+    <ClCompile Include="main\d3dx9_exports.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="util.h">
+    <ClInclude Include="main\loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="heap_replacer.h">
+    <ClInclude Include="default_heap\cell_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="loader.h">
+    <ClInclude Include="default_heap\default_heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mem_cell.h">
+    <ClInclude Include="default_heap\default_heap_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="memory_pool.h">
+    <ClInclude Include="default_heap\mem_cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="memory_pool_manager.h">
+    <ClInclude Include="main\heap_replacer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default_heap_manager.h">
+    <ClInclude Include="memory_pools\memory_pool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrap_heap_manager.h">
+    <ClInclude Include="memory_pools\memory_pool_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sh_array.h">
+    <ClInclude Include="scrap_heap\scrap_heap_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default_heap.h">
+    <ClInclude Include="scrap_heap\sh_array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cell_list.h">
+    <ClInclude Include="main\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="exports.def">
+    <None Include="main\exports.def">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

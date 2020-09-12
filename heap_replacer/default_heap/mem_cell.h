@@ -47,7 +47,7 @@ public:
 	cell_node* size_node;
 	cell_node* addr_node;
 	cell_desc desc;
-	
+
 public:
 
 	mem_cell(void* address, size_t size) : size_node(nullptr), addr_node(nullptr), desc(address, size)

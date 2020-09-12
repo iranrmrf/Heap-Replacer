@@ -2,58 +2,45 @@
 
 #include "util.h"
 
-#include "default_heap_manager.h"
-#include "memory_pool_manager.h"
-#include "scrap_heap_manager.h"
+#include "default_heap/default_heap_manager.h"
+#include "memory_pools/memory_pool_manager.h"
+#include "scrap_heap/scrap_heap_manager.h"
 
 memory_pools_manager* mpm;
 default_heap_manager* dhm;
 
-void* __fastcall nvhr_alloc(size_t size, bool zero)
-{
-	if (size > MAX_HEAP_SIZE)
-	{
-		MessageBox(NULL, "NVHR - Alloc too large!", "Error", NULL);
-		return nullptr;
-	}
-	if (size < 4) { size = 4; }
-	void* address;
-	if (size <= 2 * KB)
-	{
-		if (address = zero ? mpm->calloc(size) : mpm->malloc(size)) { return address; }
-	}
-	else
-	{
-		if (address = zero ? dhm->calloc(size) : dhm->malloc(size)) { return address; }
-	}
-	MessageBox(NULL, "NVHR - nullptr alloc!", "Error", NULL);
-
-	return nullptr;
-}
-
 void* __fastcall nvhr_malloc(size_t size)
 {
-	return nvhr_alloc(size, false);
+	if (size < 4) { size = 4; }
+	void* address;
+	if (address = mpm->malloc(size)) { return address; }
+	if (address = dhm->malloc(size)) { return address; }
+	MessageBox(NULL, "NVHR - nullptr malloc!", "Error", NULL);
+	return nullptr;
 }
 
 void* __fastcall nvhr_calloc(size_t count, size_t size)
 {
-	return nvhr_alloc(count * size, true);
+	size *= count;
+	if (size < 4) { size = 4; }
+	void* address;
+	if (address = mpm->calloc(size)) { return address; }
+	if (address = dhm->calloc(size)) { return address; }
+	MessageBox(NULL, "NVHR - nullptr calloc!", "Error", NULL);
+	return nullptr;
 }
 
 size_t __fastcall nvhr_mem_size(void* address)
 {
 	size_t size;
 	if (size = mpm->mem_size(address)) { return size; }
-	if (size = dhm->mem_size(address)) { return size; }
-	return 0;
+	return dhm->mem_size(address);
 }
 
 void __fastcall nvhr_free(void* address)
 {
-	if (!address) { return; }
 	if (mpm->free(address)) { return; }
-	if (dhm->free(address)) { return; }
+	dhm->free(address);
 }
 
 void* __fastcall nvhr_realloc(void* address, size_t size)
@@ -62,13 +49,8 @@ void* __fastcall nvhr_realloc(void* address, size_t size)
 	size_t old_size = nvhr_mem_size(address);
 	if (old_size >= size) { return address; }
 	void* new_address;
-	/*if (new_address = dhm->realloc(address, size))
-	{
-		if (address != new_address) { memmove(new_address, address, (size < old_size) ? size : old_size); return new_address; }
-		return address;
-	}*/
 	new_address = nvhr_malloc(size);
-	memcpy(new_address, address, (size < old_size) ? size : old_size);
+	memcpy(new_address, address, branchless_min<size_t>(size, old_size));
 	nvhr_free(address);
 	return new_address;
 }
@@ -115,7 +97,7 @@ size_t __cdecl crt_msize(void* address)
 
 /*void patch_old_NVSE()
 {
-	HMODULE base = GetModuleHandleA("nvse_1_4.dll");	
+	HMODULE base = GetModuleHandleA("nvse_1_4.dll");
 	if (!base) { return; }
 	printf("NVHR - Found NVSE at %p\n", base);
 	BYTE* address;

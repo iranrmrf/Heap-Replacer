@@ -43,7 +43,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -87,26 +87,26 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="d3dx9_exports.cpp" />
-    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="main\d3dx9_exports.cpp" />
+    <ClCompile Include="main\dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cell_list.h" />
-    <ClInclude Include="heap_replacer.h" />
-    <ClInclude Include="default_heap_manager.h" />
-    <ClInclude Include="loader.h" />
-    <ClInclude Include="memory_pool.h" />
-    <ClInclude Include="memory_pool_manager.h">
+    <ClInclude Include="default_heap\cell_list.h" />
+    <ClInclude Include="main\heap_replacer.h" />
+    <ClInclude Include="default_heap\default_heap_manager.h" />
+    <ClInclude Include="main\loader.h" />
+    <ClInclude Include="memory_pools\memory_pool.h" />
+    <ClInclude Include="memory_pools\memory_pool_manager.h">
       <FileType>CppHeader</FileType>
     </ClInclude>
-    <ClInclude Include="default_heap.h" />
-    <ClInclude Include="mem_cell.h" />
-    <ClInclude Include="scrap_heap_manager.h" />
-    <ClInclude Include="util.h" />
-    <ClInclude Include="sh_array.h" />
+    <ClInclude Include="default_heap\default_heap.h" />
+    <ClInclude Include="default_heap\mem_cell.h" />
+    <ClInclude Include="scrap_heap\scrap_heap_manager.h" />
+    <ClInclude Include="main\util.h" />
+    <ClInclude Include="scrap_heap\sh_array.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="exports.def" />
+    <None Include="main\exports.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

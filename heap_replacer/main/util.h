@@ -20,6 +20,8 @@ constexpr size_t GB = 1024 * MB;
 
 void* __fastcall nvhr_malloc(size_t size);
 void* __fastcall nvhr_calloc(size_t count, size_t size);
+void* __fastcall nvhr_realloc(void* address, size_t size);
+size_t __fastcall nvhr_mem_size(void* address);
 void __fastcall nvhr_free(void* address);
 
 // FILE* file = fopen("log.log", "w");
@@ -44,7 +46,7 @@ void* try_valloc(void* lpAddress, size_t dwSize, DWORD flAllocationType, DWORD f
 		if (address = VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect))
 		{
 			return address;
-		}	
+		}
 		Sleep(1u);
 	}
 	return nullptr;

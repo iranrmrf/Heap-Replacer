@@ -45,8 +45,8 @@ public:
 		if (this->size >= this->alloc)
 		{
 			this->alloc <<= 1;
-			mt_sh* temp = (mt_sh*)nvhr_calloc(this->alloc, sizeof(mt_sh));
-			memcpy(temp, this->data, this->size * sizeof(mt_sh));
+			mt_sh* temp = (mt_sh*)nvhr_realloc(this->data, this->alloc * sizeof(mt_sh));
+			memmove(temp, this->data, this->size * sizeof(mt_sh));
 			nvhr_free(this->data);
 			this->data = temp;
 		}

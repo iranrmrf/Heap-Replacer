@@ -110,7 +110,7 @@ public:
 	{
 		cell_node* curr;
 		for (curr = this->addr_dlist->get_head(); curr->cell && !cell->swap_by_addr(curr->cell); curr = curr->next);
-		return this->addr_dlist->insert_before(curr, cell);	
+		return this->addr_dlist->insert_before(curr, cell);
 	}
 
 	void rmv_free_cell(mem_cell* cell)
@@ -171,11 +171,6 @@ public:
 		}
 		LCS(&this->critical_section);
 		return cell;
-	}
-
-	void* try_expand(void* address, size_t size)
-	{
-		return nullptr;
 	}
 
 	mem_cell* commit()

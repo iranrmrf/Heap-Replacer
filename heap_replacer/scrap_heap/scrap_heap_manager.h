@@ -259,7 +259,7 @@ void __fastcall sh_remove_chunk(TtFParam(scrap_heap* self, uintptr_t address))
 {
 	scrap_heap_chunk* chunk = (scrap_heap_chunk*)(address - sizeof(scrap_heap_chunk));
 	if (address && !(chunk->size & FREE_FLAG))
-	{	
+	{
 		for (chunk->size |= FREE_FLAG; self->last_chunk && (self->last_chunk->size & FREE_FLAG); self->last_chunk = self->last_chunk->next_chunk);
 		self->unused = self->last_chunk ? (BYTE*)self->last_chunk + sizeof(scrap_heap_chunk) + self->last_chunk->size : self->commit_bgn;
 		size_t new_size = ((uintptr_t)self->commit_end - (uintptr_t)self->commit_bgn) >> 2;
