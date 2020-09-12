@@ -9,29 +9,39 @@
 memory_pools_manager* mpm;
 default_heap_manager* dhm;
 
-void*	__fastcall	nvhr_alloc(size_t size, bool zero)
+void* __fastcall nvhr_alloc(size_t size, bool zero)
 {
+	if (size > MAX_HEAP_SIZE)
+	{
+		MessageBox(NULL, "NVHR - Alloc too large!", "Error", NULL);
+		return nullptr;
+	}
 	if (size < 4) { size = 4; }
-	void* address = nullptr;
+	void* address;
 	if (size <= 2 * KB)
 	{
 		if (address = zero ? mpm->calloc(size) : mpm->malloc(size)) { return address; }
 	}
-	if (address = zero ? dhm->calloc(size) : dhm->malloc(size)) { return address; }
+	else
+	{
+		if (address = zero ? dhm->calloc(size) : dhm->malloc(size)) { return address; }
+	}
+	MessageBox(NULL, "NVHR - nullptr alloc!", "Error", NULL);
+
 	return nullptr;
 }
 
-void*	__fastcall	nvhr_malloc(size_t size)
+void* __fastcall nvhr_malloc(size_t size)
 {
 	return nvhr_alloc(size, false);
 }
 
-void*	__fastcall	nvhr_calloc(size_t count, size_t size)
+void* __fastcall nvhr_calloc(size_t count, size_t size)
 {
 	return nvhr_alloc(count * size, true);
 }
 
-size_t	__fastcall	nvhr_mem_size(void* address)
+size_t __fastcall nvhr_mem_size(void* address)
 {
 	size_t size;
 	if (size = mpm->mem_size(address)) { return size; }
@@ -39,61 +49,66 @@ size_t	__fastcall	nvhr_mem_size(void* address)
 	return 0;
 }
 
-void	__fastcall	nvhr_free(void* address)
+void __fastcall nvhr_free(void* address)
 {
 	if (!address) { return; }
 	if (mpm->free(address)) { return; }
 	if (dhm->free(address)) { return; }
 }
 
-void* __fastcall	nvhr_realloc(void* address, size_t size)
+void* __fastcall nvhr_realloc(void* address, size_t size)
 {
 	if (address == nullptr) { return nvhr_malloc(size); }
 	size_t old_size = nvhr_mem_size(address);
 	if (old_size >= size) { return address; }
-	void* new_address = nvhr_malloc(size);
-	size = (size < old_size) ? size : old_size;
-	memcpy(new_address, address, size);
+	void* new_address;
+	/*if (new_address = dhm->realloc(address, size))
+	{
+		if (address != new_address) { memmove(new_address, address, (size < old_size) ? size : old_size); return new_address; }
+		return address;
+	}*/
+	new_address = nvhr_malloc(size);
+	memcpy(new_address, address, (size < old_size) ? size : old_size);
 	nvhr_free(address);
 	return new_address;
 }
 
-void*	__fastcall	game_heap_allocate(TtFParam(void* self, size_t size))
+void* __fastcall game_heap_allocate(TtFParam(void* self, size_t size))
 {
 	return nvhr_malloc(size);
 }
 
-void*	__fastcall	game_heap_reallocate(TtFParam(void* self, void* address, size_t size))
+void* __fastcall game_heap_reallocate(TtFParam(void* self, void* address, size_t size))
 {
 	return nvhr_realloc(address, size);
 }
 
-void	__fastcall	game_heap_free(TtFParam(void* self, void* address))
+void __fastcall game_heap_free(TtFParam(void* self, void* address))
 {
 	nvhr_free(address);
 }
 
-void*	__cdecl		crt_malloc(size_t size)
+void* __cdecl crt_malloc(size_t size)
 {
 	return nvhr_malloc(size);
 }
 
-void*	__cdecl		crt_calloc(size_t count, size_t size)
+void* __cdecl crt_calloc(size_t count, size_t size)
 {
 	return nvhr_calloc(count, size);
 }
 
-void*	__cdecl		crt_realloc(void* address, size_t size)
+void* __cdecl crt_realloc(void* address, size_t size)
 {
 	return nvhr_realloc(address, size);
 }
 
-void	__cdecl		crt_free(void* address)
+void __cdecl crt_free(void* address)
 {
 	nvhr_free(address);
 }
 
-size_t	__cdecl		crt_msize(void* address)
+size_t __cdecl crt_msize(void* address)
 {
 	return nvhr_mem_size(address);
 }
