@@ -248,7 +248,7 @@ void* __fastcall sh_add_chunk(TtFParam(scrap_heap* self, size_t size, size_t ali
 			grow_size = new_size - old_size;
 			if (new_size > BUFFER_MAX_SIZE)
 			{
-				MessageBox(NULL, "Scrap heap failed to grow!", "Error", NULL);
+				MessageBox(NULL, "NVHR - Scrap heap failed to grow!", "Error", NULL);
 				return nullptr;
 			}
 		}

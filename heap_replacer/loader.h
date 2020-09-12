@@ -28,7 +28,7 @@ void create_loader_hook()
 		}
 		else
 		{
-			MessageBox(NULL, "Your game is not LAA, apply a 4GB patcher to use NVHR", "Error", NULL);
+			MessageBox(NULL, "NVHR - Your game is not LAA, please apply a 4GB patcher", "Error", NULL);
 		}
 	}
 }
