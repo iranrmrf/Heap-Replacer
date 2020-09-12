@@ -227,7 +227,7 @@ void __fastcall sh_init_var(TtFParam(scrap_heap* self, size_t size))
 void* __fastcall sh_add_chunk(TtFParam(scrap_heap* self, size_t size, size_t alignment))
 {
 	uintptr_t body = (uintptr_t)self->unused + sizeof(scrap_heap_chunk);
-	body += alignment - (alignment ? body & (alignment - 1) : alignment);
+	body += alignment - (body & (alignment - 1));
 	scrap_heap_chunk* header = (scrap_heap_chunk*)(body - sizeof(scrap_heap_chunk));
 	void* desired_end = (void*)(body + size);
 	if (desired_end >= self->commit_end)
