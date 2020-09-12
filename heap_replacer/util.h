@@ -24,18 +24,6 @@ void __fastcall nvhr_free(void* address);
 
 // FILE* file = fopen("log.log", "w");
 
-template <typename T>
-T branchless_min(T a, T b)
-{
-	return b + ((a - b) & (a - b) >> 31);
-}
-
-template <typename T>
-T branchless_max(T a, T b)
-{
-	return a - ((a - b) & (a - b) >> 31);
-}
-
 void* try_valloc(void* lpAddress, size_t dwSize, DWORD flAllocationType, DWORD flProtect, size_t count)
 {
 	void* address;

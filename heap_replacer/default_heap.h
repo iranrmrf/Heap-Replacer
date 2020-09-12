@@ -173,6 +173,11 @@ public:
 		return cell;
 	}
 
+	void* try_expand(void* address, size_t size)
+	{
+		return nullptr;
+	}
+
 	mem_cell* commit()
 	{
 		if (this->last_addr == this->heap_desc->get_end())
