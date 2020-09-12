@@ -1,20 +1,20 @@
 #pragma once
 
-#include "list.h"
-
 #include "util.h"
+
+#include "cell_list.h"
 
 struct cell_desc
 {
 
 	void* addr;
 	size_t size;
-	
+
 	cell_desc(void* addr, size_t size) : addr(addr), size(size)
 	{
-	
+
 	}
-	
+
 	void* get_end()
 	{
 		return (void*)((uintptr_t)this->addr + this->size);
@@ -37,16 +37,17 @@ struct cell_desc
 
 };
 
+class cell_node;
+
 class mem_cell
 {
 
 public:
 
-	node<mem_cell*>* size_node;
-	node<mem_cell*>* addr_node;
-
+	cell_node* size_node;
+	cell_node* addr_node;
 	cell_desc desc;
-
+	
 public:
 
 	mem_cell(void* address, size_t size) : size_node(nullptr), addr_node(nullptr), desc(address, size)
@@ -61,24 +62,29 @@ public:
 
 	bool is_adjacent_to(mem_cell* cell)
 	{
-		return (this->desc.get_end() == cell->desc.addr) || (cell->desc.get_end() == this->desc.addr);
+		return ((this->desc.addr == cell->desc.get_end()) || (cell->desc.addr == this->desc.get_end()));
 	}
 
 	void join(mem_cell* other)
 	{
-		if (this->desc.addr > other->desc.addr)
-		{
-			this->desc.addr = other->desc.addr;
-		}
+		this->desc.addr = (void*)((ptrdiff_t)this->desc.addr + (((ptrdiff_t)other->desc.addr - (ptrdiff_t)this->desc.addr) & (this->desc.addr < other->desc.addr) - 1));
 		this->desc.size += other->desc.size;
 	}
 
 	mem_cell* split(size_t size)
 	{
-		mem_cell* cell = new mem_cell(this->desc.addr, size);
-		this->desc.addr = cell->desc.get_end();
 		this->desc.size -= size;
-		return cell;
+		return new mem_cell(this->desc.get_end(), size);
+	}
+
+	bool swap_by_size(mem_cell* cell)
+	{
+		return (this->desc.size < cell->desc.size) || ((this->desc.size == cell->desc.size) && (this->desc.addr < cell->desc.addr));
+	}
+
+	bool swap_by_addr(mem_cell* cell)
+	{
+		return (this->desc.addr < cell->desc.addr);
 	}
 
 	void* operator new(size_t size)
