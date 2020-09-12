@@ -17,7 +17,7 @@ private:
 
 	mt_sh* data;
 	size_t size;
-	size_t allc;
+	size_t alloc;
 
 private:
 
@@ -28,8 +28,8 @@ public:
 	sh_array(size_t size)
 	{
 		this->size = 0;
-		this->allc = size;
-		this->data = (mt_sh*)nvhr_calloc(this->allc, sizeof(mt_sh));
+		this->alloc = size;
+		this->data = (mt_sh*)nvhr_calloc(this->alloc, sizeof(mt_sh));
 
 		InitializeCriticalSectionAndSpinCount(&this->critical_section, INFINITE);
 	}
@@ -42,10 +42,10 @@ public:
 
 	void insert(DWORD id, scrap_heap* sh)
 	{
-		if (this->size >= this->allc)
+		if (this->size >= this->alloc)
 		{
-			this->allc <<= 1;
-			mt_sh* temp = (mt_sh*)nvhr_calloc(this->allc, sizeof(mt_sh));
+			this->alloc <<= 1;
+			mt_sh* temp = (mt_sh*)nvhr_calloc(this->alloc, sizeof(mt_sh));
 			memcpy(temp, this->data, this->size * sizeof(mt_sh));
 			nvhr_free(this->data);
 			this->data = temp;
