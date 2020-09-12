@@ -29,14 +29,7 @@ void __fastcall enter_light_critical_section(TtFParam(light_critical_section* se
 		size_t spin = 0;
 		while (InterlockedCompareExchange(&self->thread_id, id, 0u))
 		{
-			if (++spin <= 10000u)
-			{
-				Sleep(0u);
-			}
-			else
-			{
-				Sleep(1u);
-			}
+			Sleep(++spin > 10000u);
 		}
 		self->lock_count = 1;
 	}
