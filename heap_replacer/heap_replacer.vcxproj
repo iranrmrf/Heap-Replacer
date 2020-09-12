@@ -106,7 +106,7 @@
     <ClInclude Include="scrap_heap\sh_array.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="main\exports.def" />
+    <None Include="exports.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

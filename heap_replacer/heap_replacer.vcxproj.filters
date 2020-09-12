@@ -58,7 +58,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="main\exports.def">
+    <None Include="exports.def">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
