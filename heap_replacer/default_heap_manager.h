@@ -46,11 +46,6 @@ public:
 		return address;
 	}
 
-	void* realloc(void* address, size_t size)
-	{
-		return this->heap->try_expand(address, size);
-	}
-
 	size_t mem_size(void* address)
 	{
 		return this->heap->get_used(address);
