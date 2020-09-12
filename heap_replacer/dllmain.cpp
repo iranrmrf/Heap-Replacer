@@ -1,6 +1,6 @@
-#include "loader.h"
-
 #include "util.h"
+
+#include "loader.h"
 
 void nvhr() { }
 
