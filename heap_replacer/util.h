@@ -10,8 +10,8 @@
 #pragma warning(disable:6031)
 #pragma warning(disable:6250)
 
-#define TtFParam( self, ... ) self, void* _, __VA_ARGS__ // thiscall to fastcall
-#define TtFCall( self, ... ) self, nullptr, __VA_ARGS__ // thiscall to fastcall
+#define TtFParam( self, ... ) self, void* _, __VA_ARGS__
+#define TtFCall( self, ... ) self, nullptr, __VA_ARGS__
 
 #define ECS(cs) EnterCriticalSection(cs)
 #define LCS(cs) LeaveCriticalSection(cs)
@@ -104,7 +104,7 @@ void patch_ret_nullptr(uintptr_t address)
 void patch_ret_nullptr(uintptr_t address, size_t argc)
 {
 	patch_bytes(address, (BYTE*)"\x83\xC4", 2);
-	patch_BYTE(address + 2, argc * 4);
+	patch_BYTE(address + 2, (BYTE)(argc * 4));
 	patch_ret_nullptr(address + 3);
 }
 
@@ -112,7 +112,7 @@ void patch_ret(uintptr_t address, size_t argc)
 {
 	BYTE bytes = 0xC2;
 	patch_bytes(address, &bytes, 1);
-	patch_WORD(address + 1, 4 * argc);
+	patch_WORD(address + 1, (WORD)(4 * argc));
 }
 
 void patch_bp(uintptr_t address)
