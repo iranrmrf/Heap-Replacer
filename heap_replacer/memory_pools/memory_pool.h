@@ -145,6 +145,14 @@ public:
 		return true;
 	}
 
+	void* operator new(size_t size)
+	{
+		return ina.malloc(size);
+	}
 
+	void operator delete(void* address)
+	{
+		ina.free(address);
+	}
 
 };

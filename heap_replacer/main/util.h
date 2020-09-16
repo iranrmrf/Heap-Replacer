@@ -8,8 +8,8 @@
 #pragma warning(disable:6031)
 #pragma warning(disable:6250)
 
-#define TtFParam( self, ... ) self, void* _, __VA_ARGS__
-#define TtFCall( self, ... ) self, nullptr, __VA_ARGS__
+#define TFPARAM(self, ...) self, void* _, __VA_ARGS__
+#define TFCALL(self, ...) self, nullptr, __VA_ARGS__
 
 #define ECS(cs) EnterCriticalSection(cs)
 #define LCS(cs) LeaveCriticalSection(cs)
@@ -202,3 +202,45 @@ void create_console()
 	freopen("CONOUT$", "w", stderr);
 	freopen("CONOUT$", "w", stdout);
 }
+
+class initial_alloc
+{
+	size_t size;
+	size_t count;
+	void* bgn;
+	void* end;
+	void* last_alloc;
+
+public:
+
+	initial_alloc(size_t size) : size(size), count(0)
+	{
+		this->bgn = VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+		this->end = VPTRSUM(this->bgn, size);
+		this->last_alloc = this->bgn;
+	}
+
+	void* malloc(size_t size)
+	{
+		this->count++;
+		this->last_alloc = align(this->last_alloc, 4);
+		void* address = this->last_alloc;
+		this->last_alloc = VPTRSUM(this->last_alloc, size);
+		return (this->last_alloc <= this->end) ? address : nullptr;
+	}
+
+	void* calloc(size_t count, size_t size)
+	{
+		return this->malloc(count * size);
+	}
+
+	void free(void* address)
+	{
+		this->count--;
+		if (!this->count)
+		{
+			VirtualFree(this->bgn, NULL, MEM_RELEASE);
+		}
+	}
+
+} ina(0x1000);
