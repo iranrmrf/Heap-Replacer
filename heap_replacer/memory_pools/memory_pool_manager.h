@@ -1,33 +1,33 @@
 #pragma once
 
-#define POOL_GROWTH 0x00010000
-#define POOL_ALIGNMENT 0x01000000
+#define POOL_ALIGNMENT	0x01000000
+#define POOL_GROWTH		0x00010000
 
 #define POOL_COUNT 10
 #define POOL_ARRAY_SIZE ((0x80000000 / POOL_ALIGNMENT) << 1)
 
-#include "util.h"
+#include "main/util.h"
 
 #include "memory_pool.h"
 
-class memory_pools_manager
+class memory_pool_manager
 {
 
 private:
 
-	memory_pool_container* pools_by_size[POOL_ARRAY_SIZE];
-	memory_pool_container* pools_by_addr[POOL_ARRAY_SIZE];
+	memory_pool* pools_by_size[POOL_ARRAY_SIZE];
+	memory_pool* pools_by_addr[POOL_ARRAY_SIZE];
 
 public:
 
-	memory_pools_manager()
+	memory_pool_manager()
 	{
-		memset(this->pools_by_size, 0, POOL_ARRAY_SIZE * sizeof(memory_pool_container*));
-		memset(this->pools_by_addr, 0, POOL_ARRAY_SIZE * sizeof(memory_pool_container*));
+		memset(this->pools_by_size, 0, POOL_ARRAY_SIZE * sizeof(memory_pool*));
+		memset(this->pools_by_addr, 0, POOL_ARRAY_SIZE * sizeof(memory_pool*));
 		this->init_all_pools();
 	}
 
-	~memory_pools_manager()
+	~memory_pool_manager()
 	{
 
 	}
@@ -36,28 +36,28 @@ private:
 
 	void init_all_pools()
 	{
-		//struct pool_data { size_t item_size; size_t pool_size; };
+		struct pool_data { size_t item_size; size_t max_size; };
 
-		memory_pool_container* pools[POOL_COUNT] =
+		pool_data pool_desc[POOL_COUNT] =
 		{
-			new memory_pool<4, 0x01000000u>(),
-			new memory_pool<8, 0x04000000u>(),
-			new memory_pool<16, 0x04000000u>(),
-			new memory_pool<32, 0x08000000u>(),
-			new memory_pool<64, 0x04000000u>(),
-			new memory_pool<128, 0x10000000u>(),
-			new memory_pool<256, 0x08000000u>(),
-			new memory_pool<512, 0x04000000u>(),
-			new memory_pool<1024, 0x08000000u>(),
-			new memory_pool<2048, 0x08000000u>()
+			{ 4		, 0x01000000u },
+			{ 8		, 0x04000000u },
+			{ 16	, 0x04000000u },
+			{ 32	, 0x08000000u },
+			{ 64	, 0x04000000u },
+			{ 128	, 0x10000000u },
+			{ 256	, 0x08000000u },
+			{ 512	, 0x04000000u },
+			{ 1024	, 0x08000000u },
+			{ 2048	, 0x08000000u },
 		};
-
 		for (size_t i = 0; i < POOL_COUNT; i++)
 		{
-			memory_pool_container* pool = pools[i];
+			pool_data* pd = &pool_desc[i];
+			memory_pool* pool = new memory_pool(pd->item_size, pd->max_size);
 			void* address = pool->memory_pool_init();
-			this->pools_by_size[(pool->item_size() >> 2) - 1] = pool;
-			for (size_t j = 0; j < ((pool->max_size() + (POOL_ALIGNMENT - 1)) / POOL_ALIGNMENT); j++)
+			this->pools_by_size[(pd->item_size >> 2) - 1] = pool;
+			for (size_t j = 0; j < ((pd->max_size + (POOL_ALIGNMENT - 1)) / POOL_ALIGNMENT); j++)
 			{
 				this->pools_by_addr[((uintptr_t)address / POOL_ALIGNMENT) + j] = pool;
 			}
@@ -79,12 +79,12 @@ private:
 		return size;
 	}
 
-	memory_pool_container* pool_from_size(size_t size)
+	memory_pool* pool_from_size(size_t size)
 	{
 		return this->pools_by_size[(size >> 2) - 1];
 	}
 
-	memory_pool_container * pool_from_addr(void* address)
+	memory_pool* pool_from_addr(void* address)
 	{
 		return this->pools_by_addr[(uintptr_t)address / POOL_ALIGNMENT];
 	}
@@ -97,7 +97,7 @@ public:
 		size_t power_size = this->next_power_of_2(size);
 		while (size <= 2048)
 		{
-			memory_pool_container* pool = this->pool_from_size(power_size);
+			memory_pool* pool = this->pool_from_size(power_size);
 			if (!pool) { return nullptr; }
 			if (address = pool->malloc()) { return address; }
 			power_size <<= 1;
@@ -111,7 +111,7 @@ public:
 		size_t power_size = this->next_power_of_2(size);
 		while (size <= 2048)
 		{
-			memory_pool_container* pool = this->pool_from_size(power_size);
+			memory_pool* pool = this->pool_from_size(power_size);
 			if (!pool) { return nullptr; }
 			if (address = pool->calloc()) { return address; }
 			power_size <<= 1;
@@ -121,14 +121,14 @@ public:
 
 	size_t mem_size(void* address)
 	{
-		memory_pool_container* pool = this->pool_from_addr(address);
+		memory_pool* pool = this->pool_from_addr(address);
 		if (!pool) { return 0; }
 		return pool->mem_size(address);
 	}
 
 	bool free(void* address)
 	{
-		memory_pool_container* pool = this->pool_from_addr(address);
+		memory_pool* pool = this->pool_from_addr(address);
 		if (!pool) { return false; }
 		return pool->free(address);
 	}
