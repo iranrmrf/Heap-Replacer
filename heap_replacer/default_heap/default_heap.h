@@ -205,4 +205,14 @@ public:
 		return this->heap_desc->is_in_range(address);
 	}
 
+	void* operator new(size_t size)
+	{
+		return nvhr_malloc(size);
+	}
+
+	void operator delete(void* address)
+	{
+		nvhr_free(address);
+	}
+
 };
