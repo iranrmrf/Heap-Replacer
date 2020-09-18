@@ -100,9 +100,8 @@ public:
 
 	cell_node* insert_free_addr(mem_cell* cell)
 	{
-		int i = 0;
 		cell_node* curr;
-		for (curr = this->addr_dlist->get_head(); curr->is_valid() && !cell->swap_by_addr(curr->cell); curr = curr->next, i++);
+		for (curr = this->addr_dlist->get_head(); curr->is_valid() && !cell->swap_by_addr(curr->cell); curr = curr->next);
 		return this->addr_dlist->insert_before(curr, cell);
 	}
 
