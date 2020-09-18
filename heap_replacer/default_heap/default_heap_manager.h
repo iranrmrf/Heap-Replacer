@@ -1,12 +1,12 @@
 #pragma once
 
-#include "util.h"
+#include "main/util.h"
+
+#define HEAP_CELL_SIZE (4 * KB)
+#define HEAP_COMMIT_SIZE (64 * MB)
+#define HEAP_MAX_SIZE (1 * GB)
 
 #include "default_heap.h"
-
-#define CELL_SIZE 4 * KB
-#define COMMIT_SIZE 64 * MB
-#define MAX_HEAP_SIZE 1 * GB
 
 class default_heap_manager
 {
@@ -19,7 +19,7 @@ public:
 
 	default_heap_manager()
 	{
-		this->heap = new default_heap(CELL_SIZE, COMMIT_SIZE, MAX_HEAP_SIZE);
+		this->heap = new default_heap();
 	}
 
 	~default_heap_manager()
@@ -60,6 +60,16 @@ public:
 			this->heap->add_free_cell(cell);
 		}
 		return true;
+	}
+
+	void* operator new(size_t size)
+	{
+		return nvhr_malloc(size);
+	}
+
+	void operator delete(void* address)
+	{
+		nvhr_free(address);
 	}
 
 };
