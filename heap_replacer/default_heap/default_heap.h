@@ -138,8 +138,8 @@ public:
 	mem_cell* get_free_cell(size_t size)
 	{
 		size = align(size, HEAP_CELL_SIZE);
-		ECS(&this->critical_section);
 		mem_cell* cell;
+		ECS(&this->critical_section);
 		while (!(cell = this->size_array[this->get_size_index(size)]))
 		{
 			this->add_free_cell(this->commit());
