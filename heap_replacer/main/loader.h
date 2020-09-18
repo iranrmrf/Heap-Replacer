@@ -6,6 +6,7 @@
 
 BOOL WINAPI qpc_hook(LARGE_INTEGER* lpPerformanceCount)
 {
+	printf("NVHR - Applying hooks...\n");
 	apply_heap_hooks();
 	BYTE* base = (BYTE*)GetModuleHandle(NULL);
 	void* address = get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter");
