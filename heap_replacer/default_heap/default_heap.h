@@ -1,6 +1,6 @@
 #pragma once
 
-#include "util.h"
+#include "main/util.h"
 
 #include "cell_list.h"
 
@@ -11,6 +11,7 @@ private:
 
 	cell_list* size_dlist;
 	cell_list* addr_dlist;
+
 	mem_cell** size_array;
 	//mem_cell** addr_array;
 
@@ -18,10 +19,7 @@ private:
 
 private:
 
-	size_t item_size;
-	size_t commit_size;
-	size_t max_size;
-	size_t item_count;
+	size_t cell_count;
 	cell_desc* heap_desc;
 
 private:
@@ -34,9 +32,9 @@ private:
 
 public:
 
-	default_heap(size_t item_size, size_t commit_size, size_t max_size) : item_size(item_size), commit_size(commit_size), max_size(max_size)
+	default_heap()
 	{
-		this->heap_desc = new cell_desc(try_valloc(nullptr, this->max_size, MEM_RESERVE, PAGE_READWRITE, 1), this->max_size);
+		this->heap_desc = new cell_desc(try_valloc(nullptr, HEAP_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE, 1), HEAP_MAX_SIZE);
 		if (!this->heap_desc->addr)
 		{
 			MessageBox(NULL, "NVHR - Failed to alloc!", "Error", NULL);
@@ -47,11 +45,11 @@ public:
 		this->size_dlist = new cell_list();
 		this->addr_dlist = new cell_list();
 
-		this->item_count = this->max_size / this->item_size;
+		this->cell_count = HEAP_MAX_SIZE / HEAP_CELL_SIZE;
 
-		this->used_cells = (size_t*)winapi_alloc(this->item_count * sizeof(size_t));
+		this->used_cells = (size_t*)winapi_alloc(this->cell_count * sizeof(size_t));
 
-		this->size_array = (mem_cell**)winapi_alloc(this->item_count * sizeof(mem_cell*));
+		this->size_array = (mem_cell**)winapi_alloc(this->cell_count * sizeof(mem_cell*));
 		//this->addr_array = (mem_cell**)winapi_alloc(this->item_count * sizeof(mem_cell*));
 
 		InitializeCriticalSectionAndSpinCount(&this->critical_section, INFINITE);
@@ -64,7 +62,7 @@ public:
 
 		VirtualFree(this->used_cells, NULL, MEM_RELEASE);
 		VirtualFree(this->size_array, NULL, MEM_RELEASE);
-		//VirtualFree(this->addr_array, NULL, MEM_RELEASE);
+		// VirtualFree(this->addr_array, NULL, MEM_RELEASE);
 
 		VirtualFree(this->heap_desc->addr, NULL, MEM_RELEASE);
 
@@ -73,12 +71,12 @@ public:
 
 	int get_size_index(size_t size)
 	{
-		return (size / this->item_size) - 1;
+		return (size / HEAP_CELL_SIZE) - 1;
 	}
 
 	int get_addr_index(void* address)
 	{
-		return ((uintptr_t)address - (uintptr_t)this->heap_desc->addr) / this->item_size;
+		return UPTRDIFF(address, this->heap_desc->addr) / HEAP_CELL_SIZE;
 	}
 
 	void add_size_array(mem_cell* cell)
@@ -88,13 +86,7 @@ public:
 
 	void rmv_size_array(mem_cell* cell)
 	{
-		mem_cell* data = cell->size_node->next ? cell->size_node->next->cell : nullptr;
-		for (int i = this->get_size_index(cell->desc.size); (i > -1) && (this->size_array[i] == cell); this->size_array[i--] = data);
-	}
-
-	mem_cell* best_free_fit(size_t size)
-	{
-		return this->size_array[this->get_size_index(size)];
+		for (int i = this->get_size_index(cell->desc.size); (i > -1) && (this->size_array[i] == cell); this->size_array[i--] = cell->size_node->next->cell);
 	}
 
 	cell_node* insert_free_size(mem_cell* cell)
@@ -102,14 +94,15 @@ public:
 		mem_cell* elem = this->size_array[this->get_size_index(cell->desc.size)];
 		if (!elem) { return this->size_dlist->add_tail(cell); }
 		cell_node* curr;
-		for (curr = elem->size_node; curr->cell && !cell->swap_by_size(curr->cell); curr = curr->next);
+		for (curr = elem->size_node; curr->is_valid() && !cell->swap_by_size(curr->cell); curr = curr->next);
 		return this->size_dlist->insert_before(curr, cell);
 	}
 
 	cell_node* insert_free_addr(mem_cell* cell)
 	{
+		int i = 0;
 		cell_node* curr;
-		for (curr = this->addr_dlist->get_head(); curr->cell && !cell->swap_by_addr(curr->cell); curr = curr->next);
+		for (curr = this->addr_dlist->get_head(); curr->is_valid() && !cell->swap_by_addr(curr->cell); curr = curr->next, i++);
 		return this->addr_dlist->insert_before(curr, cell);
 	}
 
@@ -145,14 +138,10 @@ public:
 
 	mem_cell* get_free_cell(size_t size)
 	{
-		if (size & (this->item_size - 1))
-		{
-			size += (this->item_size - 1);
-			size &= ~(this->item_size - 1);
-		}
+		size = align(size, HEAP_CELL_SIZE);
 		ECS(&this->critical_section);
 		mem_cell* cell;
-		while (!(cell = this->best_free_fit(size)))
+		while (!(cell = this->size_array[this->get_size_index(size)]))
 		{
 			this->add_free_cell(this->commit());
 		}
@@ -181,12 +170,12 @@ public:
 			return nullptr;
 		}
 		void* address;
-		if (!(address = try_valloc(this->last_addr, this->commit_size, MEM_COMMIT, PAGE_READWRITE, 1)))
+		if (!(address = try_valloc(this->last_addr, HEAP_COMMIT_SIZE, MEM_COMMIT, PAGE_READWRITE, 1)))
 		{
 			MessageBox(NULL, "NVHR - Commit fail!", "Error", NULL);
 			return nullptr;
 		}
-		mem_cell* cell = new mem_cell(address, this->commit_size);
+		mem_cell* cell = new mem_cell(address, HEAP_COMMIT_SIZE);
 		this->last_addr = cell->desc.get_end();
 		return cell;
 	}
@@ -208,7 +197,7 @@ public:
 
 	bool free_is_empty()
 	{
-		return (this->size_dlist->is_empty() || this->addr_dlist->is_empty());
+		return (this->size_dlist->is_empty() | this->addr_dlist->is_empty());
 	}
 
 	bool is_in_range(void* address)
