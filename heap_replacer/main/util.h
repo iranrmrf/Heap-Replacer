@@ -14,6 +14,12 @@
 #define ECS(cs) EnterCriticalSection(cs)
 #define LCS(cs) LeaveCriticalSection(cs)
 
+#define UPTRSUM(x, y) ((uintptr_t)x + (uintptr_t)y)
+#define UPTRDIFF(x, y) ((uintptr_t)x - (uintptr_t)y)
+
+#define VPTRSUM(x, y) (void*)UPTRSUM(x, y)
+#define VPTRDIFF(x, y) (void*)UPTRDIFF(x, y)
+
 constexpr size_t KB = 1024 * 1u;
 constexpr size_t MB = 1024 * KB;
 constexpr size_t GB = 1024 * MB;
@@ -26,16 +32,14 @@ void __fastcall nvhr_free(void* address);
 
 // FILE* file = fopen("log.log", "w");
 
-template <typename T>
-T branchless_min(T a, T b)
+size_t align(size_t size, size_t alignment)
 {
-	return b + ((a - b) & (a - b) >> 31);
+	return (size + ((alignment - 1) & (((size & (alignment - 1)) == 0) - 1))) & (~(alignment - 1) | !(((size & (alignment - 1)) == 0) - 1));
 }
 
-template <typename T>
-T branchless_max(T a, T b)
+void* align(void* address, size_t alignment)
 {
-	return a - ((a - b) & (a - b) >> 31);
+	return (void*)align((uintptr_t)address, alignment);
 }
 
 void* try_valloc(void* lpAddress, size_t dwSize, DWORD flAllocationType, DWORD flProtect, size_t count)
