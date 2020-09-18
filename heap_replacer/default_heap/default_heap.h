@@ -52,7 +52,7 @@ public:
 		this->size_array = (mem_cell**)winapi_alloc(this->cell_count * sizeof(mem_cell*));
 		//this->addr_array = (mem_cell**)winapi_alloc(this->item_count * sizeof(mem_cell*));
 
-		InitializeCriticalSectionAndSpinCount(&this->critical_section, INFINITE);
+		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
 
 	~default_heap()

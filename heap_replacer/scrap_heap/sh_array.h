@@ -34,7 +34,7 @@ public:
 		this->alloc = size;
 		this->data = (mt_sh*)nvhr_calloc(this->alloc, sizeof(mt_sh));
 
-		InitializeCriticalSectionAndSpinCount(&this->critical_section, INFINITE);
+		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
 
 	~sh_array()

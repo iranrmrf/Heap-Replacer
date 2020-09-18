@@ -47,7 +47,7 @@ public:
 		this->free_cells = (cell*)winapi_alloc(this->max_cell_count * sizeof(cell));
 		this->next_free = this->free_cells;
 
-		InitializeCriticalSectionAndSpinCount(&this->critical_section, INFINITE);
+		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
 
 	~memory_pool()
