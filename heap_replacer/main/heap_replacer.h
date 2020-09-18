@@ -6,7 +6,7 @@
 #include "memory_pools/memory_pool_manager.h"
 #include "scrap_heap/scrap_heap_manager.h"
 
-memory_pools_manager* mpm;
+memory_pool_manager* mpm;
 default_heap_manager* dhm;
 
 void* __fastcall nvhr_malloc(size_t size)
@@ -50,22 +50,22 @@ void* __fastcall nvhr_realloc(void* address, size_t size)
 	if (old_size >= size) { return address; }
 	void* new_address;
 	new_address = nvhr_malloc(size);
-	memcpy(new_address, address, branchless_min<size_t>(size, old_size));
+	memcpy(new_address, address, size < old_size ? size : old_size);
 	nvhr_free(address);
 	return new_address;
 }
 
-void* __fastcall game_heap_allocate(TtFParam(void* self, size_t size))
+void* __fastcall game_heap_allocate(TFPARAM(void* self, size_t size))
 {
 	return nvhr_malloc(size);
 }
 
-void* __fastcall game_heap_reallocate(TtFParam(void* self, void* address, size_t size))
+void* __fastcall game_heap_reallocate(TFPARAM(void* self, void* address, size_t size))
 {
 	return nvhr_realloc(address, size);
 }
 
-void __fastcall game_heap_free(TtFParam(void* self, void* address))
+void __fastcall game_heap_free(TFPARAM(void* self, void* address))
 {
 	nvhr_free(address);
 }
@@ -120,7 +120,7 @@ size_t __cdecl crt_msize(void* address)
 void apply_heap_hooks()
 {
 
-	mpm = new memory_pools_manager();
+	mpm = new memory_pool_manager();
 	dhm = new default_heap_manager();
 
 
@@ -183,6 +183,6 @@ void apply_heap_hooks()
 	/*patch_call(0x86CF64, &patch_old_NVSE);
 	patch_nops(0x86CF69, 2);*/
 
-	printf("NVHR - Heap hooks applied.\n");
+	printf("NVHR - Hooks applied.\n");
 
 }
