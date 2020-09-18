@@ -1,6 +1,6 @@
 #pragma once
 
-#include "util.h"
+#include "main/util.h"
 
 struct scrap_heap;
 
@@ -8,6 +8,9 @@ struct mt_sh
 {
 	DWORD id;
 	scrap_heap* sh;
+
+	void* operator new(size_t size) { return nvhr_malloc(size); }
+	void operator delete(void* address) { nvhr_free(address); }
 };
 
 class sh_array
@@ -42,6 +45,7 @@ public:
 
 	void insert(DWORD id, scrap_heap* sh)
 	{
+		EnterCriticalSection(&this->critical_section);
 		if (this->size >= this->alloc)
 		{
 			this->alloc <<= 1;
@@ -51,26 +55,29 @@ public:
 			this->data = temp;
 		}
 		this->data[size++] = mt_sh { id, sh };
+		LeaveCriticalSection(&this->critical_section);
 	}
 
 	scrap_heap* find(DWORD id)
 	{
-		EnterCriticalSection(&this->critical_section);
 		for (size_t i = 0; i < this->size; i++)
 		{
 			if (this->data[i].id == id)
 			{
-				LeaveCriticalSection(&this->critical_section);
 				return this->data[i].sh;
 			}
 		}
-		LeaveCriticalSection(&this->critical_section);
 		return nullptr;
 	}
 
-	mt_sh* at(size_t index)
+	void* operator new(size_t size)
 	{
-		return (index < this->size) ? &this->data[index] : nullptr;
+		return nvhr_malloc(size);
+	}
+
+	void operator delete(void* address)
+	{
+		nvhr_free(address);
 	}
 
 };
