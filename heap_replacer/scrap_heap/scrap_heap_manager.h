@@ -7,7 +7,7 @@
 #define SHM_BUFFER_COUNT	64
 
 #define SH_BUFFER_MAX_SIZE	0x01000000
-#define SH_BUFFER_MIN_SIZE	0x00010000
+#define SH_BUFFER_MIN_SIZE	0x00040000
 
 #define SH_FREE_FLAG		0x80000000
 
@@ -191,7 +191,7 @@ void __fastcall shm_free_all_buffers(scrap_heap_manager* self)
 struct scrap_heap_chunk
 {
 	size_t size;
-	scrap_heap_chunk* next_chunk;
+	scrap_heap_chunk* prev_chunk;
 };
 
 struct scrap_heap
@@ -228,7 +228,7 @@ void* __fastcall sh_add_chunk(TFPARAM(scrap_heap* self, size_t size, size_t alig
 	uintptr_t body = UPTRSUM(self->unused, sizeof(scrap_heap_chunk));
 	body = align(body, alignment);
 	scrap_heap_chunk* header = (scrap_heap_chunk*)(body - sizeof(scrap_heap_chunk));
-	void* desired_end = (void*)(body + size);
+	void* desired_end = VPTRSUM(body, size);
 	if (desired_end >= self->commit_end)
 	{
 		size_t old_size = UPTRDIFF(self->commit_end, self->commit_bgn);
@@ -248,7 +248,7 @@ void* __fastcall sh_add_chunk(TFPARAM(scrap_heap* self, size_t size, size_t alig
 		self->commit_end = VPTRSUM(self->commit_end, grow_size);
 	}
 	header->size = size;
-	header->next_chunk = self->last_chunk;
+	header->prev_chunk = self->last_chunk;
 	self->last_chunk = header;
 	self->unused = desired_end;
 	return (void*)body;
@@ -259,7 +259,7 @@ void __fastcall sh_remove_chunk(TFPARAM(scrap_heap* self, uintptr_t address))
 	scrap_heap_chunk* chunk = (scrap_heap_chunk*)(address - sizeof(scrap_heap_chunk));
 	if (address && !(chunk->size & SH_FREE_FLAG))
 	{
-		for (chunk->size |= SH_FREE_FLAG; self->last_chunk && (self->last_chunk->size & SH_FREE_FLAG); self->last_chunk = self->last_chunk->next_chunk);
+		for (chunk->size |= SH_FREE_FLAG; self->last_chunk && (self->last_chunk->size & SH_FREE_FLAG); self->last_chunk = self->last_chunk->prev_chunk);
 		self->unused = self->last_chunk ? (BYTE*)self->last_chunk + sizeof(scrap_heap_chunk) + self->last_chunk->size : self->commit_bgn;
 		size_t new_size = (UPTRDIFF(self->commit_end, self->commit_bgn)) >> 2;
 		if ((VPTRSUM(self->unused, new_size) < self->commit_end) && (new_size >= SH_BUFFER_MIN_SIZE))
