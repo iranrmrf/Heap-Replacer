@@ -64,12 +64,12 @@ public:
 
 	void* operator new(size_t size)
 	{
-		return nvhr_malloc(size);
+		return NVHR::nvhr_malloc(size);
 	}
 
 	void operator delete(void* address)
 	{
-		nvhr_free(address);
+		NVHR::nvhr_free(address);
 	}
 
 };

@@ -44,7 +44,7 @@ public:
 
 		this->max_cell_count = this->block_count * this->block_item_count;
 
-		this->free_cells = (cell*)winapi_alloc(this->max_cell_count * sizeof(cell));
+		this->free_cells = (cell*)Util::winapi_alloc(this->max_cell_count * sizeof(cell));
 		this->next_free = this->free_cells;
 
 		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
@@ -60,7 +60,7 @@ public:
 		size_t i = 0x10;
 		while (!this->pool_bgn)
 		{
-			this->pool_bgn = try_valloc((void*)(i * POOL_ALIGNMENT), this->max_size, MEM_RESERVE, PAGE_READWRITE, 1);
+			this->pool_bgn = Util::try_valloc((void*)(i * POOL_ALIGNMENT), this->max_size, MEM_RESERVE, PAGE_READWRITE, 1);
 			if (++i == 0xFF) { i = 0x10; }
 		}
 		this->pool_cur = this->pool_bgn;
@@ -72,7 +72,7 @@ private:
 
 	void setup_new_block()
 	{
-		this->pool_cur = try_valloc(this->pool_cur, POOL_GROWTH, MEM_COMMIT, PAGE_READWRITE, 1);
+		this->pool_cur = Util::try_valloc(this->pool_cur, POOL_GROWTH, MEM_COMMIT, PAGE_READWRITE, 1);
 		size_t bank_offset = UPTRDIFF(this->pool_cur, this->pool_bgn) / POOL_GROWTH * this->block_item_count;
 		this->free_cells[bank_offset].next = nullptr;
 		for (size_t i = 0; i < this->block_item_count - 1; i++)

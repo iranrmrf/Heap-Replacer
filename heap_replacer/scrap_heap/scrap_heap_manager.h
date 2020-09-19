@@ -45,7 +45,7 @@ void __fastcall leave_light_critical_section(TFPARAM(light_critical_section* sel
 
 void __fastcall sh_grow(TFPARAM(void* self, void* address, size_t offset, size_t size))
 {
-	try_valloc(VPTRSUM(address, offset), size, MEM_COMMIT, PAGE_READWRITE, 1);
+	Util::try_valloc(VPTRSUM(address, offset), size, MEM_COMMIT, PAGE_READWRITE, 1);
 }
 
 void __fastcall sh_shrink(TFPARAM(void* self, void* address, size_t offset, size_t size))
@@ -66,8 +66,8 @@ struct scrap_heap_manager
 	size_t total_free_bytes;
 	light_critical_section critical_section;
 
-	void* operator new(size_t size) { return nvhr_malloc(size); }
-	void operator delete(void* address) { nvhr_free(address); }
+	void* operator new(size_t size) { return NVHR::nvhr_malloc(size); }
+	void operator delete(void* address) { NVHR::nvhr_free(address); }
 };
 
 scrap_heap_manager* shm;
@@ -105,8 +105,8 @@ void __fastcall shm_swap_buffers(TFPARAM(scrap_heap_manager* self, size_t index)
 
 void* __fastcall shm_create_buffer(TFPARAM(scrap_heap_manager* self, size_t size))
 {
-	void* address = try_valloc(nullptr, SH_BUFFER_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE, INFINITE);
-	try_valloc(address, size, MEM_COMMIT, PAGE_READWRITE, INFINITE);
+	void* address = Util::try_valloc(nullptr, SH_BUFFER_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE, INFINITE);
+	Util::try_valloc(address, size, MEM_COMMIT, PAGE_READWRITE, INFINITE);
 	return address;
 }
 
@@ -219,14 +219,14 @@ void __fastcall sh_init_0x10000(scrap_heap* self)
 
 void __fastcall sh_init_var(TFPARAM(scrap_heap* self, size_t size))
 {
-	size = align(size, SH_BUFFER_MIN_SIZE);
+	size = Util::align(size, SH_BUFFER_MIN_SIZE);
 	sh_init(TFCALL(self, size));
 }
 
 void* __fastcall sh_add_chunk(TFPARAM(scrap_heap* self, size_t size, size_t alignment))
 {
 	uintptr_t body = UPTRSUM(self->unused, sizeof(scrap_heap_chunk));
-	body = align(body, alignment);
+	body = Util::align(body, alignment);
 	scrap_heap_chunk* header = (scrap_heap_chunk*)(body - sizeof(scrap_heap_chunk));
 	void* desired_end = VPTRSUM(body, size);
 	if (desired_end >= self->commit_end)

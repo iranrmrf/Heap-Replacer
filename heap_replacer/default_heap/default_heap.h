@@ -34,7 +34,7 @@ public:
 
 	default_heap()
 	{
-		this->heap_desc = new cell_desc(try_valloc(nullptr, HEAP_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE, 1), HEAP_MAX_SIZE);
+		this->heap_desc = new cell_desc(Util::try_valloc(nullptr, HEAP_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE, 1), HEAP_MAX_SIZE);
 		if (!this->heap_desc->addr)
 		{
 			MessageBox(NULL, "NVHR - Failed to alloc!", "Error", NULL);
@@ -47,10 +47,10 @@ public:
 
 		this->cell_count = HEAP_MAX_SIZE / HEAP_CELL_SIZE;
 
-		this->used_cells = (size_t*)winapi_alloc(this->cell_count * sizeof(size_t));
+		this->used_cells = (size_t*)Util::winapi_alloc(this->cell_count * sizeof(size_t));
 
-		this->size_array = (mem_cell**)winapi_alloc(this->cell_count * sizeof(mem_cell*));
 		//this->addr_array = (mem_cell**)winapi_alloc(this->item_count * sizeof(mem_cell*));
+		this->size_array = (mem_cell**)Util::winapi_alloc(this->cell_count * sizeof(mem_cell*));
 
 		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
@@ -137,7 +137,7 @@ public:
 
 	mem_cell* get_free_cell(size_t size)
 	{
-		size = align(size, HEAP_CELL_SIZE);
+		size = Util::align(size, HEAP_CELL_SIZE);
 		mem_cell* cell;
 		ECS(&this->critical_section);
 		while (!(cell = this->size_array[this->get_size_index(size)]))
@@ -169,7 +169,7 @@ public:
 			return nullptr;
 		}
 		void* address;
-		if (!(address = try_valloc(this->last_addr, HEAP_COMMIT_SIZE, MEM_COMMIT, PAGE_READWRITE, 1)))
+		if (!(address = Util::try_valloc(this->last_addr, HEAP_COMMIT_SIZE, MEM_COMMIT, PAGE_READWRITE, 1)))
 		{
 			MessageBox(NULL, "NVHR - Commit fail!", "Error", NULL);
 			return nullptr;
@@ -206,12 +206,12 @@ public:
 
 	void* operator new(size_t size)
 	{
-		return nvhr_malloc(size);
+		return NVHR::nvhr_malloc(size);
 	}
 
 	void operator delete(void* address)
 	{
-		nvhr_free(address);
+		NVHR::nvhr_free(address);
 	}
 
 };
