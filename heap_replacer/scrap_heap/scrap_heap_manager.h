@@ -2,7 +2,7 @@
 
 #include "main/util.h"
 
-#include "sh_array.h"
+#include "sh_vector.h"
 
 #define SHM_BUFFER_COUNT	64
 
@@ -202,7 +202,7 @@ struct scrap_heap
 	scrap_heap_chunk* last_chunk;
 };
 
-sh_array* mt_sh_array;
+sh_vector* mt_sh_vector;
 
 void __fastcall sh_init(TFPARAM(scrap_heap* self, size_t size))
 {
@@ -272,16 +272,16 @@ void __fastcall sh_remove_chunk(TFPARAM(scrap_heap* self, uintptr_t address))
 
 void __fastcall shm_create_mt(TFPARAM(void* self, size_t num_buckets))
 {
-	mt_sh_array = new sh_array(16);
+	mt_sh_vector = new sh_vector(16);
 }
 
 scrap_heap* shm_get_scrap_heap(void* heap)
 {
 	DWORD id = GetCurrentThreadId();
 	scrap_heap* sh;
-	if (sh = mt_sh_array->find(id)) { return sh; }
-	sh = (scrap_heap*)nvhr_malloc(sizeof(scrap_heap));
+	if (sh = mt_sh_vector->find(id)) { return sh; }
+	sh = (scrap_heap*)NVHR::nvhr_malloc(sizeof(scrap_heap));
 	sh_init_0x10000(sh);
-	mt_sh_array->insert(id, sh);
+	mt_sh_vector->insert(id, sh);
 	return sh;
 }
