@@ -50,10 +50,10 @@
     <ClInclude Include="scrap_heap\scrap_heap_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrap_heap\sh_array.h">
+    <ClInclude Include="main\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="main\util.h">
+    <ClInclude Include="scrap_heap\sh_vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
