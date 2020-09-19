@@ -52,25 +52,25 @@
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <ExceptionHandling>false</ExceptionHandling>
       <CallingConvention>FastCall</CallingConvention>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsCpp</CompileAs>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AssemblerOutput>All</AssemblerOutput>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
-      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointModel>Precise</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -113,7 +113,7 @@
     <ClInclude Include="default_heap\mem_cell.h" />
     <ClInclude Include="scrap_heap\scrap_heap_manager.h" />
     <ClInclude Include="main\util.h" />
-    <ClInclude Include="scrap_heap\sh_array.h" />
+    <ClInclude Include="scrap_heap\sh_vector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
