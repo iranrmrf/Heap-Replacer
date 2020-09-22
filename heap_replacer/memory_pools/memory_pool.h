@@ -36,8 +36,7 @@ private:
 
 public:
 
-	memory_pool(size_t item_size, size_t max_size) : item_size(item_size), max_size(max_size),
-		pool_bgn(nullptr), pool_cur(nullptr), pool_end(nullptr)
+	memory_pool(size_t item_size, size_t max_size) : item_size(item_size), max_size(max_size), pool_bgn(nullptr), pool_cur(nullptr), pool_end(nullptr)
 	{
 		this->block_count = this->max_size / POOL_GROWTH;
 		this->block_item_count = POOL_GROWTH / this->item_size;
@@ -52,7 +51,11 @@ public:
 
 	~memory_pool()
 	{
+		VirtualFree(this->free_cells, NULL, MEM_RELEASE);
 
+		VirtualFree(this->pool_bgn, NULL, MEM_RELEASE);
+
+		DeleteCriticalSection(&this->critical_section);
 	}
 
 	void* memory_pool_init()

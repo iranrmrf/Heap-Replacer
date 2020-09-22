@@ -29,7 +29,13 @@ public:
 
 	~memory_pool_manager()
 	{
-
+		for (int i = 0; i < POOL_ARRAY_SIZE; i++)
+		{
+			if (this->pools_by_size[i])
+			{
+				delete this->pools_by_size[i];
+			}
+		}
 	}
 
 private:
