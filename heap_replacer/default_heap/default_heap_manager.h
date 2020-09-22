@@ -24,7 +24,7 @@ public:
 
 	~default_heap_manager()
 	{
-
+		delete this->heap;
 	}
 
 public:
