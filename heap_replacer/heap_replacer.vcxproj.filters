@@ -56,6 +56,9 @@
     <ClInclude Include="scrap_heap\sh_vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="initial_allocator\inital_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">
