@@ -2,6 +2,8 @@
 
 #include "util.h"
 
+#include "initial_allocator/inital_allocator.h"
+
 #include "default_heap/default_heap_manager.h"
 #include "memory_pools/memory_pool_manager.h"
 #include "scrap_heap/scrap_heap_manager.h"
@@ -15,22 +17,22 @@ namespace NVHR
 	void* __fastcall nvhr_malloc(size_t size)
 	{
 		if (size < 4) { size = 4; }
-		void* address;
+		void* address = nullptr;
 		if (address = mpm->malloc(size)) { return address; }
 		if (address = dhm->malloc(size)) { return address; }
 		MessageBox(NULL, "NVHR - nullptr malloc!", "Error", NULL);
-		return nullptr;
+		return address;
 	}
 
 	void* __fastcall nvhr_calloc(size_t count, size_t size)
 	{
 		size *= count;
 		if (size < 4) { size = 4; }
-		void* address;
+		void* address = nullptr;
 		if (address = mpm->calloc(size)) { return address; }
 		if (address = dhm->calloc(size)) { return address; }
 		MessageBox(NULL, "NVHR - nullptr calloc!", "Error", NULL);
-		return nullptr;
+		return address;
 	}
 
 	size_t __fastcall nvhr_mem_size(void* address)
@@ -120,6 +122,7 @@ namespace NVHR
 		}
 	}*/
 
+
 	void apply_heap_hooks()
 	{
 
@@ -149,32 +152,32 @@ namespace NVHR
 		Util::Mem::patch_ret(0xAA7290);
 
 
-		Util::Mem::patch_jmp(0xAA47E0, &shm_create_mt);
-		Util::Mem::patch_jmp(0xAA42E0, &shm_get_scrap_heap);
+		Util::Mem::patch_jmp(0xAA47E0, &ScrapHeap::shm_create_mt);
+		Util::Mem::patch_jmp(0xAA42E0, &ScrapHeap::shm_get_scrap_heap);
 
-		Util::Mem::patch_jmp(0x866D10, &shm_get_singleton);
+		Util::Mem::patch_jmp(0x866D10, &ScrapHeap::shm_get_singleton);
 
-		Util::Mem::patch_jmp(0x40FBF0, &enter_light_critical_section);
-		Util::Mem::patch_jmp(0x40FBA0, &leave_light_critical_section);
+		Util::Mem::patch_jmp(0x40FBF0, &Util::enter_light_critical_section);
+		Util::Mem::patch_jmp(0x40FBA0, &Util::leave_light_critical_section);
 
-		Util::Mem::patch_jmp(0xAA5E30, &sh_grow);
-		Util::Mem::patch_jmp(0xAA5E90, &sh_shrink);
+		Util::Mem::patch_jmp(0xAA5E30, &ScrapHeap::sh_grow);
+		Util::Mem::patch_jmp(0xAA5E90, &ScrapHeap::sh_shrink);
 
-		Util::Mem::patch_jmp(0xAA5860, &shm_ctor);
-		Util::Mem::patch_jmp(0xAA58D0, &shm_init);
-		Util::Mem::patch_jmp(0xAA5F50, &shm_swap_buffers);
-		Util::Mem::patch_jmp(0xAA5EC0, &shm_create_buffer);
-		Util::Mem::patch_jmp(0xAA59B0, &shm_request_buffer);
-		Util::Mem::patch_jmp(0xAA5F30, &shm_free_buffer);
-		Util::Mem::patch_jmp(0xAA5B70, &shm_release_buffer);
-		Util::Mem::patch_jmp(0xAA5C80, &shm_free_all_buffers);
+		Util::Mem::patch_jmp(0xAA5860, &ScrapHeap::shm_ctor);
+		Util::Mem::patch_jmp(0xAA58D0, &ScrapHeap::shm_init);
+		Util::Mem::patch_jmp(0xAA5F50, &ScrapHeap::shm_swap_buffers);
+		Util::Mem::patch_jmp(0xAA5EC0, &ScrapHeap::shm_create_buffer);
+		Util::Mem::patch_jmp(0xAA59B0, &ScrapHeap::shm_request_buffer);
+		Util::Mem::patch_jmp(0xAA5F30, &ScrapHeap::shm_free_buffer);
+		Util::Mem::patch_jmp(0xAA5B70, &ScrapHeap::shm_release_buffer);
+		Util::Mem::patch_jmp(0xAA5C80, &ScrapHeap::shm_free_all_buffers);
 
-		Util::Mem::patch_jmp(0xAA57B0, &sh_init);
-		Util::Mem::patch_jmp(0xAA53F0, &sh_init_0x10000);
-		Util::Mem::patch_jmp(0xAA5410, &sh_init_var);
+		Util::Mem::patch_jmp(0xAA57B0, &ScrapHeap::sh_init);
+		Util::Mem::patch_jmp(0xAA53F0, &ScrapHeap::sh_init_0x10000);
+		Util::Mem::patch_jmp(0xAA5410, &ScrapHeap::sh_init_var);
 
-		Util::Mem::patch_jmp(0xAA54A0, &sh_add_chunk);
-		Util::Mem::patch_jmp(0xAA5610, &sh_remove_chunk);
+		Util::Mem::patch_jmp(0xAA54A0, &ScrapHeap::sh_add_chunk);
+		Util::Mem::patch_jmp(0xAA5610, &ScrapHeap::sh_remove_chunk);
 
 
 		Util::Mem::patch_nops(0xAA3060, 5);
@@ -182,6 +185,7 @@ namespace NVHR
 		Util::Mem::patch_bytes(0xC42EA4, (BYTE*)"\xEB", 1);
 		Util::Mem::patch_bytes(0x86C563, (BYTE*)"\xEB\x12", 2);
 		Util::Mem::patch_bytes(0xEC16F8, (BYTE*)"\xEB\x0F", 2);
+
 
 		/*patch_call(0x86CF64, &patch_old_NVSE);
 		patch_nops(0x86CF69, 2);*/
