@@ -2,6 +2,7 @@
 
 #include "main/util.h"
 
+#include "light_critical_section.h"
 #include "sh_vector.h"
 
 #define SHM_BUFFER_COUNT	64
@@ -35,7 +36,7 @@ namespace ScrapHeap
 		scrap_heap_buffer buffers[SHM_BUFFER_COUNT];
 		size_t scrap_heap_count;
 		size_t total_free_bytes;
-		Util::light_critical_section critical_section;
+		light_critical_section critical_section;
 
 		void* operator new(size_t size) { return NVHR::nvhr_malloc(size); }
 		void operator delete(void* address) { NVHR::nvhr_free(address); }

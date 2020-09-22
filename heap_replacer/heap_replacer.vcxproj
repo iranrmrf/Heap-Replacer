@@ -114,6 +114,7 @@
     </ClInclude>
     <ClInclude Include="default_heap\default_heap.h" />
     <ClInclude Include="default_heap\mem_cell.h" />
+    <ClInclude Include="scrap_heap\light_critical_section.h" />
     <ClInclude Include="scrap_heap\scrap_heap_manager.h" />
     <ClInclude Include="main\util.h" />
     <ClInclude Include="scrap_heap\sh_vector.h" />
