@@ -152,16 +152,14 @@ namespace NVHR
 		Util::Mem::patch_ret(0xAA7290);
 
 
+		Util::Mem::patch_jmp(0x40FBF0, &enter_light_critical_section);
+		Util::Mem::patch_jmp(0x40FBA0, &leave_light_critical_section);
+
+
 		Util::Mem::patch_jmp(0xAA47E0, &ScrapHeap::shm_create_mt);
 		Util::Mem::patch_jmp(0xAA42E0, &ScrapHeap::shm_get_scrap_heap);
 
 		Util::Mem::patch_jmp(0x866D10, &ScrapHeap::shm_get_singleton);
-
-		Util::Mem::patch_jmp(0x40FBF0, &Util::enter_light_critical_section);
-		Util::Mem::patch_jmp(0x40FBA0, &Util::leave_light_critical_section);
-
-		Util::Mem::patch_jmp(0xAA5E30, &ScrapHeap::sh_grow);
-		Util::Mem::patch_jmp(0xAA5E90, &ScrapHeap::sh_shrink);
 
 		Util::Mem::patch_jmp(0xAA5860, &ScrapHeap::shm_ctor);
 		Util::Mem::patch_jmp(0xAA58D0, &ScrapHeap::shm_init);
@@ -172,9 +170,13 @@ namespace NVHR
 		Util::Mem::patch_jmp(0xAA5B70, &ScrapHeap::shm_release_buffer);
 		Util::Mem::patch_jmp(0xAA5C80, &ScrapHeap::shm_free_all_buffers);
 
+
 		Util::Mem::patch_jmp(0xAA57B0, &ScrapHeap::sh_init);
 		Util::Mem::patch_jmp(0xAA53F0, &ScrapHeap::sh_init_0x10000);
 		Util::Mem::patch_jmp(0xAA5410, &ScrapHeap::sh_init_var);
+
+		Util::Mem::patch_jmp(0xAA5E30, &ScrapHeap::sh_grow);
+		Util::Mem::patch_jmp(0xAA5E90, &ScrapHeap::sh_shrink);
 
 		Util::Mem::patch_jmp(0xAA54A0, &ScrapHeap::sh_add_chunk);
 		Util::Mem::patch_jmp(0xAA5610, &ScrapHeap::sh_remove_chunk);
