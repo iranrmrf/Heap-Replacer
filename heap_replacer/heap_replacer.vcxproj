@@ -59,7 +59,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessKeepComments>false</PreprocessKeepComments>
       <StructMemberAlignment>Default</StructMemberAlignment>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsCpp</CompileAs>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ControlFlowGuard>false</ControlFlowGuard>
@@ -71,6 +71,7 @@
       </DisableSpecificWarnings>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <FloatingPointModel>Precise</FloatingPointModel>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,6 +92,7 @@
       <StackReserveSize>0</StackReserveSize>
       <StackCommitSize>0</StackCommitSize>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <LinkStatus>true</LinkStatus>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"</Command>
@@ -102,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="default_heap\cell_list.h" />
+    <ClInclude Include="initial_allocator\inital_allocator.h" />
     <ClInclude Include="main\heap_replacer.h" />
     <ClInclude Include="default_heap\default_heap_manager.h" />
     <ClInclude Include="main\loader.h" />
