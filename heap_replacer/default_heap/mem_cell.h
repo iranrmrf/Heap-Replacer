@@ -67,18 +67,14 @@ public:
 
 	void join(mem_cell* other)
 	{
-		this->desc.addr = VPTRSUM(this->desc.addr, (UPTRDIFF(other->desc.addr, this->desc.addr) & (this->desc.addr < other->desc.addr) - 1));
 		this->desc.size += other->desc.size;
+		this->desc.addr = (this->desc.addr < other->desc.addr) ? this->desc.addr : other->desc.addr;
 	}
 
 	mem_cell* split(size_t size)
 	{
-		//this->desc.size -= size;
-		mem_cell* cell = new mem_cell(this->desc.addr, size);
-		this->desc.addr = cell->desc.get_end();
 		this->desc.size -= size;
-		return cell;
-		//return new mem_cell(this->desc.get_end(), size);
+		return new mem_cell(this->desc.get_end(), size);
 	}
 
 	bool swap_by_size(mem_cell* cell)
