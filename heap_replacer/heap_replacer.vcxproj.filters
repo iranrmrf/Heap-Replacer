@@ -53,13 +53,13 @@
     <ClInclude Include="main\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrap_heap\sh_vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="initial_allocator\inital_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scrap_heap\light_critical_section.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scrap_heap\scrap_heap_vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
