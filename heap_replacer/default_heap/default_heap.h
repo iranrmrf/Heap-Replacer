@@ -13,7 +13,7 @@ private:
 	cell_list* addr_dlist;
 
 	mem_cell** size_array;
-	//mem_cell** addr_array;
+	mem_cell** addr_array;
 
 	size_t* used_cells;
 
@@ -49,8 +49,8 @@ public:
 
 		this->used_cells = (size_t*)Util::winapi_alloc(this->cell_count * sizeof(size_t));
 
-		//this->addr_array = (mem_cell**)winapi_alloc(this->item_count * sizeof(mem_cell*));
 		this->size_array = (mem_cell**)Util::winapi_alloc(this->cell_count * sizeof(mem_cell*));
+		this->addr_array = (mem_cell**)Util::winapi_alloc(this->cell_count * sizeof(mem_cell*));
 
 		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
@@ -61,10 +61,13 @@ public:
 		delete this->addr_dlist;
 
 		VirtualFree(this->used_cells, NULL, MEM_RELEASE);
+
 		VirtualFree(this->size_array, NULL, MEM_RELEASE);
-		// VirtualFree(this->addr_array, NULL, MEM_RELEASE);
+		VirtualFree(this->addr_array, NULL, MEM_RELEASE);
 
 		VirtualFree(this->heap_desc->addr, NULL, MEM_RELEASE);
+
+		delete this->heap_desc;
 
 		DeleteCriticalSection(&this->critical_section);
 	}
@@ -74,63 +77,108 @@ public:
 		return (size / HEAP_CELL_SIZE) - 1;
 	}
 
+	int get_size_index(mem_cell* cell)
+	{
+		return this->get_size_index(cell->desc.size);
+	}
+
 	int get_addr_index(void* address)
 	{
 		return UPTRDIFF(address, this->heap_desc->addr) / HEAP_CELL_SIZE;
 	}
 
+	int get_addr_index(mem_cell* cell)
+	{
+		return this->get_addr_index(cell->desc.addr);
+	}
+
 	void add_size_array(mem_cell* cell)
 	{
-		for (int i = this->get_size_index(cell->desc.size); (i > -1) && (!this->size_array[i] || cell->swap_by_size(this->size_array[i])); this->size_array[i--] = cell);
+		cell_node* curr;
+		for (curr = cell->size_node->prev; curr->is_valid() && cell->swap_by_size(curr->cell); curr = curr->prev);
+		Util::Mem::memset4(this->size_array + curr->array_index + 1, (DWORD)cell, cell->size_node->array_index - curr->array_index);
+	}
+
+	void add_addr_array(mem_cell* cell)
+	{
+		cell_node* curr;
+		for (curr = cell->addr_node->prev; curr->is_valid() && cell->swap_by_addr(curr->cell); curr = curr->prev);
+		Util::Mem::memset4(this->addr_array + curr->array_index + 1, (DWORD)cell, cell->addr_node->array_index - curr->array_index);
 	}
 
 	void rmv_size_array(mem_cell* cell)
 	{
-		for (int i = this->get_size_index(cell->desc.size); (i > -1) && (this->size_array[i] == cell); this->size_array[i--] = cell->size_node->next->cell);
+		cell_node* curr = cell->size_node->prev;
+		Util::Mem::memset4(this->size_array + curr->array_index + 1, (DWORD)cell->size_node->next->cell, cell->size_node->array_index - curr->array_index);
 	}
 
-	cell_node* insert_free_size(mem_cell* cell)
+	void rmv_addr_array(mem_cell* cell)
 	{
-		mem_cell* elem = this->size_array[this->get_size_index(cell->desc.size)];
+		cell_node* curr = cell->addr_node->prev;
+		Util::Mem::memset4(this->addr_array + curr->array_index + 1, (DWORD)cell->addr_node->next->cell, cell->addr_node->array_index - curr->array_index);
+	}
+
+	cell_node* insert_size_dlist(mem_cell* cell)
+	{
+		mem_cell* elem = this->size_array[this->get_size_index(cell)];
 		if (!elem) { return this->size_dlist->add_tail(cell); }
 		cell_node* curr;
 		for (curr = elem->size_node; curr->is_valid() && !cell->swap_by_size(curr->cell); curr = curr->next);
 		return this->size_dlist->insert_before(curr, cell);
 	}
 
-	cell_node* insert_free_addr(mem_cell* cell)
+	cell_node* insert_addr_dlist(mem_cell* cell)
 	{
+		mem_cell* elem = this->addr_array[this->get_addr_index(cell)];
+		if (!elem) { return this->addr_dlist->add_tail(cell); }
 		cell_node* curr;
-		for (curr = this->addr_dlist->get_head(); curr->is_valid() && !cell->swap_by_addr(curr->cell); curr = curr->next);
+		for (curr = elem->addr_node; curr->is_valid() && !cell->swap_by_addr(curr->cell); curr = curr->next);
 		return this->addr_dlist->insert_before(curr, cell);
+	}
+
+	void add_free_cell_size(mem_cell* cell)
+	{
+		cell->size_node = this->insert_size_dlist(cell);
+		cell->size_node->array_index = this->get_size_index(cell);
+	}
+
+	void add_free_cell_addr(mem_cell* cell)
+	{
+		cell->addr_node = this->insert_addr_dlist(cell);
+		cell->addr_node->array_index = this->get_addr_index(cell);
 	}
 
 	void rmv_free_cell(mem_cell* cell)
 	{
+		this->rmv_size_array(cell);
+		this->rmv_addr_array(cell);
 		this->size_dlist->remove_node(cell->size_node);
 		this->addr_dlist->remove_node(cell->addr_node);
+		cell->size_node = nullptr;
+		cell->addr_node = nullptr;
 	}
 
 	void add_free_cell(mem_cell* cell)
 	{
 		ECS(&this->critical_section);
-		cell->addr_node = this->insert_free_addr(cell);
+		this->add_free_cell_addr(cell);
 		mem_cell* temp;
-		if ((temp = cell->addr_node->next->cell) && cell->is_adjacent_to(temp))
-		{
-			this->rmv_size_array(temp);
-			cell->join(temp);
-			this->rmv_free_cell(temp);
-			delete temp;
-		}
 		if ((temp = cell->addr_node->prev->cell) && cell->is_adjacent_to(temp))
 		{
-			this->rmv_size_array(temp);
-			cell->join(temp);
 			this->rmv_free_cell(temp);
+			cell->join(temp);
+			cell->addr_node->array_index = this->get_addr_index(cell);
 			delete temp;
 		}
-		cell->size_node = this->insert_free_size(cell);
+		if ((temp = cell->addr_node->next->cell) && cell->is_adjacent_to(temp))
+		{
+			this->rmv_free_cell(temp);
+			cell->join(temp);
+			cell->addr_node->array_index = this->get_addr_index(cell);
+			delete temp;
+		}
+		this->add_addr_array(cell);
+		this->add_free_cell_size(cell);
 		this->add_size_array(cell);
 		LCS(&this->critical_section);
 	}
@@ -144,16 +192,16 @@ public:
 		{
 			this->add_free_cell(this->commit());
 		}
-		this->rmv_size_array(cell);
 		if (cell->desc.size == size)
 		{
 			this->rmv_free_cell(cell);
 		}
 		else
 		{
-			mem_cell* split = cell->split(size);
+			this->rmv_size_array(cell);
 			this->size_dlist->remove_node(cell->size_node);
-			cell->size_node = this->insert_free_size(cell);
+			mem_cell* split = cell->split(size);
+			this->add_free_cell_size(cell);
 			this->add_size_array(cell);
 			cell = split;
 		}
@@ -181,7 +229,7 @@ public:
 
 	void add_used(mem_cell* cell)
 	{
-		InterlockedExchange(&this->used_cells[this->get_addr_index(cell->desc.addr)], cell->desc.size);
+		InterlockedExchange(&this->used_cells[this->get_addr_index(cell)], cell->desc.size);
 	}
 
 	size_t rmv_used(void* address)
