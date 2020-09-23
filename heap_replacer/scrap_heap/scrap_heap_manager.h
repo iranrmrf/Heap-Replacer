@@ -3,7 +3,7 @@
 #include "main/util.h"
 
 #include "light_critical_section.h"
-#include "sh_vector.h"
+#include "scrap_heap_vector.h"
 
 #define SHM_BUFFER_COUNT	64
 
