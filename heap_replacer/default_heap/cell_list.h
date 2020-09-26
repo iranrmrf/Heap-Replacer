@@ -37,16 +37,6 @@ public:
 		return cell;
 	}
 
-	void* operator new(size_t size)
-	{
-		return NVHR::nvhr_malloc(size);
-	}
-
-	void operator delete(void* address)
-	{
-		NVHR::nvhr_free(address);
-	}
-
 };
 
 class cell_list
@@ -123,16 +113,6 @@ public:
 	bool is_empty()
 	{
 		return !this->size;
-	}
-
-	void* operator new(size_t size)
-	{
-		return NVHR::nvhr_malloc(size);
-	}
-
-	void operator delete(void* address)
-	{
-		NVHR::nvhr_free(address);
 	}
 
 };

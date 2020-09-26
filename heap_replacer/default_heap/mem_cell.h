@@ -25,16 +25,6 @@ struct cell_desc
 		return ((this->addr <= address) & (address < this->get_end()));
 	}
 
-	void* operator new(size_t size)
-	{
-		return NVHR::nvhr_malloc(size);
-	}
-
-	void operator delete(void* address)
-	{
-		NVHR::nvhr_free(address);
-	}
-
 };
 
 class cell_node;
@@ -85,16 +75,6 @@ public:
 	bool swap_by_addr(mem_cell* cell)
 	{
 		return (this->desc.addr < cell->desc.addr);
-	}
-
-	void* operator new(size_t size)
-	{
-		return NVHR::nvhr_malloc(size);
-	}
-
-	void operator delete(void* address)
-	{
-		NVHR::nvhr_free(address);
 	}
 
 };

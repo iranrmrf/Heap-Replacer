@@ -11,9 +11,6 @@ namespace ScrapHeap
 	{
 		DWORD id;
 		scrap_heap* sh;
-
-		void* operator new(size_t size) { return NVHR::nvhr_malloc(size); }
-		void operator delete(void* address) { NVHR::nvhr_free(address); }
 	};
 
 	class sh_vector
@@ -73,16 +70,6 @@ namespace ScrapHeap
 			}
 			LCS(&this->critical_section);
 			return nullptr;
-		}
-
-		void* operator new(size_t size)
-		{
-			return NVHR::nvhr_malloc(size);
-		}
-
-		void operator delete(void* address)
-		{
-			NVHR::nvhr_free(address);
 		}
 
 	};

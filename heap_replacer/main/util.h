@@ -37,6 +37,26 @@ namespace NVHR
 
 }
 
+__declspec(restrict) void* __cdecl operator new(size_t size)
+{
+	return NVHR::nvhr_malloc(size);
+}
+
+__declspec(restrict) void* __cdecl operator new[](size_t size)
+{
+	return NVHR::nvhr_malloc(size);
+}
+
+void __cdecl operator delete(void* address)
+{
+	NVHR::nvhr_free(address);
+}
+
+void __cdecl operator delete[](void* address)
+{
+	NVHR::nvhr_free(address);
+}
+
 // FILE* file = fopen("log.log", "w");
 
 namespace Util

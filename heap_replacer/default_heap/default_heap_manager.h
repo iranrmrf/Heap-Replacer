@@ -62,14 +62,4 @@ public:
 		return true;
 	}
 
-	void* operator new(size_t size)
-	{
-		return NVHR::nvhr_malloc(size);
-	}
-
-	void operator delete(void* address)
-	{
-		NVHR::nvhr_free(address);
-	}
-
 };
