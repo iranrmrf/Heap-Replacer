@@ -72,6 +72,7 @@
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <FloatingPointModel>Precise</FloatingPointModel>
       <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <AdditionalOptions>/Qvec-report:2 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
