@@ -17,7 +17,7 @@ namespace ScrapHeap
 
 	void __fastcall sh_grow(TFPARAM(void* self, void* address, size_t offset, size_t size))
 	{
-		Util::try_valloc(VPTRSUM(address, offset), size, MEM_COMMIT, PAGE_READWRITE, 1);
+		VirtualAlloc(VPTRSUM(address, offset), size, MEM_COMMIT, PAGE_READWRITE);
 	}
 
 	void __fastcall sh_shrink(TFPARAM(void* self, void* address, size_t offset, size_t size))
@@ -77,8 +77,8 @@ namespace ScrapHeap
 
 	void* __fastcall shm_create_buffer(TFPARAM(scrap_heap_manager* self, size_t size))
 	{
-		void* address = Util::try_valloc(nullptr, SH_BUFFER_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE, INFINITE);
-		Util::try_valloc(address, size, MEM_COMMIT, PAGE_READWRITE, INFINITE);
+		void* address = VirtualAlloc(nullptr, SH_BUFFER_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE);
+		VirtualAlloc(address, size, MEM_COMMIT, PAGE_READWRITE);
 		return address;
 	}
 

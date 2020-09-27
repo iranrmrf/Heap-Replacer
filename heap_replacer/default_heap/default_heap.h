@@ -34,7 +34,7 @@ public:
 
 	default_heap()
 	{
-		this->heap_desc = new cell_desc(Util::try_valloc(nullptr, HEAP_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE, 1), HEAP_MAX_SIZE);
+		this->heap_desc = new cell_desc(VirtualAlloc(nullptr, HEAP_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE), HEAP_MAX_SIZE);
 		if (!this->heap_desc->addr)
 		{
 			MessageBox(NULL, "NVHR - Failed to alloc!", "Error", NULL);
@@ -217,7 +217,7 @@ public:
 			return nullptr;
 		}
 		void* address;
-		if (!(address = Util::try_valloc(this->last_addr, HEAP_COMMIT_SIZE, MEM_COMMIT, PAGE_READWRITE, 1)))
+		if (!(address = VirtualAlloc(this->last_addr, HEAP_COMMIT_SIZE, MEM_COMMIT, PAGE_READWRITE)))
 		{
 			MessageBox(NULL, "NVHR - Commit fail!", "Error", NULL);
 			return nullptr;

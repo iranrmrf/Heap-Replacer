@@ -187,23 +187,9 @@ namespace Util
 		return (void*)align((uintptr_t)address, alignment);
 	}
 
-	void* try_valloc(void* lpAddress, size_t dwSize, DWORD flAllocationType, DWORD flProtect, size_t count)
-	{
-		void* address;
-		while (count--)
-		{
-			if (address = VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect))
-			{
-				return address;
-			}
-			Sleep(1u);
-		}
-		return nullptr;
-	}
-
 	void* winapi_alloc(size_t size)
 	{
-		return try_valloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE, INFINITE);
+		return VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	}
 
 	void* get_IAT_address(BYTE* base, const char* dll_name, const char* search)
