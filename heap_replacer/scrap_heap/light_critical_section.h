@@ -8,7 +8,7 @@ struct light_critical_section
 	size_t lock_count;
 };
 
-void __fastcall enter_light_critical_section(TFPARAM(light_critical_section* self, const char* name))
+void __fastcall enter_light_critical_section(TFPARAM(light_critical_section* self, const char* msg))
 {
 	DWORD id = GetCurrentThreadId();
 	if (self->thread_id == id)
