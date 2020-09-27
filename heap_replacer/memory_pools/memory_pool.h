@@ -131,12 +131,11 @@ public:
 
 	size_t mem_size(void* address)
 	{
-		return (this->is_in_range(address)) ? this->item_size : 0;
+		return this->item_size;
 	}
 
-	bool free(void* address)
+	void free(void* address)
 	{
-		if (!this->is_in_range(address)) { return false; }
 		cell* c = (cell*)this->real_to_free_ptr(address);
 		ECS(&this->critical_section);
 		if (!c->next) [[likely]]
@@ -145,7 +144,6 @@ public:
 			this->next_free = c;
 		}
 		LCS(&this->critical_section);
-		return true;
 	}
 
 	void* operator new(size_t size)

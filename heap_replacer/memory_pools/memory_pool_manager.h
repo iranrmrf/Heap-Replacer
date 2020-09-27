@@ -126,7 +126,8 @@ public:
 	{
 		memory_pool* pool = this->pool_from_addr(address);
 		if (!pool) { return false; }
-		return pool->free(address);
+		pool->free(address);
+		return true;
 	}
 
 	void* operator new(size_t size)
