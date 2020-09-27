@@ -14,7 +14,7 @@ namespace NVHR
 	memory_pool_manager* mpm;
 	default_heap_manager* dhm;
 
-	__declspec(restrict) void* __fastcall nvhr_malloc(size_t size)
+	void* __fastcall nvhr_malloc(size_t size)
 	{
 		if (size < 4) { size = 4; }
 		if (size <= 2048)
@@ -29,7 +29,7 @@ namespace NVHR
 		return nullptr;
 	}
 
-	__declspec(restrict) void* __fastcall nvhr_calloc(size_t count, size_t size)
+	void* __fastcall nvhr_calloc(size_t count, size_t size)
 	{
 		size *= count;
 		if (size < 4) { size = 4; }
@@ -45,7 +45,7 @@ namespace NVHR
 		return nullptr;
 	}
 
-	__declspec(restrict) void* __fastcall nvhr_realloc(void* address, size_t size)
+	void* __fastcall nvhr_realloc(void* address, size_t size)
 	{
 		if (address == nullptr) [[unlikely]] { return nvhr_malloc(size); }
 		size_t old_size = nvhr_mem_size(address);
