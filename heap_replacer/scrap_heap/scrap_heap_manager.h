@@ -37,9 +37,6 @@ namespace ScrapHeap
 		size_t scrap_heap_count;
 		size_t total_free_bytes;
 		light_critical_section critical_section;
-
-		void* operator new(size_t size) { return NVHR::nvhr_malloc(size); }
-		void operator delete(void* address) { NVHR::nvhr_free(address); }
 	};
 
 	scrap_heap_manager* shm;
