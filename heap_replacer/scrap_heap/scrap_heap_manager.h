@@ -174,7 +174,7 @@ namespace ScrapHeap
 		scrap_heap_chunk* last_chunk;
 	};
 
-	sh_vector* mt_sh_vector;
+	scrap_heap_vector* mt_sh_vector;
 
 	void __fastcall sh_init(TFPARAM(scrap_heap* self, size_t size))
 	{
@@ -244,7 +244,7 @@ namespace ScrapHeap
 
 	void __fastcall shm_create_mt(TFPARAM(void* self, size_t num_buckets))
 	{
-		mt_sh_vector = new sh_vector(16);
+		mt_sh_vector = new scrap_heap_vector(16);
 	}
 
 	scrap_heap* shm_get_scrap_heap(void* heap)

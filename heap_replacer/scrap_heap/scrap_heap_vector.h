@@ -13,7 +13,7 @@ namespace ScrapHeap
 		scrap_heap* sh;
 	};
 
-	class sh_vector
+	class scrap_heap_vector
 	{
 
 	private:
@@ -28,14 +28,14 @@ namespace ScrapHeap
 
 	public:
 
-		sh_vector(size_t size) : size(0), alloc(size)
+		scrap_heap_vector(size_t size) : size(0), alloc(size)
 		{
 			this->data = (mt_sh*)NVHR::nvhr_calloc(this->alloc, sizeof(mt_sh));
 
 			InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 		}
 
-		~sh_vector()
+		~scrap_heap_vector()
 		{
 			NVHR::nvhr_free(this->data);
 
@@ -53,7 +53,7 @@ namespace ScrapHeap
 				NVHR::nvhr_free(this->data);
 				this->data = temp;
 			}
-			this->data[size++] = mt_sh{ id, sh };
+			this->data[size++] = mt_sh({ id, sh });
 			LCS(&this->critical_section);
 		}
 
