@@ -47,7 +47,7 @@ namespace ScrapHeap
 	void shm_ctor(scrap_heap_manager* self)
 	{
 		shm = new scrap_heap_manager();
-		memset(shm->buffers, 0, SHM_BUFFER_COUNT * sizeof(scrap_heap_buffer));
+		Util::Mem::memset8(shm->buffers, 0, SHM_BUFFER_COUNT * sizeof(scrap_heap_buffer));
 		shm->scrap_heap_count = 0;
 		shm->total_free_bytes = 0;
 		shm->critical_section.thread_id = 0;

@@ -72,6 +72,24 @@ namespace Util
 	namespace Mem
 	{
 
+		void memset8(void* destination, BYTE value, size_t count)
+		{
+			BYTE* position = (BYTE*)destination;
+			for (size_t i = 0; i < count; i++, *position++ = value);
+		}
+
+		void memset16(void* destination, WORD value, size_t count)
+		{
+			WORD* position = (WORD*)destination;
+			for (size_t i = 0; i < count; i++, *position++ = value);
+		}
+
+		void memset32(void* destination, DWORD value, size_t count)
+		{
+			DWORD* position = (DWORD*)destination;
+			for (size_t i = 0; i < count; i++) { *position++ = value; }
+		}
+
 		void patch_bytes(uintptr_t address, BYTE* data, DWORD size)
 		{
 			DWORD p = 0;
@@ -152,27 +170,9 @@ namespace Util
 		{
 			DWORD p = 0;
 			VirtualProtect((void*)address, count, PAGE_EXECUTE_READWRITE, &p);
-			memset((void*)address, 0x90, count);
+			memset8((void*)address, 0x90, count);
 			VirtualProtect((void*)address, count, p, &p);
 			FlushInstructionCache(GetCurrentProcess(), (void*)address, count);
-		}
-
-		void memset4(void* destination, DWORD value, size_t count)
-		{
-			size_t batch_size = 32;
-			DWORD* start = (DWORD*)destination;
-			for (size_t i = 0; i < (count & ~(batch_size - 1)) / batch_size; i++)
-			{
-				for (size_t j = 0; j < batch_size; j++)
-				{
-					start[j] = value;
-				}
-				start += batch_size;
-			}
-			for (size_t i = 0; i < (count & (batch_size - 1)); i++)
-			{
-				*start++ = value;
-			}
 		}
 
 	}
