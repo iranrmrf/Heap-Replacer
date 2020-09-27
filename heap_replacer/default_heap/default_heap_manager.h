@@ -32,7 +32,7 @@ public:
 	void* malloc(size_t size)
 	{
 		mem_cell* cell = this->heap->get_free_cell(size);
-		if (!cell) { return nullptr; }
+		if (!cell) [[unlikely]] { return nullptr; }
 		this->heap->add_used(cell);
 		void* address = cell->desc.addr;
 		delete cell;
@@ -42,7 +42,7 @@ public:
 	void* calloc(size_t size)
 	{
 		void* address = this->malloc(size);
-		Util::Mem::memset32(address, 0, (size + 3) >> 2);
+		if (address) [[likely]]	{ Util::Mem::memset32(address, 0, (size + 3) >> 2); }
 		return address;
 	}
 
@@ -53,7 +53,7 @@ public:
 
 	bool free(void* address)
 	{
-		if (!this->heap->is_in_range(address)) { return false; }
+		if (!this->heap->is_in_range(address)) [[unlikely]] { return false; }
 		if (size_t size = this->heap->rmv_used(address))
 		{
 			mem_cell* cell = new mem_cell(address, size);

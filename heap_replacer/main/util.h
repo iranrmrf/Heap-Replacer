@@ -20,7 +20,7 @@
 #define VPTRSUM(x, y) (void*)UPTRSUM(x, y)
 #define VPTRDIFF(x, y) (void*)UPTRDIFF(x, y)
 
-#define NOINLINE __declspec(noinline)
+#define NOINLINE	__declspec(noinline)
 
 constexpr size_t KB = 1024 * 1u;
 constexpr size_t MB = 1024 * KB;
@@ -37,12 +37,12 @@ namespace NVHR
 
 }
 
-__declspec(restrict) void* __cdecl operator new(size_t size)
+void* __cdecl operator new(size_t size)
 {
 	return NVHR::nvhr_malloc(size);
 }
 
-__declspec(restrict) void* __cdecl operator new[](size_t size)
+void* __cdecl operator new[](size_t size)
 {
 	return NVHR::nvhr_malloc(size);
 }

@@ -106,9 +106,9 @@ public:
 	void* malloc()
 	{
 		ECS(&this->critical_section);
-		if (!this->next_free->next)
+		if (!this->next_free->next) [[unlikely]]
 		{
-			if (this->pool_cur == this->pool_end)
+			if (this->pool_cur == this->pool_end) [[unlikely]]
 			{
 				LCS(&this->critical_section);
 				return nullptr;
@@ -125,10 +125,7 @@ public:
 	void* calloc()
 	{
 		void* address = this->malloc();
-		if (address) [[likely]]
-		{
-			Util::Mem::memset32(address, 0, this->item_size >> 2);
-		}
+		if (address) [[likely]] { Util::Mem::memset32(address, 0, this->item_size >> 2); }
 		return address;
 	}
 
@@ -142,7 +139,7 @@ public:
 		if (!this->is_in_range(address)) { return false; }
 		cell* c = (cell*)this->real_to_free_ptr(address);
 		ECS(&this->critical_section);
-		if (!c->next)
+		if (!c->next) [[likely]]
 		{
 			c->next = this->next_free;
 			this->next_free = c;

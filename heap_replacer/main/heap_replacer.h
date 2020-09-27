@@ -14,25 +14,46 @@ namespace NVHR
 	memory_pool_manager* mpm;
 	default_heap_manager* dhm;
 
-	void* __fastcall nvhr_malloc(size_t size)
+	__declspec(restrict) void* __fastcall nvhr_malloc(size_t size)
 	{
 		if (size < 4) { size = 4; }
-		void* address = nullptr;
-		if (address = mpm->malloc(size)) { return address; }
-		if (address = dhm->malloc(size)) { return address; }
+		if (size <= 2048)
+		{
+			if (void* address = mpm->malloc(size)) [[likely]] { return address; }
+		}
+		else
+		{
+			if (void* address = dhm->malloc(size)) [[likely]] { return address; }
+		}
 		MessageBox(NULL, "NVHR - nullptr malloc!", "Error", NULL);
-		return address;
+		return nullptr;
 	}
 
-	void* __fastcall nvhr_calloc(size_t count, size_t size)
+	__declspec(restrict) void* __fastcall nvhr_calloc(size_t count, size_t size)
 	{
 		size *= count;
 		if (size < 4) { size = 4; }
-		void* address = nullptr;
-		if (address = mpm->calloc(size)) { return address; }
-		if (address = dhm->calloc(size)) { return address; }
+		if (size <= 2048)
+		{
+			if (void* address = mpm->calloc(size)) [[likely]] { return address; }
+		}
+		else
+		{
+			if (void* address = dhm->calloc(size)) [[likely]] { return address; }
+		}
 		MessageBox(NULL, "NVHR - nullptr calloc!", "Error", NULL);
-		return address;
+		return nullptr;
+	}
+
+	__declspec(restrict) void* __fastcall nvhr_realloc(void* address, size_t size)
+	{
+		if (address == nullptr) [[unlikely]] { return nvhr_malloc(size); }
+		size_t old_size = nvhr_mem_size(address);
+		if (old_size >= size) { return address; }
+		void* new_address = nvhr_malloc(size);
+		memcpy(new_address, address, size < old_size ? size : old_size);
+		nvhr_free(address);
+		return new_address;
 	}
 
 	size_t __fastcall nvhr_mem_size(void* address)
@@ -46,18 +67,6 @@ namespace NVHR
 	{
 		if (mpm->free(address)) { return; }
 		dhm->free(address);
-	}
-
-	void* __fastcall nvhr_realloc(void* address, size_t size)
-	{
-		if (address == nullptr) { return nvhr_malloc(size); }
-		size_t old_size = nvhr_mem_size(address);
-		if (old_size >= size) { return address; }
-		void* new_address;
-		new_address = nvhr_malloc(size);
-		memcpy(new_address, address, size < old_size ? size : old_size);
-		nvhr_free(address);
-		return new_address;
 	}
 
 	void* __fastcall game_heap_allocate(TFPARAM(void* self, size_t size))
@@ -122,7 +131,6 @@ namespace NVHR
 		}
 	}*/
 
-
 	void apply_heap_hooks()
 	{
 
@@ -163,6 +171,7 @@ namespace NVHR
 
 		Util::Mem::patch_jmp(0xAA5860, &ScrapHeap::shm_ctor);
 		Util::Mem::patch_jmp(0xAA58D0, &ScrapHeap::shm_init);
+
 		Util::Mem::patch_jmp(0xAA5F50, &ScrapHeap::shm_swap_buffers);
 		Util::Mem::patch_jmp(0xAA5EC0, &ScrapHeap::shm_create_buffer);
 		Util::Mem::patch_jmp(0xAA59B0, &ScrapHeap::shm_request_buffer);

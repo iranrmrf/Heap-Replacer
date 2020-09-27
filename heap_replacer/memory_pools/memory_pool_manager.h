@@ -42,9 +42,7 @@ private:
 
 	void init_all_pools()
 	{
-		struct pool_data { size_t item_size; size_t max_size; };
-
-		pool_data pool_desc[POOL_COUNT] =
+		struct pool_data { size_t item_size; size_t max_size; } pool_desc[POOL_COUNT] =
 		{
 			{ 4		, 0x01000000u },
 			{ 8		, 0x04000000u },
@@ -99,30 +97,22 @@ public:
 
 	void* malloc(size_t size)
 	{
-		void* address = nullptr;
-		size_t power_size = this->next_power_of_2(size);
-		while (size <= 2048)
+		for (size = this->next_power_of_2(size); size <= 2048; size <<= 1)
 		{
-			memory_pool* pool = this->pool_from_size(power_size);
-			if (!pool) { return nullptr; }
-			if (address = pool->malloc()) { return address; }
-			power_size <<= 1;
+			if (void* address = this->pool_from_size(size)->malloc()) [[likely]] { return address; }
 		}
-		return address;
+		[[unlikely]]
+		return nullptr;
 	}
 
 	void* calloc(size_t size)
 	{
-		void* address = nullptr;
-		size_t power_size = this->next_power_of_2(size);
-		while (size <= 2048)
+		for (size = this->next_power_of_2(size); size <= 2048; size <<= 1)
 		{
-			memory_pool* pool = this->pool_from_size(power_size);
-			if (!pool) { return nullptr; }
-			if (address = pool->calloc()) { return address; }
-			power_size <<= 1;
+			if (void* address = this->pool_from_size(size)->calloc()) [[likely]] { return address; }
 		}
-		return address;
+		[[unlikely]]
+		return nullptr;
 	}
 
 	size_t mem_size(void* address)

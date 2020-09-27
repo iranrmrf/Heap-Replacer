@@ -121,7 +121,7 @@ public:
 	cell_node* insert_size_dlist(mem_cell* cell)
 	{
 		mem_cell* elem = this->size_array[this->get_size_index(cell)];
-		if (!elem) { return this->size_dlist->add_tail(cell); }
+		if (!elem) [[unlikely]] { return this->size_dlist->add_tail(cell); }
 		cell_node* curr;
 		for (curr = elem->size_node; curr->is_valid() && !cell->swap_by_size(curr->cell); curr = curr->next);
 		return this->size_dlist->insert_before(curr, cell);
@@ -130,7 +130,7 @@ public:
 	cell_node* insert_addr_dlist(mem_cell* cell)
 	{
 		mem_cell* elem = this->addr_array[this->get_addr_index(cell)];
-		if (!elem) { return this->addr_dlist->add_tail(cell); }
+		if (!elem) [[unlikely]] { return this->addr_dlist->add_tail(cell); }
 		cell_node* curr;
 		for (curr = elem->addr_node; curr->is_valid() && !cell->swap_by_addr(curr->cell); curr = curr->next);
 		return this->addr_dlist->insert_before(curr, cell);
@@ -188,7 +188,7 @@ public:
 		size = Util::align(size, HEAP_CELL_SIZE);
 		mem_cell* cell;
 		ECS(&this->critical_section);
-		while (!(cell = this->size_array[this->get_size_index(size)]))
+		while (!(cell = this->size_array[this->get_size_index(size)])) [[unlikely]]
 		{
 			this->add_free_cell(this->commit());
 		}
