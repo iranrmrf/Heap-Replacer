@@ -120,6 +120,7 @@
     <ClInclude Include="scrap_heap\scrap_heap_vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="exports.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
