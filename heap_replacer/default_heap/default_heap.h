@@ -37,7 +37,7 @@ public:
 		this->heap_desc = new cell_desc(VirtualAlloc(nullptr, HEAP_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE), HEAP_MAX_SIZE);
 		if (!this->heap_desc->addr)
 		{
-			MessageBox(NULL, "NVHR - Failed to alloc!", "Error", NULL);
+			HR_MSGBOX("Failed to reserve!");
 		}
 
 		this->last_addr = this->heap_desc->addr;
@@ -213,13 +213,13 @@ public:
 	{
 		if (this->last_addr == this->heap_desc->get_end())
 		{
-			MessageBox(NULL, "NVHR - Out of memory!", "Error", NULL);
+			HR_MSGBOX("Out of memory!");
 			return nullptr;
 		}
 		void* address;
 		if (!(address = VirtualAlloc(this->last_addr, HEAP_COMMIT_SIZE, MEM_COMMIT, PAGE_READWRITE)))
 		{
-			MessageBox(NULL, "NVHR - Commit fail!", "Error", NULL);
+			HR_MSGBOX("Commit fail!");
 			return nullptr;
 		}
 		mem_cell* cell = new mem_cell(address, HEAP_COMMIT_SIZE);

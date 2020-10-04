@@ -6,11 +6,11 @@
 
 BOOL WINAPI qpc_hook(LARGE_INTEGER* lpPerformanceCount)
 {
-	printf("NVHR - Applying hooks...\n");
+	HR_PRINTF("Applying hooks.");
 	NVHR::apply_heap_hooks();
 	BYTE* base = (BYTE*)GetModuleHandle(NULL);
 	void* address = Util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter");
-	printf("NVHR - Cleaning QPC hook...\n");
+	HR_PRINTF("Cleaning QPC hook...");
 	Util::Mem::patch_DWORD((DWORD)address, (DWORD)&QueryPerformanceCounter);
 	return QueryPerformanceCounter(lpPerformanceCount);
 }
@@ -24,12 +24,16 @@ void create_loader_hook()
 		if (Util::is_LAA(base))
 		{
 			if (Util::file_exists("d3dx9_38.tmp")) { Util::create_console(); }
-			printf("NVHR - Creating QPC hook...\n");
+			HR_PRINTF("Creating QPC hook...");
 			Util::Mem::patch_DWORD((DWORD)address, (DWORD)&qpc_hook);
 		}
 		else
 		{
-			MessageBox(NULL, "NVHR - Your game is not LAA, please apply a 4GB patcher", "Error", NULL);
+			HR_MSGBOX("Your game is not LAA, please apply a 4GB patcher");
 		}
+	}
+	else
+	{
+		HR_MSGBOX("Incompatible game executable. Please use version (" HR_VERSION ")");
 	}
 }

@@ -209,7 +209,7 @@ namespace ScrapHeap
 				new_size <<= 2;
 				if (new_size > SH_BUFFER_MAX_SIZE)
 				{
-					MessageBox(NULL, "NVHR - Scrap heap failed to grow!", "Error", NULL);
+					HR_MSGBOX("Scrap heap failed to grow!");
 					return nullptr;
 				}
 				grow_size = new_size - old_size;

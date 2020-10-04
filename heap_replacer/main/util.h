@@ -8,6 +8,9 @@
 #pragma warning(disable:6031)
 #pragma warning(disable:6250)
 
+#define HR_MSGBOX(msg) MessageBox(NULL, HR_NAME " - " msg, "Error", NULL)
+#define HR_PRINTF(msg) printf(HR_NAME " - " msg "\n")
+
 #define TFPARAM(self, ...) self, void* _, __VA_ARGS__
 #define TFCALL(self, ...) self, nullptr, __VA_ARGS__
 
