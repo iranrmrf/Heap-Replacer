@@ -5,12 +5,12 @@
 #include "light_critical_section.h"
 #include "scrap_heap_vector.h"
 
-#define SHM_BUFFER_COUNT	64
+#define SHM_BUFFER_COUNT	64u
 
-#define SH_BUFFER_MAX_SIZE	0x01000000
-#define SH_BUFFER_MIN_SIZE	0x00040000
+#define SH_BUFFER_MAX_SIZE	0x01000000u
+#define SH_BUFFER_MIN_SIZE	0x00040000u
 
-#define SH_FREE_FLAG		0x80000000
+#define SH_FREE_FLAG		0x80000000u
 
 namespace ScrapHeap
 {

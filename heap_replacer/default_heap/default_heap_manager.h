@@ -2,9 +2,9 @@
 
 #include "main/util.h"
 
-#define HEAP_CELL_SIZE (4 * KB)
-#define HEAP_COMMIT_SIZE (64 * MB)
-#define HEAP_MAX_SIZE (1 * GB)
+#define HEAP_CELL_SIZE (4u * KB)
+#define HEAP_COMMIT_SIZE (64u * MB)
+#define HEAP_MAX_SIZE (1u * GB)
 
 #include "default_heap.h"
 
