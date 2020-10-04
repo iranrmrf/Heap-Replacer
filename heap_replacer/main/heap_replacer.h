@@ -16,8 +16,8 @@ namespace NVHR
 
 	void* __fastcall nvhr_malloc(size_t size)
 	{
-		if (size < 4) { size = 4; }
-		if (size <= 2048)
+		if (size < 4) [[unlikely]] { size = 4; }
+		if (size <= 2048) [[likely]]
 		{
 			if (void* address = mpm->malloc(size)) [[likely]] { return address; }
 		}
@@ -32,8 +32,8 @@ namespace NVHR
 	void* __fastcall nvhr_calloc(size_t count, size_t size)
 	{
 		size *= count;
-		if (size < 4) { size = 4; }
-		if (size <= 2048)
+		if (size < 4) [[unlikely]] { size = 4; }
+		if (size <= 2048) [[likely]]
 		{
 			if (void* address = mpm->calloc(size)) [[likely]] { return address; }
 		}
@@ -58,14 +58,13 @@ namespace NVHR
 
 	size_t __fastcall nvhr_mem_size(void* address)
 	{
-		size_t size;
-		if (size = mpm->mem_size(address)) { return size; }
+		if (size_t size = mpm->mem_size(address)) [[likely]] { return size; }
 		return dhm->mem_size(address);
 	}
 
 	void __fastcall nvhr_free(void* address)
 	{
-		if (mpm->free(address)) { return; }
+		if (mpm->free(address)) [[likely]] { return; }
 		dhm->free(address);
 	}
 

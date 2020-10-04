@@ -163,14 +163,14 @@ public:
 		ECS(&this->critical_section);
 		this->add_free_cell_addr(cell);
 		mem_cell* temp;
-		if ((temp = cell->addr_node->prev->cell) && cell->is_adjacent_to(temp))
+		if ((temp = cell->addr_node->prev->cell) && cell->is_adjacent_to(temp)) [[unlikely]]
 		{
 			this->rmv_free_cell(temp);
 			cell->join(temp);
 			cell->addr_node->array_index = this->get_addr_index(cell);
 			delete temp;
 		}
-		if ((temp = cell->addr_node->next->cell) && cell->is_adjacent_to(temp))
+		if ((temp = cell->addr_node->next->cell) && cell->is_adjacent_to(temp)) [[unlikely]]
 		{
 			this->rmv_free_cell(temp);
 			cell->join(temp);
