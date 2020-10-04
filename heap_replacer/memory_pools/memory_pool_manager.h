@@ -1,10 +1,11 @@
 #pragma once
 
-#define POOL_ALIGNMENT	0x01000000
-#define POOL_GROWTH		0x00010000
+#define POOL_ALIGNMENT	0x01000000u
+#define POOL_GROWTH		0x00010000u
 
-#define POOL_COUNT 10
-#define POOL_ARRAY_SIZE ((0x80000000 / POOL_ALIGNMENT) << 1)
+#define POOL_COUNT 10u
+#define POOL_SIZE_ARRAY_LEN ((2048 >> 2) + 1)
+#define POOL_ADDR_ARRAY_LEN ((0x80000000u / POOL_ALIGNMENT) << 1)
 
 #include "main/util.h"
 
@@ -15,25 +16,25 @@ class memory_pool_manager
 
 private:
 
-	memory_pool* pools_by_size[POOL_ARRAY_SIZE];
-	memory_pool* pools_by_addr[POOL_ARRAY_SIZE];
+	memory_pool* pools_by_size[POOL_SIZE_ARRAY_LEN];
+	memory_pool* pools_by_addr[POOL_ADDR_ARRAY_LEN];
 
 public:
 
 	memory_pool_manager()
 	{
-		memset(this->pools_by_size, 0, POOL_ARRAY_SIZE * sizeof(memory_pool*));
-		memset(this->pools_by_addr, 0, POOL_ARRAY_SIZE * sizeof(memory_pool*));
+		memset(this->pools_by_size, 0, POOL_SIZE_ARRAY_LEN * sizeof(memory_pool*));
+		memset(this->pools_by_addr, 0, POOL_ADDR_ARRAY_LEN * sizeof(memory_pool*));
 		this->init_all_pools();
 	}
 
 	~memory_pool_manager()
 	{
-		for (int i = 0; i < POOL_ARRAY_SIZE; i++)
+		for (int i = 0; i < POOL_ADDR_ARRAY_LEN; i++)
 		{
-			if (this->pools_by_size[i])
+			if (this->pools_by_addr[i])
 			{
-				delete this->pools_by_size[i];
+				delete this->pools_by_addr[i];
 			}
 		}
 	}
@@ -60,7 +61,7 @@ private:
 			pool_data* pd = &pool_desc[i];
 			memory_pool* pool = new memory_pool(pd->item_size, pd->max_size);
 			void* address = pool->memory_pool_init();
-			this->pools_by_size[(pd->item_size >> 2) - 1] = pool;
+			this->pools_by_size[pd->item_size >> 2] = pool;
 			for (size_t j = 0; j < ((pd->max_size + (POOL_ALIGNMENT - 1)) / POOL_ALIGNMENT); j++)
 			{
 				this->pools_by_addr[((uintptr_t)address / POOL_ALIGNMENT) + j] = pool;
@@ -85,7 +86,7 @@ private:
 
 	memory_pool* pool_from_size(size_t size)
 	{
-		return this->pools_by_size[(size >> 2) - 1];
+		return this->pools_by_size[size >> 2];
 	}
 
 	memory_pool* pool_from_addr(void* address)
