@@ -23,6 +23,8 @@ private:
 	size_t block_count;
 	size_t block_item_count;
 
+private:
+
 	void* pool_bgn;
 	void* pool_cur;
 	void* pool_end;
@@ -31,6 +33,8 @@ private:
 
 	cell* free_cells;
 	cell* next_free;
+
+private:
 
 	CRITICAL_SECTION critical_section;
 
