@@ -41,7 +41,14 @@ namespace ScrapHeap
 
 	scrap_heap_manager* shm;
 
-	void shm_ctor(scrap_heap_manager* self)
+	scrap_heap_vector* mt_sh_vector;
+
+	void __fastcall shm_create_mt(void* self, size_t num_buckets)
+	{
+		mt_sh_vector = new scrap_heap_vector(num_buckets);
+	}
+
+	void __fastcall shm_ctor(TFPARAM(scrap_heap_manager* self))
 	{
 		shm = new scrap_heap_manager();
 		Util::Mem::memset8(shm->buffers, 0, SHM_BUFFER_COUNT * sizeof(scrap_heap_buffer));
@@ -49,14 +56,10 @@ namespace ScrapHeap
 		shm->total_free_bytes = 0;
 		shm->critical_section.thread_id = 0;
 		shm->critical_section.lock_count = 0;
+		shm_create_mt(nullptr, 16);
 	}
 
-	void __cdecl shm_init()
-	{
-		shm_ctor(shm);
-	}
-
-	scrap_heap_manager* shm_get_singleton()
+	scrap_heap_manager* __cdecl shm_get_singleton()
 	{
 		return shm;
 	}
@@ -171,8 +174,6 @@ namespace ScrapHeap
 		scrap_heap_chunk* last_chunk;
 	};
 
-	scrap_heap_vector* mt_sh_vector;
-
 	void __fastcall sh_init(TFPARAM(scrap_heap* self, size_t size))
 	{
 		self->commit_bgn = shm_request_buffer(TFCALL(shm, &size));
@@ -239,12 +240,14 @@ namespace ScrapHeap
 		}
 	}
 
-	void __fastcall shm_create_mt(TFPARAM(void* self, size_t num_buckets))
+	void __fastcall sh_release_buffer(TFPARAM(scrap_heap* self))
 	{
-		mt_sh_vector = new scrap_heap_vector(16);
+		shm_release_buffer(TFCALL(shm_get_singleton(), self->commit_bgn, UPTRDIFF(self->commit_end, self->commit_bgn)));
+		self->commit_bgn = nullptr;
+		self->unused = nullptr;
 	}
 
-	scrap_heap* shm_get_scrap_heap(void* heap)
+	scrap_heap* __fastcall get_scrap_heap(TFPARAM(void* self))
 	{
 		DWORD id = GetCurrentThreadId();
 		scrap_heap* sh;
