@@ -25,7 +25,6 @@ namespace NVHR
 		{
 			if (void* address = dhm->malloc(size)) [[likely]] { return address; }
 		}
-		MessageBox(NULL, "NVHR - nullptr malloc!", "Error", NULL);
 		return nullptr;
 	}
 
@@ -41,7 +40,6 @@ namespace NVHR
 		{
 			if (void* address = dhm->calloc(size)) [[likely]] { return address; }
 		}
-		MessageBox(NULL, "NVHR - nullptr calloc!", "Error", NULL);
 		return nullptr;
 	}
 
@@ -107,28 +105,6 @@ namespace NVHR
 	{
 		return nvhr_mem_size(address);
 	}
-
-	/*void patch_old_NVSE()
-	{
-		HMODULE base = GetModuleHandleA("nvse_1_4.dll");
-		if (!base) { return; }
-		printf("NVHR - Found NVSE at %p\n", base);
-		BYTE* address;
-		address = (BYTE*)((DWORD)base + 0x38887);
-		if (*address == 0x4)
-		{
-			printf("NVHR - Patched stable NVSE\n");
-			patch_BYTE((DWORD)address, 0x8);
-			return;
-		}
-		address = (BYTE*)((DWORD)base + 0x24FF7);
-		if (*address == 0x4)
-		{
-			printf("NVHR - Patched unsupported releasefast NVSE\n");
-			patch_BYTE((DWORD)address, 0x8);
-			return;
-		}
-	}*/
 
 	void apply_heap_hooks()
 	{
@@ -197,8 +173,6 @@ namespace NVHR
 		Util::Mem::patch_bytes(0xEC16F8, (BYTE*)"\xEB\x0F", 2);
 
 
-		/*patch_call(0x86CF64, &patch_old_NVSE);
-		patch_nops(0x86CF69, 2);*/
 
 		printf("NVHR - Hooks applied.\n");
 
