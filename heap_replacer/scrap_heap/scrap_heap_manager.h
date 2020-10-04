@@ -118,7 +118,7 @@ namespace ScrapHeap
 
 	void __fastcall shm_free_buffer(TFPARAM(scrap_heap_manager* self, void* address, size_t size))
 	{
-		VirtualFree(address, 0, MEM_RELEASE);
+		VirtualFree(address, NULL, MEM_RELEASE);
 	}
 
 	void __fastcall shm_release_buffer(TFPARAM(scrap_heap_manager* self, void* address, size_t size))
@@ -147,7 +147,7 @@ namespace ScrapHeap
 		if (self->scrap_heap_count)
 		{
 			enter_light_critical_section(TFCALL(&self->critical_section, nullptr));
-			for (size_t i = 0; i < self->scrap_heap_count; ++i)
+			for (size_t i = 0; i < self->scrap_heap_count; i++)
 			{
 				shm_free_buffer(TFCALL(self, self->buffers[i].addr, self->buffers[i].size));
 			}
@@ -223,7 +223,7 @@ namespace ScrapHeap
 		return (void*)body;
 	}
 
-	void __fastcall sh_remove_chunk(TFPARAM(scrap_heap* self, uintptr_t address))
+	void __fastcall sh_rmv_chunk(TFPARAM(scrap_heap* self, uintptr_t address))
 	{
 		scrap_heap_chunk* chunk = (scrap_heap_chunk*)(address - sizeof(scrap_heap_chunk));
 		if (address && !(chunk->size & SH_FREE_FLAG))
