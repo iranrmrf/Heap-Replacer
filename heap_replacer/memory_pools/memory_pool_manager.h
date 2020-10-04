@@ -45,6 +45,7 @@ private:
 	{
 		struct pool_data { size_t item_size; size_t max_size; } pool_desc[POOL_COUNT] =
 		{
+#ifdef FNV
 			{ 4		, 0x01000000u },
 			{ 8		, 0x04000000u },
 			{ 16	, 0x04000000u },
@@ -55,6 +56,19 @@ private:
 			{ 512	, 0x04000000u },
 			{ 1024	, 0x08000000u },
 			{ 2048	, 0x08000000u },
+#endif
+#ifdef FO3
+			{ 4		, 0x01000000u },
+			{ 8		, 0x04000000u },
+			{ 16	, 0x04000000u },
+			{ 32	, 0x08000000u },
+			{ 64	, 0x04000000u },
+			{ 128	, 0x10000000u },
+			{ 256	, 0x08000000u },
+			{ 512	, 0x04000000u },
+			{ 1024	, 0x08000000u },
+			{ 2048	, 0x08000000u },
+#endif
 		};
 		for (size_t i = 0; i < POOL_COUNT; i++)
 		{
