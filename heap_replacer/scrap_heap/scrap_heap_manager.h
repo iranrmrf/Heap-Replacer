@@ -142,7 +142,7 @@ namespace ScrapHeap
 		leave_light_critical_section(TFCALL(&self->critical_section));
 	}
 
-	void __fastcall shm_free_all_buffers(scrap_heap_manager* self)
+	void __fastcall shm_free_all_buffers(TFPARAM(scrap_heap_manager* self))
 	{
 		if (self->scrap_heap_count)
 		{
@@ -181,7 +181,7 @@ namespace ScrapHeap
 		self->last_chunk = nullptr;
 	}
 
-	void __fastcall sh_init_0x10000(scrap_heap* self)
+	void __fastcall sh_init_0x10000(TFPARAM(scrap_heap* self))
 	{
 		sh_init(TFCALL(self, SH_BUFFER_MIN_SIZE));
 	}
@@ -250,7 +250,7 @@ namespace ScrapHeap
 		scrap_heap* sh;
 		if (sh = mt_sh_vector->find(id)) [[likely]] { return sh; }
 		sh = (scrap_heap*)NVHR::nvhr_malloc(sizeof(scrap_heap));
-		sh_init_0x10000(sh);
+		sh_init_0x10000(TFCALL(sh));
 		mt_sh_vector->insert(id, sh);
 		return sh;
 	}
