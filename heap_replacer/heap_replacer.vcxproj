@@ -96,7 +96,8 @@
       <LinkStatus>true</LinkStatus>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"</Command>
+      <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"
+copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
