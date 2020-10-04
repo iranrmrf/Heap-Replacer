@@ -20,7 +20,7 @@
 #define VPTRSUM(x, y) (void*)UPTRSUM(x, y)
 #define VPTRDIFF(x, y) (void*)UPTRDIFF(x, y)
 
-#define NOINLINE	__declspec(noinline)
+#define NOINLINE __declspec(noinline)
 
 constexpr size_t KB = 1024 * 1u;
 constexpr size_t MB = 1024 * KB;
@@ -56,8 +56,6 @@ void __cdecl operator delete[](void* address)
 {
 	NVHR::nvhr_free(address);
 }
-
-// FILE* file = fopen("log.log", "w");
 
 namespace Util
 {
@@ -173,6 +171,11 @@ namespace Util
 			memset8((void*)address, 0x90, count);
 			VirtualProtect((void*)address, count, p, &p);
 			FlushInstructionCache(GetCurrentProcess(), (void*)address, count);
+		}
+
+		void patch_nop_call(uintptr_t address)
+		{
+			patch_nops(address, 5);
 		}
 
 	}
