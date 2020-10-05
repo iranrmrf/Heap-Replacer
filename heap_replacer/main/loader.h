@@ -37,7 +37,7 @@ void create_loader_hook()
 			HR_MSGBOX("Your game is not LAA, please apply a 4GB patcher");
 		}
 	}
-	else
+	else if (address != (void*)0x00D2320C)
 	{
 		HR_MSGBOX("Incompatible game executable. Please use version (" HR_VERSION ")");
 	}
