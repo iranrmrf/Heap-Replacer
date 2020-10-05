@@ -4,5 +4,6 @@ EXPORTS
 	nvhr_malloc
 	nvhr_calloc
 	nvhr_realloc
+	nvhr_recalloc
 	nvhr_mem_size
 	nvhr_free

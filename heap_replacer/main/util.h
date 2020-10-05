@@ -35,6 +35,7 @@ namespace NVHR
 	void* __fastcall nvhr_malloc(size_t size);
 	void* __fastcall nvhr_calloc(size_t count, size_t size);
 	void* __fastcall nvhr_realloc(void* address, size_t size);
+	void* __fastcall nvhr_recalloc(void* address, size_t count, size_t size);
 	size_t __fastcall nvhr_mem_size(void* address);
 	void __fastcall nvhr_free(void* address);
 
