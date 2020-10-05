@@ -77,13 +77,13 @@ namespace Util
 		void memset8(void* destination, BYTE value, size_t count)
 		{
 			BYTE* position = (BYTE*)destination;
-			for (size_t i = 0; i < count; i++, *position++ = value);
+			for (size_t i = 0; i < count; i++) { *position++ = value; }
 		}
 
 		void memset16(void* destination, WORD value, size_t count)
 		{
 			WORD* position = (WORD*)destination;
-			for (size_t i = 0; i < count; i++, *position++ = value);
+			for (size_t i = 0; i < count; i++) { *position++ = value; }
 		}
 
 		void memset32(void* destination, DWORD value, size_t count)
