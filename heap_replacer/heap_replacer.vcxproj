@@ -94,7 +94,8 @@
       <StackCommitSize>0</StackCommitSize>
       <ShowProgress>LinkVerbose</ShowProgress>
       <LinkStatus>true</LinkStatus>
-      <Version>2.0</Version>
+      <Version>
+      </Version>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"

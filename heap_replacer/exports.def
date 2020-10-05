@@ -1,4 +1,5 @@
 LIBRARY	"d3dx9_38"
+VERSION 2.0
 EXPORTS
 	nvhr
 	nvhr_malloc
