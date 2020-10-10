@@ -11,8 +11,8 @@ private:
 
 	size_t size;
 	size_t count;
-	void* bgn;
-	void* end;
+	void* ina_bgn;
+	void* ina_end;
 	void* last_alloc;
 
 private:
@@ -23,17 +23,17 @@ public:
 
 	initial_allocator(size_t size) : size(size), count(0)
 	{
-		this->bgn = VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-		this->end = VPTRSUM(this->bgn, size);
+		this->ina_bgn = Util::Mem::winapi_calloc(size, 1);
+		this->ina_end = VPTRSUM(this->ina_bgn, size);
 
-		this->last_alloc = this->bgn;
+		this->last_alloc = this->ina_bgn;
 
 		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
 
 	~initial_allocator()
 	{
-		VirtualFree(this->bgn, NULL, MEM_RELEASE);
+		Util::Mem::winapi_free(this->ina_bgn);
 
 		DeleteCriticalSection(&this->critical_section);
 	}
@@ -41,7 +41,7 @@ public:
 	void* malloc(size_t size)
 	{
 		void* new_last_alloc = VPTRSUM(this->last_alloc, size + 4);
-		if (new_last_alloc > this->end) { return nullptr; }
+		if (new_last_alloc > this->ina_end) { return nullptr; }
 		ECS(&this->critical_section);
 		*(size_t*)this->last_alloc = size;
 		void* address = VPTRSUM(this->last_alloc, 4);
@@ -51,11 +51,16 @@ public:
 		return address;
 	}
 
+	void* calloc(size_t count, size_t size)
+	{
+		return malloc(count * size);
+	}
+
 	void free(void* address)
 	{
 		if (this->is_in_range(address) && !(--this->count))
 		{
-			VirtualFree(this->bgn, NULL, MEM_RELEASE);
+			Util::Mem::winapi_free(this->ina_bgn);
 		}
 	}
 
@@ -66,7 +71,7 @@ public:
 
 	bool is_in_range(void* address)
 	{
-		return ((this->bgn <= address) & (address < this->end));
+		return ((this->ina_bgn <= address) & (address < this->ina_end));
 	}
 
 } ina(INITIAL_ALLOCATOR_SIZE);

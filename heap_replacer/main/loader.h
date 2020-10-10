@@ -11,7 +11,7 @@ BOOL WINAPI qpc_hook(LARGE_INTEGER* lpPerformanceCount)
 	BYTE* base = (BYTE*)GetModuleHandle(NULL);
 	void* address = Util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter");
 	HR_PRINTF("Cleaning QPC hook...");
-	Util::Mem::patch_DWORD((DWORD)address, (DWORD)&QueryPerformanceCounter);
+	Util::Mem::patch_DWORD((uintptr_t)address, (uintptr_t)&QueryPerformanceCounter);
 	return QueryPerformanceCounter(lpPerformanceCount);
 }
 
@@ -29,7 +29,7 @@ void create_loader_hook()
 		{
 			if (Util::file_exists("d3dx9_38.tmp")) { Util::create_console(); }
 			HR_PRINTF("Creating QPC hook...");
-			Util::Mem::patch_DWORD((DWORD)address, (DWORD)&qpc_hook);
+			Util::Mem::patch_DWORD((uintptr_t)address, (uintptr_t)&qpc_hook);
 		}
 		else
 		{

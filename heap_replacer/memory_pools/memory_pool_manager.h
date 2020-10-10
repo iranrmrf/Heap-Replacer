@@ -23,8 +23,8 @@ public:
 
 	memory_pool_manager()
 	{
-		memset(this->pools_by_size, 0, POOL_SIZE_ARRAY_LEN * sizeof(memory_pool*));
-		memset(this->pools_by_addr, 0, POOL_ADDR_ARRAY_LEN * sizeof(memory_pool*));
+		Util::Mem::memset8(this->pools_by_size, NULL, POOL_SIZE_ARRAY_LEN * sizeof(memory_pool*));
+		Util::Mem::memset8(this->pools_by_addr, NULL, POOL_ADDR_ARRAY_LEN * sizeof(memory_pool*));
 		this->init_all_pools();
 	}
 

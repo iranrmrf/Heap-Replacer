@@ -17,6 +17,9 @@
 #define ECS(cs) EnterCriticalSection(cs)
 #define LCS(cs) LeaveCriticalSection(cs)
 
+#define BITWISE_NULLIFIER(c, v) ((DWORD)(v) & ((!(c)) - 1))
+#define BITWISE_IF_ELSE(c, t, f) ((BITWISE_NULLIFIER((c), (t))) + (BITWISE_NULLIFIER((!(c)), (f))))
+
 #define UPTRSUM(x, y) ((uintptr_t)x + (uintptr_t)y)
 #define UPTRDIFF(x, y) ((uintptr_t)x - (uintptr_t)y)
 
@@ -89,7 +92,7 @@ namespace Util
 			return winapi_alloc(count * size);
 		}
 
-		void* winapi_free(void* address)
+		void winapi_free(void* address)
 		{
 			VirtualFree(address, NULL, MEM_RELEASE);
 		}
@@ -206,17 +209,12 @@ namespace Util
 
 	size_t align(size_t size, size_t alignment)
 	{
-		return (size + ((alignment - 1) & (((size & (alignment - 1)) == 0) - 1))) & (~(alignment - 1) | !(((size & (alignment - 1)) == 0) - 1));
+		return BITWISE_IF_ELSE(size & (alignment - 1), (size + (alignment - 1)) & ~(alignment - 1), size);
 	}
 
 	void* align(void* address, size_t alignment)
 	{
 		return (void*)align((uintptr_t)address, alignment);
-	}
-
-	void* winapi_alloc(size_t size)
-	{
-		return VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	}
 
 	void* get_IAT_address(BYTE* base, const char* dll_name, const char* search)
@@ -225,18 +223,18 @@ namespace Util
 		IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*)(base + dos_header->e_lfanew);
 		IMAGE_DATA_DIRECTORY* data_directory = nt_headers->OptionalHeader.DataDirectory;
 		IMAGE_DATA_DIRECTORY section = data_directory[IMAGE_DIRECTORY_ENTRY_IMPORT];
-		IMAGE_IMPORT_DESCRIPTOR* importDescriptor = (IMAGE_IMPORT_DESCRIPTOR*)(base + section.VirtualAddress);
-		for (size_t i = 0; importDescriptor[i].Name != 0; i++)
+		IMAGE_IMPORT_DESCRIPTOR* import_descriptor = (IMAGE_IMPORT_DESCRIPTOR*)(base + section.VirtualAddress);
+		for (size_t i = 0; import_descriptor[i].Name != 0; i++)
 		{
-			char* curr_dll_name = (char*)(base + importDescriptor[i].Name);
+			char* curr_dll_name = (char*)(base + import_descriptor[i].Name);
 			if (!_stricmp(curr_dll_name, dll_name))
 			{
-				if (!importDescriptor[i].FirstThunk)
+				if (!import_descriptor[i].FirstThunk)
 				{
 					return 0;
 				}
-				IMAGE_THUNK_DATA* name_table = (IMAGE_THUNK_DATA*)(base + importDescriptor[i].OriginalFirstThunk);
-				IMAGE_THUNK_DATA* import_table = (IMAGE_THUNK_DATA*)(base + importDescriptor[i].FirstThunk);
+				IMAGE_THUNK_DATA* name_table = (IMAGE_THUNK_DATA*)(base + import_descriptor[i].OriginalFirstThunk);
+				IMAGE_THUNK_DATA* import_table = (IMAGE_THUNK_DATA*)(base + import_descriptor[i].FirstThunk);
 				for (; name_table->u1.Ordinal != 0; ++name_table, ++import_table)
 				{
 					if (!IMAGE_SNAP_BY_ORDINAL(name_table->u1.Ordinal))
