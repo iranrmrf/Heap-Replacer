@@ -98,26 +98,26 @@ private:
 	{
 		cell_node* curr;
 		for (curr = cell->size_node->prev; curr->is_valid() && cell->swap_by_size(curr->cell); curr = curr->prev);
-		Util::Mem::memset32(this->size_array + curr->array_index + 1, (DWORD)cell, cell->size_node->array_index - curr->array_index);
+		Util::Mem::memset32(&this->size_array[curr->array_index + 1], (DWORD)cell, cell->size_node->array_index - curr->array_index);
 	}
 
 	void add_addr_array(mem_cell* cell)
 	{
 		cell_node* curr;
 		for (curr = cell->addr_node->prev; curr->is_valid() && cell->swap_by_addr(curr->cell); curr = curr->prev);
-		Util::Mem::memset32(this->addr_array + curr->array_index + 1, (DWORD)cell, cell->addr_node->array_index - curr->array_index);
+		Util::Mem::memset32(&this->addr_array[curr->array_index + 1], (DWORD)cell, cell->addr_node->array_index - curr->array_index);
 	}
 
 	void rmv_size_array(mem_cell* cell)
 	{
 		cell_node* curr = cell->size_node->prev;
-		Util::Mem::memset32(this->size_array + curr->array_index + 1, (DWORD)cell->size_node->next->cell, cell->size_node->array_index - curr->array_index);
+		Util::Mem::memset32(&this->size_array[curr->array_index + 1], (DWORD)cell->size_node->next->cell, cell->size_node->array_index - curr->array_index);
 	}
 
 	void rmv_addr_array(mem_cell* cell)
 	{
 		cell_node* curr = cell->addr_node->prev;
-		Util::Mem::memset32(this->addr_array + curr->array_index + 1, (DWORD)cell->addr_node->next->cell, cell->addr_node->array_index - curr->array_index);
+		Util::Mem::memset32(&this->addr_array[curr->array_index + 1], (DWORD)cell->addr_node->next->cell, cell->addr_node->array_index - curr->array_index);
 	}
 
 	cell_node* insert_size_dlist(mem_cell* cell)
