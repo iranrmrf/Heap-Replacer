@@ -30,7 +30,7 @@ public:
 
 	~memory_pool_manager()
 	{
-		for (int i = 0; i < POOL_ADDR_ARRAY_LEN; i++)
+		for (size_t i = 0; i < POOL_ADDR_ARRAY_LEN; i++)
 		{
 			if (this->pools_by_addr[i])
 			{

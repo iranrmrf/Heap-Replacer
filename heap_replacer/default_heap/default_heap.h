@@ -72,22 +72,24 @@ public:
 		DeleteCriticalSection(&this->critical_section);
 	}
 
-	int get_size_index(size_t size)
+private:
+
+	size_t get_size_index(size_t size)
 	{
 		return (size / HEAP_CELL_SIZE) - 1;
 	}
 
-	int get_size_index(mem_cell* cell)
+	size_t get_size_index(mem_cell* cell)
 	{
 		return this->get_size_index(cell->desc.size);
 	}
 
-	int get_addr_index(void* address)
+	size_t get_addr_index(void* address)
 	{
 		return UPTRDIFF(address, this->heap_desc->addr) / HEAP_CELL_SIZE;
 	}
 
-	int get_addr_index(mem_cell* cell)
+	size_t get_addr_index(mem_cell* cell)
 	{
 		return this->get_addr_index(cell->desc.addr);
 	}
