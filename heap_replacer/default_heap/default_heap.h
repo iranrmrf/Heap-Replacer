@@ -47,10 +47,10 @@ public:
 
 		this->cell_count = HEAP_MAX_SIZE / HEAP_CELL_SIZE;
 
-		this->used_cells = (size_t*)Util::winapi_alloc(this->cell_count * sizeof(size_t));
+		this->size_array = (mem_cell**)ina.calloc(this->cell_count, sizeof(mem_cell*));
+		this->addr_array = (mem_cell**)ina.calloc(this->cell_count, sizeof(mem_cell*));
 
-		this->size_array = (mem_cell**)Util::winapi_alloc(this->cell_count * sizeof(mem_cell*));
-		this->addr_array = (mem_cell**)Util::winapi_alloc(this->cell_count * sizeof(mem_cell*));
+		this->used_cells = (size_t*)ina.calloc(this->cell_count, sizeof(size_t));
 
 		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
@@ -160,6 +160,8 @@ private:
 		cell->addr_node = nullptr;
 	}
 
+public:
+
 	void add_free_cell(mem_cell* cell)
 	{
 		ECS(&this->critical_section);
@@ -211,6 +213,28 @@ private:
 		return cell;
 	}
 
+	void add_used(mem_cell* cell)
+	{
+		InterlockedExchange(&this->used_cells[this->get_addr_index(cell)], cell->desc.size);
+	}
+
+	size_t rmv_used(void* address)
+	{
+		return InterlockedExchange(&this->used_cells[this->get_addr_index(address)], 0u);
+	}
+
+	size_t get_used(void* address)
+	{
+		return this->used_cells[this->get_addr_index(address)];
+	}
+
+	bool is_in_range(void* address)
+	{
+		return this->heap_desc->is_in_range(address);
+	}
+
+private:
+
 	mem_cell* commit()
 	{
 		if (this->last_addr == this->heap_desc->get_end())
@@ -229,29 +253,9 @@ private:
 		return cell;
 	}
 
-	void add_used(mem_cell* cell)
-	{
-		InterlockedExchange(&this->used_cells[this->get_addr_index(cell)], cell->desc.size);
-	}
-
-	size_t rmv_used(void* address)
-	{
-		return InterlockedExchange(&this->used_cells[this->get_addr_index(address)], 0);
-	}
-
-	size_t get_used(void* address)
-	{
-		return this->used_cells[this->get_addr_index(address)];
-	}
-
 	bool free_is_empty()
 	{
 		return (this->size_dlist->is_empty() | this->addr_dlist->is_empty());
-	}
-
-	bool is_in_range(void* address)
-	{
-		return this->heap_desc->is_in_range(address);
 	}
 
 };
