@@ -29,7 +29,7 @@ namespace NVHR
 	void* __fastcall nvhr_malloc(size_t size)
 	{
 		if (size < 4) [[unlikely]] { size = 4; }
-		if (size <= 2048) [[likely]]
+		if (size <= 2 * KB) [[likely]]
 		{
 			if (void* address = mpm->malloc(size)) [[likely]] { return address; }
 		}
@@ -44,7 +44,7 @@ namespace NVHR
 	{
 		size *= count;
 		if (size < 4) [[unlikely]] { size = 4; }
-		if (size <= 2048) [[likely]]
+		if (size <= 2 * KB) [[likely]]
 		{
 			if (void* address = mpm->calloc(size)) [[likely]] { return address; }
 		}

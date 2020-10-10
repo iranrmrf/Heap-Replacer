@@ -112,7 +112,7 @@ public:
 
 	void* malloc(size_t size)
 	{
-		for (size = this->next_power_of_2(size); size <= 2048; size <<= 1)
+		for (size = this->next_power_of_2(size); size <= 2 * KB; size <<= 1)
 		{
 			if (void* address = this->pool_from_size(size)->malloc()) [[likely]] { return address; }
 		}
@@ -122,7 +122,7 @@ public:
 
 	void* calloc(size_t size)
 	{
-		for (size = this->next_power_of_2(size); size <= 2048; size <<= 1)
+		for (size = this->next_power_of_2(size); size <= 2 * KB; size <<= 1)
 		{
 			if (void* address = this->pool_from_size(size)->calloc()) [[likely]] { return address; }
 		}
