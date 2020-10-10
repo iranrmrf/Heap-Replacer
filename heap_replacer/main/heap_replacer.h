@@ -1,6 +1,6 @@
 #pragma once
 
-#define FNV
+#define FO3
 
 #if defined(FNV)
 	#define HR_NAME "NVHR"
@@ -178,27 +178,19 @@ namespace NVHR
 
 		Util::Mem::patch_jmp(0x40FBF0, &enter_light_critical_section);
 		Util::Mem::patch_jmp(0x40FBA0, &leave_light_critical_section);
-		
-		Util::Mem::patch_jmp(0xAA5860, &ScrapHeap::shm_ctor);
-		Util::Mem::patch_jmp(0x866D10, &ScrapHeap::shm_get_singleton);
-		Util::Mem::patch_jmp(0xAA5F50, &ScrapHeap::shm_swap_buffers);
-		Util::Mem::patch_jmp(0xAA5EC0, &ScrapHeap::shm_create_buffer);
-		Util::Mem::patch_jmp(0xAA59B0, &ScrapHeap::shm_request_buffer);
-		Util::Mem::patch_jmp(0xAA5F30, &ScrapHeap::shm_free_buffer);
-		Util::Mem::patch_jmp(0xAA5B70, &ScrapHeap::shm_release_buffer);
-		Util::Mem::patch_jmp(0xAA5C80, &ScrapHeap::shm_free_all_buffers);
 
-		Util::Mem::patch_jmp(0xAA57B0, &ScrapHeap::sh_init);
+		Util::Mem::patch_jmp(0xAA58D0, &ScrapHeap::shm_ctor);
+		Util::Mem::patch_ret(0x866D10);
+		Util::Mem::patch_ret(0xAA5C80);
+
 		Util::Mem::patch_jmp(0xAA53F0, &ScrapHeap::sh_init_0x10000);
-		Util::Mem::patch_jmp(0xAA5410, &ScrapHeap::sh_init_var);
-		Util::Mem::patch_jmp(0xAA5E30, &ScrapHeap::sh_grow);
-		Util::Mem::patch_jmp(0xAA5E90, &ScrapHeap::sh_shrink);
-		Util::Mem::patch_jmp(0xAA54A0, &ScrapHeap::sh_add_chunk);
-		Util::Mem::patch_jmp(0xAA5610, &ScrapHeap::sh_rmv_chunk);
-		//Util::Mem::patch_jmp(0x0, &ScrapHeap::sh_release_buffer);
+		Util::Mem::patch_jmp(0xAA5410, &ScrapHeap::sh_init_var);	
+		Util::Mem::patch_jmp(0xAA54A0, &ScrapHeap::sh_alloc);
+		Util::Mem::patch_jmp(0xAA5610, &ScrapHeap::sh_free);
+		Util::Mem::patch_jmp(0xAA5460, &ScrapHeap::sh_purge);
 
 		Util::Mem::patch_nops(0xAA38CA, 0xAA38E8 - 0xAA38CA);
-		Util::Mem::patch_jmp(0xAA42E0, &ScrapHeap::get_scrap_heap);
+		Util::Mem::patch_jmp(0xAA42E0, &ScrapHeap::get_thread_scrap_heap);
 
 		Util::Mem::patch_nop_call(0xAA3060);
 
@@ -232,28 +224,18 @@ namespace NVHR
 		Util::Mem::patch_jmp(0x409A80, &enter_light_critical_section); 
 		//Util::Mem::patch_jmp(0x0, &leave_light_critical_section);
 
-		Util::Mem::patch_ret(0x86C5E0);
-
 		Util::Mem::patch_jmp(0x86C600, &ScrapHeap::shm_ctor);
-		Util::Mem::patch_jmp(0x6E1CD0, &ScrapHeap::shm_get_singleton);
-		//Util::Mem::patch_jmp(0x0, &ScrapHeap::shm_swap_buffers);
-		Util::Mem::patch_jmp(0x86C6A0, &ScrapHeap::shm_create_buffer);
-		Util::Mem::patch_jmp(0x86C840, &ScrapHeap::shm_request_buffer);
-		//Util::Mem::patch_jmp(0x0, &ScrapHeap::shm_free_buffer);
-		Util::Mem::patch_jmp(0x86C9A0, &ScrapHeap::shm_release_buffer);
-		Util::Mem::patch_jmp(0x86CA30, &ScrapHeap::shm_free_all_buffers);
+		Util::Mem::patch_ret(0x6E1CD0);
+		Util::Mem::patch_ret(0x86CA30);
 
-		Util::Mem::patch_jmp(0x86CB00, &ScrapHeap::sh_init);
 		Util::Mem::patch_jmp(0x86CB70, &ScrapHeap::sh_init_0x10000);
 		Util::Mem::patch_jmp(0x86CB90, &ScrapHeap::sh_init_var);
-		Util::Mem::patch_jmp(0x86C640, &ScrapHeap::sh_grow);
-		//Util::Mem::patch_jmp(0x0, &ScrapHeap::sh_shrink);
-		Util::Mem::patch_jmp(0x86C710, &ScrapHeap::sh_add_chunk);
-		Util::Mem::patch_jmp(0x86C7B0, &ScrapHeap::sh_rmv_chunk);
-		Util::Mem::patch_jmp(0x86CAA0, &ScrapHeap::sh_release_buffer);
+		Util::Mem::patch_jmp(0x86C710, &ScrapHeap::sh_alloc);
+		Util::Mem::patch_jmp(0x86C7B0, &ScrapHeap::sh_free);
+		Util::Mem::patch_jmp(0x86CAA0, &ScrapHeap::sh_purge);
 
 		Util::Mem::patch_nops(0x86C038, 0x86C086 - 0x86C038);
-		Util::Mem::patch_jmp(0x86BCB0, &ScrapHeap::get_scrap_heap);
+		Util::Mem::patch_jmp(0x86BCB0, &ScrapHeap::get_thread_scrap_heap);
 
 		Util::Mem::patch_nop_call(0x6E9B30);
 		Util::Mem::patch_nop_call(0x7FACDB);
