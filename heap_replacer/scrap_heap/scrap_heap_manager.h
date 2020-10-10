@@ -120,7 +120,7 @@ namespace ScrapHeap
 	}
 
 	void __fastcall sh_init(TFPARAM(scrap_heap* self, size_t size))
-	{		
+	{
 		self->commit_bgn = shm_request_buffer(TFCALL(shm, &size));
 		self->unused = self->commit_bgn;
 		self->commit_end = VPTRSUM(self->commit_bgn, size);

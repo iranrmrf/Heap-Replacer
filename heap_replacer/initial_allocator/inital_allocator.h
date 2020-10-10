@@ -2,7 +2,7 @@
 
 #include "main/util.h"
 
-#define INITIAL_ALLOCATOR_SIZE 0x00010000u
+#define INITIAL_ALLOCATOR_SIZE 0x0001000u
 
 class initial_allocator
 {

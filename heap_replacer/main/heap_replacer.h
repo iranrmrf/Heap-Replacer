@@ -148,7 +148,7 @@ namespace NVHR
 		mpm = new memory_pool_manager();
 		dhm = new default_heap_manager();
 
-#if defined(NV)
+#if defined(FNV)
 
 		Util::Mem::patch_jmp(0xECD1C7, &crt_malloc);
 		Util::Mem::patch_jmp(0xED0CDF, &crt_malloc);
