@@ -45,7 +45,7 @@ private:
 	{
 		struct pool_data { size_t item_size; size_t max_size; } pool_desc[POOL_COUNT] =
 		{
-#ifdef FNV
+#if defined(FNV)
 			{ 4		, 0x01000000u },
 			{ 8		, 0x04000000u },
 			{ 16	, 0x04000000u },
@@ -56,8 +56,7 @@ private:
 			{ 512	, 0x04000000u },
 			{ 1024	, 0x08000000u },
 			{ 2048	, 0x08000000u },
-#endif
-#ifdef FO3
+#elif defined(FO3)
 			{ 4		, 0x01000000u },
 			{ 8		, 0x04000000u },
 			{ 16	, 0x04000000u },

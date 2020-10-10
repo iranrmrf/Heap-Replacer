@@ -2,12 +2,10 @@
 
 #define FNV
 
-#ifdef FNV
+#if defined(FNV)
 	#define HR_NAME "NVHR"
 	#define HR_VERSION "1.4.0.525"
-#endif
-
-#ifdef FO3
+#elif defined(FO3)
 	#define HR_NAME "F3HR"
 	#define HR_VERSION "1.7.0.3"
 #endif
@@ -150,7 +148,7 @@ namespace NVHR
 		mpm = new memory_pool_manager();
 		dhm = new default_heap_manager();
 
-#ifdef FNV
+#if defined(NV)
 
 		Util::Mem::patch_jmp(0xECD1C7, &crt_malloc);
 		Util::Mem::patch_jmp(0xED0CDF, &crt_malloc);
@@ -208,9 +206,7 @@ namespace NVHR
 		Util::Mem::patch_nop_call(0xC42EB1);
 		Util::Mem::patch_nop_call(0xEC1701);
 
-#endif
-
-#ifdef FO3
+#elif defined(FO3)
 
 		Util::Mem::patch_jmp(0xC063F5, &crt_malloc);
 		Util::Mem::patch_jmp(0xC0AB3F, &crt_malloc);

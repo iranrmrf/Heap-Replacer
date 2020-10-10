@@ -19,10 +19,9 @@ void create_loader_hook()
 {
 	BYTE* base = (BYTE*)GetModuleHandle(NULL);
 	void* address = Util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter");
-#ifdef FNV
+#if defined(FNV)
 	if (address == (void*)0x00FDF0A0)
-#endif
-#ifdef FO3
+#elif defined(FO3)
 	if (address == (void*)0x00D9B0E4)
 #endif
 	{
