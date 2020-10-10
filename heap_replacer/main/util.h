@@ -74,6 +74,26 @@ namespace Util
 	namespace Mem
 	{
 
+		void* winapi_alloc(size_t size)
+		{
+			return VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+		}
+
+		void* winapi_malloc(size_t size)
+		{
+			return winapi_alloc(size);
+		}
+
+		void* winapi_calloc(size_t count, size_t size)
+		{
+			return winapi_alloc(count * size);
+		}
+
+		void* winapi_free(void* address)
+		{
+			VirtualFree(address, NULL, MEM_RELEASE);
+		}
+
 		void memset8(void* destination, BYTE value, size_t count)
 		{
 			BYTE* position = (BYTE*)destination;

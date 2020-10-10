@@ -47,10 +47,10 @@ public:
 
 		this->cell_count = HEAP_MAX_SIZE / HEAP_CELL_SIZE;
 
-		this->size_array = (mem_cell**)ina.calloc(this->cell_count, sizeof(mem_cell*));
-		this->addr_array = (mem_cell**)ina.calloc(this->cell_count, sizeof(mem_cell*));
+		this->size_array = (mem_cell**)Util::Mem::winapi_calloc(this->cell_count, sizeof(mem_cell*));
+		this->addr_array = (mem_cell**)Util::Mem::winapi_calloc(this->cell_count, sizeof(mem_cell*));
 
-		this->used_cells = (size_t*)ina.calloc(this->cell_count, sizeof(size_t));
+		this->used_cells = (size_t*)Util::Mem::winapi_calloc(this->cell_count, sizeof(size_t));
 
 		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
@@ -60,12 +60,12 @@ public:
 		delete this->size_dlist;
 		delete this->addr_dlist;
 
-		VirtualFree(this->used_cells, NULL, MEM_RELEASE);
+		Util::Mem::winapi_free(this->used_cells);
 
-		VirtualFree(this->size_array, NULL, MEM_RELEASE);
-		VirtualFree(this->addr_array, NULL, MEM_RELEASE);
+		Util::Mem::winapi_free(this->size_array);
+		Util::Mem::winapi_free(this->addr_array);
 
-		VirtualFree(this->heap_desc->addr, NULL, MEM_RELEASE);
+		Util::Mem::winapi_free(this->heap_desc->addr);
 
 		delete this->heap_desc;
 
