@@ -129,7 +129,7 @@ public:
 	void* calloc()
 	{
 		void* address = this->malloc();
-		if (address) [[likely]] { Util::Mem::memset32(address, 0, this->item_size >> 2); }
+		if (address) [[likely]] { Util::Mem::memset32(address, NULL, this->item_size >> 2); }
 		return address;
 	}
 

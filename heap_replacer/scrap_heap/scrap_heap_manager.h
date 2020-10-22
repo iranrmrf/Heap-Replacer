@@ -168,7 +168,7 @@ namespace ScrapHeap
 	void __fastcall sh_free(TFPARAM(scrap_heap* self, void* address))
 	{
 		scrap_heap_chunk* chunk = (scrap_heap_chunk*)UPTRDIFF(address, sizeof(scrap_heap_chunk));
-		if (!!address & !(chunk->size & SH_FREE_FLAG)) [[likely]]
+		if (address && !(chunk->size & SH_FREE_FLAG)) [[likely]]
 		{
 			for (chunk->size |= SH_FREE_FLAG; self->last_chunk && (self->last_chunk->size & SH_FREE_FLAG); self->last_chunk = self->last_chunk->prev_chunk);
 			self->unused = self->last_chunk ? (BYTE*)self->last_chunk + sizeof(scrap_heap_chunk) + self->last_chunk->size : self->commit_bgn;

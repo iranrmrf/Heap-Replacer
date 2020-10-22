@@ -1,6 +1,6 @@
 #pragma once
 
-#define FO3
+#define FNV
 
 #if defined(FNV)
 	#define HR_NAME "NVHR"
@@ -102,14 +102,14 @@ namespace NVHR
 		return nvhr_realloc(address, size);
 	}
 
-	void __fastcall game_heap_free(TFPARAM(void* self, void* address))
-	{
-		nvhr_free(address);
-	}
-
 	size_t __fastcall game_heap_msize(TFPARAM(void* self, void* address))
 	{
 		return nvhr_mem_size(address);
+	}
+
+	void __fastcall game_heap_free(TFPARAM(void* self, void* address))
+	{
+		nvhr_free(address);
 	}
 
 	void* __cdecl crt_malloc(size_t size)
@@ -132,14 +132,14 @@ namespace NVHR
 		return nvhr_recalloc(address, count, size);
 	}
 
-	void __cdecl crt_free(void* address)
-	{
-		nvhr_free(address);
-	}
-
 	size_t __cdecl crt_msize(void* address)
 	{
 		return nvhr_mem_size(address);
+	}
+
+	void __cdecl crt_free(void* address)
+	{
+		nvhr_free(address);
 	}
 
 	void apply_heap_hooks()
@@ -158,14 +158,14 @@ namespace NVHR
 		Util::Mem::patch_jmp(0xED0D70, &crt_realloc);
 		Util::Mem::patch_jmp(0xEE1700, &crt_recalloc);
 		Util::Mem::patch_jmp(0xED0DBE, &crt_recalloc);
-		Util::Mem::patch_jmp(0xECD291, &crt_free);
 		Util::Mem::patch_jmp(0xECD31F, &crt_msize);
+		Util::Mem::patch_jmp(0xECD291, &crt_free);
 
 		Util::Mem::patch_jmp(0xAA3E40, &game_heap_allocate);
 		Util::Mem::patch_jmp(0xAA4150, &game_heap_reallocate);
 		Util::Mem::patch_jmp(0xAA4200, &game_heap_reallocate);
-		Util::Mem::patch_jmp(0xAA4060, &game_heap_free);
 		Util::Mem::patch_jmp(0xAA44C0, &game_heap_msize);
+		Util::Mem::patch_jmp(0xAA4060, &game_heap_free);
 
 		Util::Mem::patch_ret(0xAA6840);
 		Util::Mem::patch_ret(0x866E00);
@@ -198,6 +198,8 @@ namespace NVHR
 		Util::Mem::patch_nop_call(0xC42EB1);
 		Util::Mem::patch_nop_call(0xEC1701);
 
+		Util::Mem::patch_bytes(0x86EED4, (BYTE*)"\xEB\x55", 2);
+
 #elif defined(FO3)
 
 		Util::Mem::patch_jmp(0xC063F5, &crt_malloc);
@@ -208,14 +210,14 @@ namespace NVHR
 		Util::Mem::patch_jmp(0xC0ABC7, &crt_realloc);
 		Util::Mem::patch_jmp(0xC06761, &crt_recalloc);
 		Util::Mem::patch_jmp(0xC0AC12, &crt_recalloc);
+		Util::Mem::patch_jmp(0xC067DA, &crt_msize);
 		Util::Mem::patch_jmp(0xC064B8, &crt_free);
-		Util::Mem::patch_jmp(0xC067DA, &crt_msize); 
 
 		Util::Mem::patch_jmp(0x86B930, &game_heap_allocate);
 		Util::Mem::patch_jmp(0x86BAE0, &game_heap_reallocate);
 		Util::Mem::patch_jmp(0x86BB50, &game_heap_reallocate);
-		Util::Mem::patch_jmp(0x86BA60, &game_heap_free);
 		Util::Mem::patch_jmp(0x86B8C0, &game_heap_msize);
+		Util::Mem::patch_jmp(0x86BA60, &game_heap_free);
 
 		Util::Mem::patch_ret(0x86D670);
 		Util::Mem::patch_ret(0x6E21F0);

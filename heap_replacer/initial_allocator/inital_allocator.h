@@ -2,7 +2,7 @@
 
 #include "main/util.h"
 
-#define INITIAL_ALLOCATOR_SIZE 0x0001000u
+#define INITIAL_ALLOCATOR_SIZE 0x0004000u
 
 class initial_allocator
 {
@@ -11,6 +11,9 @@ private:
 
 	size_t size;
 	size_t count;
+
+private:
+
 	void* ina_bgn;
 	void* ina_end;
 	void* last_alloc;

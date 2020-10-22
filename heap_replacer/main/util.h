@@ -32,6 +32,8 @@ constexpr size_t KB = 1024 * 1u;
 constexpr size_t MB = 1024 * KB;
 constexpr size_t GB = 1024 * MB;
 
+// FILE* file = fopen("log.log", "w");
+
 namespace NVHR
 {
 
