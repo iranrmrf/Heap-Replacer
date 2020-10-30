@@ -4,7 +4,7 @@
 #define POOL_GROWTH		0x00010000u
 
 #define POOL_COUNT 10u
-#define POOL_SIZE_ARRAY_LEN ((2048 >> 2) + 1)
+#define POOL_SIZE_ARRAY_LEN (((2 * MB) >> 2) + 1)
 #define POOL_ADDR_ARRAY_LEN ((0x80000000u / POOL_ALIGNMENT) << 1)
 
 #include "main/util.h"

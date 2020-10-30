@@ -139,7 +139,7 @@ namespace ScrapHeap
 
 	void* __fastcall sh_alloc(TFPARAM(scrap_heap* self, size_t size, size_t alignment))
 	{
-		uintptr_t body = Util::align(UPTRSUM(self->unused, sizeof(scrap_heap_chunk)), alignment);
+		void* body = (void*)Util::align(UPTRSUM(self->unused, sizeof(scrap_heap_chunk)), alignment);
 		void* desired_end = VPTRSUM(body, size);
 		if (desired_end > self->commit_end) [[unlikely]]
 		{
@@ -157,12 +157,12 @@ namespace ScrapHeap
 			VirtualAlloc(self->commit_end, new_size - old_size, MEM_COMMIT, PAGE_READWRITE);
 			self->commit_end = VPTRSUM(self->commit_bgn, new_size);
 		}
-		scrap_heap_chunk* header = (scrap_heap_chunk*)UPTRDIFF(body, sizeof(scrap_heap_chunk));
+		scrap_heap_chunk* header = (scrap_heap_chunk*)VPTRDIFF(body, sizeof(scrap_heap_chunk));
 		header->size = size;
 		header->prev_chunk = self->last_chunk;
 		self->last_chunk = header;
 		self->unused = desired_end;
-		return (void*)body;
+		return body;
 	}
 
 	void __fastcall sh_free(TFPARAM(scrap_heap* self, void* address))
