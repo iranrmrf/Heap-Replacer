@@ -42,7 +42,7 @@ public:
 	void* calloc(size_t size)
 	{
 		void* address = this->malloc(size);
-		if (address) [[likely]]	{ Util::Mem::memset32(address, NULL, (size + 3) >> 2); }
+		if (address) [[likely]]	{ util::mem::memset32(address, NULL, (size + 3) >> 2); }
 		return address;
 	}
 

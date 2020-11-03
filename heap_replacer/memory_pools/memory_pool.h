@@ -47,7 +47,7 @@ public:
 
 		this->max_cell_count = this->block_count * this->block_item_count;
 
-		this->free_cells = (cell*)Util::Mem::winapi_calloc(this->max_cell_count, sizeof(cell));
+		this->free_cells = (cell*)util::mem::winapi_calloc(this->max_cell_count, sizeof(cell));
 		this->next_free = this->free_cells;
 
 		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
@@ -129,7 +129,7 @@ public:
 	void* calloc()
 	{
 		void* address = this->malloc();
-		if (address) [[likely]] { Util::Mem::memset32(address, NULL, this->item_size >> 2); }
+		if (address) [[likely]] { util::mem::memset32(address, NULL, this->item_size >> 2); }
 		return address;
 	}
 

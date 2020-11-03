@@ -66,7 +66,7 @@ void __cdecl operator delete[](void* address)
 	NVHR::nvhr_free(address);
 }
 
-namespace Util
+namespace util
 {
 
 	template <typename O, typename I>
@@ -76,7 +76,7 @@ namespace Util
 		return u.out;
 	};
 
-	namespace Mem
+	namespace mem
 	{
 
 		void* winapi_alloc(size_t size)

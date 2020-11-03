@@ -41,7 +41,7 @@ namespace ScrapHeap
 	void __fastcall shm_ctor(TFPARAM(scrap_heap_manager* self))
 	{
 		shm = new scrap_heap_manager();
-		Util::Mem::memset8(shm->buffers, NULL, SHM_BUFFER_COUNT * sizeof(scrap_heap_buffer));
+		util::mem::memset8(shm->buffers, NULL, SHM_BUFFER_COUNT * sizeof(scrap_heap_buffer));
 		shm->free_buffer_count = 0;
 		shm->critical_section.thread_id = 0;
 		shm->critical_section.lock_count = 0;
@@ -134,12 +134,12 @@ namespace ScrapHeap
 
 	void __fastcall sh_init_var(TFPARAM(scrap_heap* self, size_t size))
 	{
-		sh_init(TFCALL(self, Util::align(size, SH_BUFFER_MIN_SIZE)));
+		sh_init(TFCALL(self, util::align(size, SH_BUFFER_MIN_SIZE)));
 	}
 
 	void* __fastcall sh_alloc(TFPARAM(scrap_heap* self, size_t size, size_t alignment))
 	{
-		void* body = (void*)Util::align(UPTRSUM(self->unused, sizeof(scrap_heap_chunk)), alignment);
+		void* body = (void*)util::align(UPTRSUM(self->unused, sizeof(scrap_heap_chunk)), alignment);
 		void* desired_end = VPTRSUM(body, size);
 		if (desired_end > self->commit_end) [[unlikely]]
 		{

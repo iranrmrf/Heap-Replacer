@@ -72,7 +72,7 @@ namespace NVHR
 		size_t new_size = size * count;
 		if (old_size >= new_size)
 		{
-			Util::Mem::memset8(address, NULL, new_size);
+			util::mem::memset8(address, NULL, new_size);
 			return address;
 		}
 		void* new_address = nvhr_calloc(count, size);
@@ -150,98 +150,98 @@ namespace NVHR
 
 #if defined(FNV)
 
-		Util::Mem::patch_jmp(0xECD1C7, &crt_malloc);
-		Util::Mem::patch_jmp(0xED0CDF, &crt_malloc);
-		Util::Mem::patch_jmp(0xEDDD7D, &crt_calloc);
-		Util::Mem::patch_jmp(0xED0D24, &crt_calloc);
-		Util::Mem::patch_jmp(0xECCF5D, &crt_realloc);
-		Util::Mem::patch_jmp(0xED0D70, &crt_realloc);
-		Util::Mem::patch_jmp(0xEE1700, &crt_recalloc);
-		Util::Mem::patch_jmp(0xED0DBE, &crt_recalloc);
-		Util::Mem::patch_jmp(0xECD31F, &crt_msize);
-		Util::Mem::patch_jmp(0xECD291, &crt_free);
+		util::mem::patch_jmp(0xECD1C7, &crt_malloc);
+		util::mem::patch_jmp(0xED0CDF, &crt_malloc);
+		util::mem::patch_jmp(0xEDDD7D, &crt_calloc);
+		util::mem::patch_jmp(0xED0D24, &crt_calloc);
+		util::mem::patch_jmp(0xECCF5D, &crt_realloc);
+		util::mem::patch_jmp(0xED0D70, &crt_realloc);
+		util::mem::patch_jmp(0xEE1700, &crt_recalloc);
+		util::mem::patch_jmp(0xED0DBE, &crt_recalloc);
+		util::mem::patch_jmp(0xECD31F, &crt_msize);
+		util::mem::patch_jmp(0xECD291, &crt_free);
 
-		Util::Mem::patch_jmp(0xAA3E40, &game_heap_allocate);
-		Util::Mem::patch_jmp(0xAA4150, &game_heap_reallocate);
-		Util::Mem::patch_jmp(0xAA4200, &game_heap_reallocate);
-		Util::Mem::patch_jmp(0xAA44C0, &game_heap_msize);
-		Util::Mem::patch_jmp(0xAA4060, &game_heap_free);
+		util::mem::patch_jmp(0xAA3E40, &game_heap_allocate);
+		util::mem::patch_jmp(0xAA4150, &game_heap_reallocate);
+		util::mem::patch_jmp(0xAA4200, &game_heap_reallocate);
+		util::mem::patch_jmp(0xAA44C0, &game_heap_msize);
+		util::mem::patch_jmp(0xAA4060, &game_heap_free);
 
-		Util::Mem::patch_ret(0xAA6840);
-		Util::Mem::patch_ret(0x866E00);
-		Util::Mem::patch_ret(0x866770);
+		util::mem::patch_ret(0xAA6840);
+		util::mem::patch_ret(0x866E00);
+		util::mem::patch_ret(0x866770);
 
-		Util::Mem::patch_ret(0xAA6F90);
-		Util::Mem::patch_ret(0xAA7030);
-		Util::Mem::patch_ret(0xAA7290);
-		Util::Mem::patch_ret(0xAA7300);
+		util::mem::patch_ret(0xAA6F90);
+		util::mem::patch_ret(0xAA7030);
+		util::mem::patch_ret(0xAA7290);
+		util::mem::patch_ret(0xAA7300);
 
-		Util::Mem::patch_jmp(0x40FBF0, &enter_light_critical_section);
-		Util::Mem::patch_jmp(0x40FBA0, &leave_light_critical_section);
+		util::mem::patch_jmp(0x40FBF0, &enter_light_critical_section);
+		util::mem::patch_jmp(0x40FBA0, &leave_light_critical_section);
 
-		Util::Mem::patch_jmp(0xAA58D0, &ScrapHeap::shm_ctor);
-		Util::Mem::patch_ret(0x866D10);
-		Util::Mem::patch_ret(0xAA5C80);
+		util::mem::patch_jmp(0xAA58D0, &ScrapHeap::shm_ctor);
+		util::mem::patch_ret(0x866D10);
+		util::mem::patch_ret(0xAA5C80);
 
-		Util::Mem::patch_jmp(0xAA53F0, &ScrapHeap::sh_init_0x10000);
-		Util::Mem::patch_jmp(0xAA5410, &ScrapHeap::sh_init_var);	
-		Util::Mem::patch_jmp(0xAA54A0, &ScrapHeap::sh_alloc);
-		Util::Mem::patch_jmp(0xAA5610, &ScrapHeap::sh_free);
-		Util::Mem::patch_jmp(0xAA5460, &ScrapHeap::sh_purge);
+		util::mem::patch_jmp(0xAA53F0, &ScrapHeap::sh_init_0x10000);
+		util::mem::patch_jmp(0xAA5410, &ScrapHeap::sh_init_var);	
+		util::mem::patch_jmp(0xAA54A0, &ScrapHeap::sh_alloc);
+		util::mem::patch_jmp(0xAA5610, &ScrapHeap::sh_free);
+		util::mem::patch_jmp(0xAA5460, &ScrapHeap::sh_purge);
 
-		Util::Mem::patch_nops(0xAA38CA, 0xAA38E8 - 0xAA38CA);
-		Util::Mem::patch_jmp(0xAA42E0, &ScrapHeap::get_thread_scrap_heap);
+		util::mem::patch_nops(0xAA38CA, 0xAA38E8 - 0xAA38CA);
+		util::mem::patch_jmp(0xAA42E0, &ScrapHeap::get_thread_scrap_heap);
 
-		Util::Mem::patch_nop_call(0xAA3060);
+		util::mem::patch_nop_call(0xAA3060);
 
-		Util::Mem::patch_nop_call(0x86C56F);
-		Util::Mem::patch_nop_call(0xC42EB1);
-		Util::Mem::patch_nop_call(0xEC1701);
+		util::mem::patch_nop_call(0x86C56F);
+		util::mem::patch_nop_call(0xC42EB1);
+		util::mem::patch_nop_call(0xEC1701);
 
-		Util::Mem::patch_bytes(0x86EED4, (BYTE*)"\xEB\x55", 2);
+		util::mem::patch_bytes(0x86EED4, (BYTE*)"\xEB\x55", 2);
 
 #elif defined(FO3)
 
-		Util::Mem::patch_jmp(0xC063F5, &crt_malloc);
-		Util::Mem::patch_jmp(0xC0AB3F, &crt_malloc);
-		Util::Mem::patch_jmp(0xC1843C, &crt_calloc);
-		Util::Mem::patch_jmp(0xC0AB7F, &crt_calloc);
-		Util::Mem::patch_jmp(0xC06546, &crt_realloc);
-		Util::Mem::patch_jmp(0xC0ABC7, &crt_realloc);
-		Util::Mem::patch_jmp(0xC06761, &crt_recalloc);
-		Util::Mem::patch_jmp(0xC0AC12, &crt_recalloc);
-		Util::Mem::patch_jmp(0xC067DA, &crt_msize);
-		Util::Mem::patch_jmp(0xC064B8, &crt_free);
+		util::mem::patch_jmp(0xC063F5, &crt_malloc);
+		util::mem::patch_jmp(0xC0AB3F, &crt_malloc);
+		util::mem::patch_jmp(0xC1843C, &crt_calloc);
+		util::mem::patch_jmp(0xC0AB7F, &crt_calloc);
+		util::mem::patch_jmp(0xC06546, &crt_realloc);
+		util::mem::patch_jmp(0xC0ABC7, &crt_realloc);
+		util::mem::patch_jmp(0xC06761, &crt_recalloc);
+		util::mem::patch_jmp(0xC0AC12, &crt_recalloc);
+		util::mem::patch_jmp(0xC067DA, &crt_msize);
+		util::mem::patch_jmp(0xC064B8, &crt_free);
 
-		Util::Mem::patch_jmp(0x86B930, &game_heap_allocate);
-		Util::Mem::patch_jmp(0x86BAE0, &game_heap_reallocate);
-		Util::Mem::patch_jmp(0x86BB50, &game_heap_reallocate);
-		Util::Mem::patch_jmp(0x86B8C0, &game_heap_msize);
-		Util::Mem::patch_jmp(0x86BA60, &game_heap_free);
+		util::mem::patch_jmp(0x86B930, &game_heap_allocate);
+		util::mem::patch_jmp(0x86BAE0, &game_heap_reallocate);
+		util::mem::patch_jmp(0x86BB50, &game_heap_reallocate);
+		util::mem::patch_jmp(0x86B8C0, &game_heap_msize);
+		util::mem::patch_jmp(0x86BA60, &game_heap_free);
 
-		Util::Mem::patch_ret(0x86D670);
-		Util::Mem::patch_ret(0x6E21F0);
-		Util::Mem::patch_ret(0x6E1E10);
+		util::mem::patch_ret(0x86D670);
+		util::mem::patch_ret(0x6E21F0);
+		util::mem::patch_ret(0x6E1E10);
 
-		Util::Mem::patch_jmp(0x409A80, &enter_light_critical_section); 
-		//Util::Mem::patch_jmp(0x0, &leave_light_critical_section);
+		util::mem::patch_jmp(0x409A80, &enter_light_critical_section); 
+		//util::mem::patch_jmp(0x0, &leave_light_critical_section);
 
-		Util::Mem::patch_jmp(0x86C600, &ScrapHeap::shm_ctor);
-		Util::Mem::patch_ret(0x6E1CD0);
-		Util::Mem::patch_ret(0x86CA30);
+		util::mem::patch_jmp(0x86C600, &ScrapHeap::shm_ctor);
+		util::mem::patch_ret(0x6E1CD0);
+		util::mem::patch_ret(0x86CA30);
 
-		Util::Mem::patch_jmp(0x86CB70, &ScrapHeap::sh_init_0x10000);
-		Util::Mem::patch_jmp(0x86CB90, &ScrapHeap::sh_init_var);
-		Util::Mem::patch_jmp(0x86C710, &ScrapHeap::sh_alloc);
-		Util::Mem::patch_jmp(0x86C7B0, &ScrapHeap::sh_free);
-		Util::Mem::patch_jmp(0x86CAA0, &ScrapHeap::sh_purge);
+		util::mem::patch_jmp(0x86CB70, &ScrapHeap::sh_init_0x10000);
+		util::mem::patch_jmp(0x86CB90, &ScrapHeap::sh_init_var);
+		util::mem::patch_jmp(0x86C710, &ScrapHeap::sh_alloc);
+		util::mem::patch_jmp(0x86C7B0, &ScrapHeap::sh_free);
+		util::mem::patch_jmp(0x86CAA0, &ScrapHeap::sh_purge);
 
-		Util::Mem::patch_nops(0x86C038, 0x86C086 - 0x86C038);
-		Util::Mem::patch_jmp(0x86BCB0, &ScrapHeap::get_thread_scrap_heap);
+		util::mem::patch_nops(0x86C038, 0x86C086 - 0x86C038);
+		util::mem::patch_jmp(0x86BCB0, &ScrapHeap::get_thread_scrap_heap);
 
-		Util::Mem::patch_nop_call(0x6E9B30);
-		Util::Mem::patch_nop_call(0x7FACDB);
-		Util::Mem::patch_nop_call(0xAA6534);
+		util::mem::patch_nop_call(0x6E9B30);
+		util::mem::patch_nop_call(0x7FACDB);
+		util::mem::patch_nop_call(0xAA6534);
 
 #endif
 

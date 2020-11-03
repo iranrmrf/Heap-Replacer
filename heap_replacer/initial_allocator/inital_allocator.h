@@ -26,7 +26,7 @@ public:
 
 	initial_allocator(size_t size) : size(size), count(0)
 	{
-		this->ina_bgn = Util::Mem::winapi_calloc(size, 1);
+		this->ina_bgn = util::mem::winapi_calloc(size, 1);
 		this->ina_end = VPTRSUM(this->ina_bgn, size);
 
 		this->last_alloc = this->ina_bgn;
@@ -36,9 +36,9 @@ public:
 
 	~initial_allocator()
 	{
-		Util::Mem::winapi_free(this->ina_bgn);
 
 		DeleteCriticalSection(&this->critical_section);
+		util::mem::winapi_free(this->ina_bgn);
 	}
 
 	void* malloc(size_t size)
@@ -48,7 +48,7 @@ public:
 		ECS(&this->critical_section);
 		*(size_t*)this->last_alloc = size;
 		void* address = VPTRSUM(this->last_alloc, 4);
-		this->last_alloc = Util::align(new_last_alloc, 4);
+		this->last_alloc = util::align(new_last_alloc, 4);
 		++this->count;
 		LCS(&this->critical_section);
 		return address;
@@ -63,7 +63,7 @@ public:
 	{
 		if (this->is_in_range(address) && !(--this->count))
 		{
-			Util::Mem::winapi_free(this->ina_bgn);
+			util::mem::winapi_free(this->ina_bgn);
 		}
 	}
 

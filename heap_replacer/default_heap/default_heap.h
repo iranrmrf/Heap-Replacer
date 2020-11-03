@@ -47,10 +47,10 @@ public:
 
 		this->cell_count = HEAP_MAX_SIZE / HEAP_CELL_SIZE;
 
-		this->size_array = (mem_cell**)Util::Mem::winapi_calloc(this->cell_count, sizeof(mem_cell*));
-		this->addr_array = (mem_cell**)Util::Mem::winapi_calloc(this->cell_count, sizeof(mem_cell*));
+		this->size_array = (mem_cell**)util::mem::winapi_calloc(this->cell_count, sizeof(mem_cell*));
+		this->addr_array = (mem_cell**)util::mem::winapi_calloc(this->cell_count, sizeof(mem_cell*));
 
-		this->used_cells = (size_t*)Util::Mem::winapi_calloc(this->cell_count, sizeof(size_t));
+		this->used_cells = (size_t*)util::mem::winapi_calloc(this->cell_count, sizeof(size_t));
 
 		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
 	}
@@ -60,12 +60,12 @@ public:
 		delete this->size_dlist;
 		delete this->addr_dlist;
 
-		Util::Mem::winapi_free(this->used_cells);
+		util::mem::winapi_free(this->used_cells);
 
-		Util::Mem::winapi_free(this->size_array);
-		Util::Mem::winapi_free(this->addr_array);
+		util::mem::winapi_free(this->size_array);
+		util::mem::winapi_free(this->addr_array);
 
-		Util::Mem::winapi_free(this->heap_desc->addr);
+		util::mem::winapi_free(this->heap_desc->addr);
 
 		delete this->heap_desc;
 
@@ -98,26 +98,26 @@ private:
 	{
 		cell_node* curr;
 		for (curr = cell->size_node->prev; curr->is_valid() && cell->swap_by_size(curr->cell); curr = curr->prev);
-		Util::Mem::memset32(&this->size_array[curr->array_index + 1], (DWORD)cell, cell->size_node->array_index - curr->array_index);
+		util::mem::memset32(&this->size_array[curr->array_index + 1], (DWORD)cell, cell->size_node->array_index - curr->array_index);
 	}
 
 	void add_addr_array(mem_cell* cell)
 	{
 		cell_node* curr;
 		for (curr = cell->addr_node->prev; curr->is_valid() && cell->swap_by_addr(curr->cell); curr = curr->prev);
-		Util::Mem::memset32(&this->addr_array[curr->array_index + 1], (DWORD)cell, cell->addr_node->array_index - curr->array_index);
+		util::mem::memset32(&this->addr_array[curr->array_index + 1], (DWORD)cell, cell->addr_node->array_index - curr->array_index);
 	}
 
 	void rmv_size_array(mem_cell* cell)
 	{
 		cell_node* curr = cell->size_node->prev;
-		Util::Mem::memset32(&this->size_array[curr->array_index + 1], (DWORD)cell->size_node->next->cell, cell->size_node->array_index - curr->array_index);
+		util::mem::memset32(&this->size_array[curr->array_index + 1], (DWORD)cell->size_node->next->cell, cell->size_node->array_index - curr->array_index);
 	}
 
 	void rmv_addr_array(mem_cell* cell)
 	{
 		cell_node* curr = cell->addr_node->prev;
-		Util::Mem::memset32(&this->addr_array[curr->array_index + 1], (DWORD)cell->addr_node->next->cell, cell->addr_node->array_index - curr->array_index);
+		util::mem::memset32(&this->addr_array[curr->array_index + 1], (DWORD)cell->addr_node->next->cell, cell->addr_node->array_index - curr->array_index);
 	}
 
 	cell_node* insert_size_dlist(mem_cell* cell)
@@ -189,7 +189,7 @@ public:
 
 	mem_cell* get_free_cell(size_t size)
 	{
-		size = Util::align(size, HEAP_CELL_SIZE);
+		size = util::align(size, HEAP_CELL_SIZE);
 		mem_cell* cell;
 		ECS(&this->critical_section);
 		while (!(cell = this->size_array[this->get_size_index(size)])) [[unlikely]]
