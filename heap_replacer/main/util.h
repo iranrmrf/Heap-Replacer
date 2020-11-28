@@ -89,6 +89,34 @@ namespace util
 		return u.out;
 	};
 
+	size_t next_power_of_2(size_t size)
+	{
+		if (size & (size - 1))
+		{
+			size--;
+			size |= size >> 1;
+			size |= size >> 2;
+			size |= size >> 4;
+			size |= size >> 8;
+			size |= size >> 16;
+			size++;
+		}
+		return size;
+	}
+
+	const size_t bit_pos[32] =
+	{
+		0,	9,	1,	10,	13,	21,	2,	29,
+		11,	14,	16,	18,	22,	25,	3,	30,
+		8,	12,	20,	28,	15,	17,	24,	07,
+		19,	27,	23,	6,	26,	5,	4,	31,
+	};
+
+	size_t get_first_bit_from_power_of_2(DWORD value)
+	{
+		return bit_pos[(DWORD)((value - 1) * 0x07C4ACDDU) >> 27];
+	}
+
 	namespace mem
 	{
 

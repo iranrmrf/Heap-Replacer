@@ -4,7 +4,7 @@
 #define POOL_GROWTH		0x00010000u
 
 #define POOL_COUNT 10u
-#define POOL_SIZE_ARRAY_LEN (((2 * MB) >> 2) + 1)
+#define POOL_SIZE_ARRAY_LEN 32
 #define POOL_ADDR_ARRAY_LEN ((0x80000000u / POOL_ALIGNMENT) << 1)
 
 #include "main/util.h"
@@ -74,7 +74,7 @@ private:
 			pool_data* pd = &pool_desc[i];
 			memory_pool* pool = new memory_pool(pd->item_size, pd->max_size);
 			void* address = pool->memory_pool_init();
-			this->pools_by_size[pd->item_size >> 2] = pool;
+			this->pools_by_size[util::get_first_bit_from_power_of_2(pd->item_size)] = pool;
 			for (size_t j = 0; j < ((pd->max_size + (POOL_ALIGNMENT - 1)) / POOL_ALIGNMENT); j++)
 			{
 				this->pools_by_addr[((uintptr_t)address / POOL_ALIGNMENT) + j] = pool;
@@ -82,24 +82,9 @@ private:
 		}
 	}
 
-	size_t next_power_of_2(size_t size)
-	{
-		if (size & (size - 1))
-		{
-			size--;
-			size |= size >> 1;
-			size |= size >> 2;
-			size |= size >> 4;
-			size |= size >> 8;
-			size |= size >> 16;
-			size++;
-		}
-		return size;
-	}
-
 	memory_pool* pool_from_size(size_t size)
 	{
-		return this->pools_by_size[size >> 2];
+		return this->pools_by_size[util::get_first_bit_from_power_of_2(size)];
 	}
 
 	memory_pool* pool_from_addr(void* address)
@@ -111,7 +96,7 @@ public:
 
 	void* malloc(size_t size)
 	{
-		for (size = this->next_power_of_2(size); size <= 2 * KB; size <<= 1)
+		for (size = util::next_power_of_2(size); size <= 2 * KB; size <<= 1)
 		{
 			if (void* address = this->pool_from_size(size)->malloc()) [[likely]] { return address; }
 		}
@@ -121,7 +106,7 @@ public:
 
 	void* calloc(size_t size)
 	{
-		for (size = this->next_power_of_2(size); size <= 2 * KB; size <<= 1)
+		for (size = util::next_power_of_2(size); size <= 2 * KB; size <<= 1)
 		{
 			if (void* address = this->pool_from_size(size)->calloc()) [[likely]] { return address; }
 		}
