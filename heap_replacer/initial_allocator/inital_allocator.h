@@ -67,7 +67,7 @@ public:
 
 	size_t mem_size(void* address)
 	{
-		return (this->is_in_range(address)) ? *((size_t*)address - 1) : 0;
+		return (this->is_in_range(address)) ? *((size_t*)address - 1) : NULL;
 	}
 
 	bool is_in_range(void* address)

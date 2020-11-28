@@ -35,10 +35,7 @@ public:
 	default_heap()
 	{
 		this->heap_desc = new cell_desc(VirtualAlloc(nullptr, HEAP_MAX_SIZE, MEM_RESERVE, PAGE_READWRITE), HEAP_MAX_SIZE);
-		if (!this->heap_desc->addr)
-		{
-			HR_MSGBOX("Failed to reserve!");
-		}
+		if (!this->heap_desc->addr) { HR_MSGBOX("Failed to reserve!"); }
 
 		this->last_addr = this->heap_desc->addr;
 
@@ -61,12 +58,11 @@ public:
 		delete this->addr_dlist;
 
 		util::mem::winapi_free(this->used_cells);
-
 		util::mem::winapi_free(this->size_array);
+
 		util::mem::winapi_free(this->addr_array);
 
 		util::mem::winapi_free(this->heap_desc->addr);
-
 		delete this->heap_desc;
 
 		DeleteCriticalSection(&this->critical_section);
@@ -156,8 +152,6 @@ private:
 		this->rmv_addr_array(cell);
 		this->size_dlist->remove_node(cell->size_node);
 		this->addr_dlist->remove_node(cell->addr_node);
-		cell->size_node = nullptr;
-		cell->addr_node = nullptr;
 	}
 
 public:
@@ -220,7 +214,7 @@ public:
 
 	size_t rmv_used(void* address)
 	{
-		return InterlockedExchange(&this->used_cells[this->get_addr_index(address)], 0u);
+		return InterlockedExchange(&this->used_cells[this->get_addr_index(address)], NULL);
 	}
 
 	size_t get_used(void* address)

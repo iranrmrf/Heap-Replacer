@@ -14,8 +14,8 @@
 
 #include "initial_allocator/inital_allocator.h"
 
-#include "default_heap/default_heap_manager.h"
 #include "memory_pools/memory_pool_manager.h"
+#include "default_heap/default_heap_manager.h"
 #include "scrap_heap/scrap_heap_manager.h"
 
 namespace NVHR
@@ -55,10 +55,9 @@ namespace NVHR
 
 	void* __fastcall nvhr_realloc(void* address, size_t size)
 	{
-		if (address == nullptr) [[unlikely]] { return nvhr_malloc(size); }
-		size_t old_size = nvhr_mem_size(address);
-		size_t new_size = size;
-		if (old_size >= new_size) { return address; }
+		if (!address) [[unlikely]] { return nvhr_malloc(size); }
+		size_t old_size, new_size;
+		if ((old_size = nvhr_mem_size(address)) >= (new_size = size)) { return address; }
 		void* new_address = nvhr_malloc(size);
 		memcpy(new_address, address, new_size < old_size ? new_size : old_size);
 		nvhr_free(address);
@@ -67,10 +66,9 @@ namespace NVHR
 
 	void* __fastcall nvhr_recalloc(void* address, size_t count, size_t size)
 	{
-		if (address == nullptr) [[unlikely]] { return nvhr_calloc(count, size); }
-		size_t old_size = nvhr_mem_size(address);
-		size_t new_size = size * count;
-		if (old_size >= new_size)
+		if (!address) [[unlikely]] { return nvhr_calloc(count, size); }
+		size_t old_size, new_size;;
+		if ((old_size = nvhr_mem_size(address)) >= (new_size = size * count))
 		{
 			util::mem::memset8(address, NULL, new_size);
 			return address;
@@ -82,12 +80,14 @@ namespace NVHR
 
 	size_t __fastcall nvhr_mem_size(void* address)
 	{
+		if (!address) [[unlikely]] { return NULL; }
 		if (size_t size = mpm->mem_size(address)) [[likely]] { return size; }
 		return dhm->mem_size(address);
 	}
 
 	void __fastcall nvhr_free(void* address)
 	{
+		if (!address) [[unlikely]] { return; }
 		if (mpm->free(address)) [[likely]] { return; }
 		dhm->free(address);
 	}

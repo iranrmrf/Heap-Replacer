@@ -132,7 +132,7 @@ public:
 	size_t mem_size(void* address)
 	{
 		memory_pool* pool = this->pool_from_addr(address);
-		if (!pool) [[unlikely]] { return 0; }
+		if (!pool) [[unlikely]] { return NULL; }
 		return pool->mem_size(address);
 	}
 

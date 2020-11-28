@@ -57,8 +57,8 @@ public:
 
 	void join(mem_cell* other)
 	{
-		this->desc.size += other->desc.size;
 		this->desc.addr = (this->desc.addr < other->desc.addr) ? this->desc.addr : other->desc.addr;
+		this->desc.size += other->desc.size;
 	}
 
 	mem_cell* split(size_t size)

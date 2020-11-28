@@ -28,9 +28,9 @@
 
 #define NOINLINE __declspec(noinline)
 
-constexpr size_t KB = 1024 * 1u;
-constexpr size_t MB = 1024 * KB;
-constexpr size_t GB = 1024 * MB;
+constexpr size_t KB = 1024u * 1u;
+constexpr size_t MB = 1024u * KB;
+constexpr size_t GB = 1024u * MB;
 
 // FILE* file = fopen("log.log", "w");
 
@@ -119,7 +119,7 @@ namespace util
 
 		void patch_bytes(uintptr_t address, BYTE* data, DWORD size)
 		{
-			DWORD p = 0;
+			DWORD p;
 			VirtualProtect((void*)address, size, PAGE_EXECUTE_READWRITE, &p);
 			memcpy((void*)address, data, size);
 			VirtualProtect((void*)address, size, p, &p);
@@ -195,7 +195,7 @@ namespace util
 
 		void patch_nops(uintptr_t address, size_t count)
 		{
-			DWORD p = 0;
+			DWORD p;
 			VirtualProtect((void*)address, count, PAGE_EXECUTE_READWRITE, &p);
 			memset8((void*)address, 0x90, count);
 			VirtualProtect((void*)address, count, p, &p);
@@ -223,30 +223,22 @@ namespace util
 	{
 		IMAGE_DOS_HEADER* dos_header = (IMAGE_DOS_HEADER*)base;
 		IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*)(base + dos_header->e_lfanew);
-		IMAGE_DATA_DIRECTORY* data_directory = nt_headers->OptionalHeader.DataDirectory;
-		IMAGE_DATA_DIRECTORY section = data_directory[IMAGE_DIRECTORY_ENTRY_IMPORT];
+		IMAGE_DATA_DIRECTORY section = nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
 		IMAGE_IMPORT_DESCRIPTOR* import_descriptor = (IMAGE_IMPORT_DESCRIPTOR*)(base + section.VirtualAddress);
-		for (size_t i = 0; import_descriptor[i].Name != 0; i++)
+		for (size_t i = 0; import_descriptor[i].Name != NULL; i++)
 		{
-			char* curr_dll_name = (char*)(base + import_descriptor[i].Name);
-			if (!_stricmp(curr_dll_name, dll_name))
+			if (!_stricmp((char*)(base + import_descriptor[i].Name), dll_name))
 			{
-				if (!import_descriptor[i].FirstThunk)
-				{
-					return 0;
-				}
+				if (!import_descriptor[i].FirstThunk) { return nullptr; }
 				IMAGE_THUNK_DATA* name_table = (IMAGE_THUNK_DATA*)(base + import_descriptor[i].OriginalFirstThunk);
 				IMAGE_THUNK_DATA* import_table = (IMAGE_THUNK_DATA*)(base + import_descriptor[i].FirstThunk);
-				for (; name_table->u1.Ordinal != 0; ++name_table, ++import_table)
+				for (; name_table->u1.Ordinal != NULL; ++name_table, ++import_table)
 				{
 					if (!IMAGE_SNAP_BY_ORDINAL(name_table->u1.Ordinal))
 					{
 						IMAGE_IMPORT_BY_NAME* import_name = (IMAGE_IMPORT_BY_NAME*)(base + name_table->u1.ForwarderString);
 						char* func_name = &import_name->Name[0];
-						if (!_stricmp(func_name, search))
-						{
-							return &import_table->u1.AddressOfData;
-						}
+						if (!_stricmp(func_name, search)) { return &import_table->u1.AddressOfData; }
 					}
 				}
 			}
