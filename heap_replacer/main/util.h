@@ -8,6 +8,19 @@
 #pragma warning(disable:6031)
 #pragma warning(disable:6250)
 
+// ONE OF THESE NEEDS TO BE DEFINED!
+#if defined(FNV)
+	#define HR_NAME "NVHR"
+	#define HR_VERSION "1.4.0.525"
+	#define HR_GAME_QPC_HOOK (void*)0x00FDF0A0
+	#define HR_GECK_QPC_HOOK (void*)0x00D2320C
+#elif defined(FO3)
+	#define HR_NAME "F3HR"
+	#define HR_VERSION "1.7.0.3"
+	#define HR_GAME_QPC_HOOK (void*)0x00D9B0E4
+	#define HR_GECK_QPC_HOOK (void*)0x00D03208
+#endif
+
 #define HR_MSGBOX(msg) MessageBox(NULL, HR_NAME " - " msg, "Error", NULL)
 #define HR_PRINTF(msg) printf(HR_NAME " - " msg "\n")
 

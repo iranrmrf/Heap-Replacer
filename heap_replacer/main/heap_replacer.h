@@ -1,15 +1,5 @@
 #pragma once
 
-#define FNV
-
-#if defined(FNV)
-	#define HR_NAME "NVHR"
-	#define HR_VERSION "1.4.0.525"
-#elif defined(FO3)
-	#define HR_NAME "F3HR"
-	#define HR_VERSION "1.7.0.3"
-#endif
-
 #include "util.h"
 
 #include "initial_allocator/inital_allocator.h"

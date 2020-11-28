@@ -19,11 +19,7 @@ void create_loader_hook()
 {
 	BYTE* base = (BYTE*)GetModuleHandle(NULL);
 	void* address = util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter");
-#if defined(FNV)
-	if (address == (void*)0x00FDF0A0)
-#elif defined(FO3)
-	if (address == (void*)0x00D9B0E4)
-#endif
+	if (address == HR_GAME_QPC_HOOK)
 	{
 		if (util::is_LAA(base))
 		{
@@ -36,7 +32,7 @@ void create_loader_hook()
 			HR_MSGBOX("Your game is not LAA, please apply a 4GB patcher");
 		}
 	}
-	else if (address != (void*)0x00D2320C)
+	else if (address != HR_GECK_QPC_HOOK)
 	{
 		HR_MSGBOX("Incompatible game executable. Please use version (" HR_VERSION ")");
 	}
