@@ -12,7 +12,7 @@
 
 #define SH_FREE_FLAG		0x80000000u
 
-namespace ScrapHeap
+namespace scrap_heap
 {
 
 	struct scrap_heap_buffer { void* addr; size_t size;	};
@@ -26,7 +26,7 @@ namespace ScrapHeap
 		light_critical_section critical_section;
 	};
 
-	struct scrap_heap
+	struct scrap_heap_block
 	{
 		void* commit_bgn;
 		void* unused;
@@ -119,7 +119,7 @@ namespace ScrapHeap
 		leave_light_critical_section(TFCALL(&self->critical_section));
 	}
 
-	void __fastcall sh_init(TFPARAM(scrap_heap* self, size_t size))
+	void __fastcall sh_init(TFPARAM(scrap_heap_block* self, size_t size))
 	{
 		self->commit_bgn = shm_request_buffer(TFCALL(shm, &size));
 		self->unused = self->commit_bgn;
@@ -127,17 +127,17 @@ namespace ScrapHeap
 		self->last_chunk = nullptr;
 	}
 
-	void __fastcall sh_init_0x10000(TFPARAM(scrap_heap* self))
+	void __fastcall sh_init_0x10000(TFPARAM(scrap_heap_block* self))
 	{
 		sh_init(TFCALL(self, SH_BUFFER_MIN_SIZE));
 	}
 
-	void __fastcall sh_init_var(TFPARAM(scrap_heap* self, size_t size))
+	void __fastcall sh_init_var(TFPARAM(scrap_heap_block* self, size_t size))
 	{
 		sh_init(TFCALL(self, util::align(size, SH_BUFFER_MIN_SIZE)));
 	}
 
-	void* __fastcall sh_alloc(TFPARAM(scrap_heap* self, size_t size, size_t alignment))
+	void* __fastcall sh_alloc(TFPARAM(scrap_heap_block* self, size_t size, size_t alignment))
 	{
 		void* body = (void*)util::align(UPTRSUM(self->unused, sizeof(scrap_heap_chunk)), alignment);
 		void* desired_end = VPTRSUM(body, size);
@@ -150,8 +150,15 @@ namespace ScrapHeap
 				new_size <<= 2;
 				if (new_size > SH_BUFFER_MAX_SIZE) [[unlikely]]
 				{
-					HR_MSGBOX("Scrap heap failed to grow!");
-					return nullptr;
+					if (VPTRSUM(self->commit_bgn, SH_BUFFER_MAX_SIZE) <= desired_end)
+					{
+						new_size = SH_BUFFER_MAX_SIZE;
+					}
+					else
+					{
+						HR_MSGBOX("Scrap heap failed to grow!");
+						return nullptr;
+					}				
 				}
 			}
 			VirtualAlloc(self->commit_end, new_size - old_size, MEM_COMMIT, PAGE_READWRITE);
@@ -165,7 +172,7 @@ namespace ScrapHeap
 		return body;
 	}
 
-	void __fastcall sh_free(TFPARAM(scrap_heap* self, void* address))
+	void __fastcall sh_free(TFPARAM(scrap_heap_block* self, void* address))
 	{
 		scrap_heap_chunk* chunk = (scrap_heap_chunk*)UPTRDIFF(address, sizeof(scrap_heap_chunk));
 		if (address && !(chunk->size & SH_FREE_FLAG)) [[likely]]
@@ -182,19 +189,17 @@ namespace ScrapHeap
 		}
 	}
 
-	void __fastcall sh_purge(TFPARAM(scrap_heap* self))
+	void __fastcall sh_purge(TFPARAM(scrap_heap_block* self))
 	{
 		shm_release_buffer(TFCALL(shm, self->commit_bgn, UPTRDIFF(self->commit_end, self->commit_bgn)));
 		self->commit_bgn = nullptr;
 		self->unused = nullptr;
-		self->commit_end = nullptr;
-		self->last_chunk = nullptr;
 	}
 
-	scrap_heap* __fastcall get_thread_scrap_heap(TFPARAM(void* self))
+	scrap_heap_block* __fastcall get_thread_scrap_heap(TFPARAM(void* self))
 	{
 		DWORD id = GetCurrentThreadId();
-		scrap_heap* sh;
+		scrap_heap_block* sh;
 		if (sh = mt_sh_vector->find(id)) [[likely]] { return sh; }
 		sh = (scrap_heap_block*)nvhr::nvhr_malloc(sizeof(scrap_heap_block));
 		sh_init_0x10000(TFCALL(sh));

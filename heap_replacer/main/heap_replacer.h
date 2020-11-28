@@ -179,18 +179,18 @@ namespace nvhr
 		util::mem::patch_jmp(0x40FBF0, &enter_light_critical_section);
 		util::mem::patch_jmp(0x40FBA0, &leave_light_critical_section);
 
-		util::mem::patch_jmp(0xAA58D0, &ScrapHeap::shm_ctor);
+		util::mem::patch_jmp(0xAA58D0, &scrap_heap::shm_ctor);
 		util::mem::patch_ret(0x866D10);
 		util::mem::patch_ret(0xAA5C80);
 
-		util::mem::patch_jmp(0xAA53F0, &ScrapHeap::sh_init_0x10000);
-		util::mem::patch_jmp(0xAA5410, &ScrapHeap::sh_init_var);	
-		util::mem::patch_jmp(0xAA54A0, &ScrapHeap::sh_alloc);
-		util::mem::patch_jmp(0xAA5610, &ScrapHeap::sh_free);
-		util::mem::patch_jmp(0xAA5460, &ScrapHeap::sh_purge);
+		util::mem::patch_jmp(0xAA53F0, &scrap_heap::sh_init_0x10000);
+		util::mem::patch_jmp(0xAA5410, &scrap_heap::sh_init_var);
+		util::mem::patch_jmp(0xAA54A0, &scrap_heap::sh_alloc);
+		util::mem::patch_jmp(0xAA5610, &scrap_heap::sh_free);
+		util::mem::patch_jmp(0xAA5460, &scrap_heap::sh_purge);
 
 		util::mem::patch_nops(0xAA38CA, 0xAA38E8 - 0xAA38CA);
-		util::mem::patch_jmp(0xAA42E0, &ScrapHeap::get_thread_scrap_heap);
+		util::mem::patch_jmp(0xAA42E0, &scrap_heap::get_thread_scrap_heap);
 
 		util::mem::patch_nop_call(0xAA3060);
 
@@ -226,18 +226,18 @@ namespace nvhr
 		util::mem::patch_jmp(0x409A80, &enter_light_critical_section); 
 		//util::mem::patch_jmp(0x0, &leave_light_critical_section);
 
-		util::mem::patch_jmp(0x86C600, &ScrapHeap::shm_ctor);
+		util::mem::patch_jmp(0x86C600, &scrap_heap::shm_ctor);
 		util::mem::patch_ret(0x6E1CD0);
 		util::mem::patch_ret(0x86CA30);
 
-		util::mem::patch_jmp(0x86CB70, &ScrapHeap::sh_init_0x10000);
-		util::mem::patch_jmp(0x86CB90, &ScrapHeap::sh_init_var);
-		util::mem::patch_jmp(0x86C710, &ScrapHeap::sh_alloc);
-		util::mem::patch_jmp(0x86C7B0, &ScrapHeap::sh_free);
-		util::mem::patch_jmp(0x86CAA0, &ScrapHeap::sh_purge);
+		util::mem::patch_jmp(0x86CB70, &scrap_heap::sh_init_0x10000);
+		util::mem::patch_jmp(0x86CB90, &scrap_heap::sh_init_var);
+		util::mem::patch_jmp(0x86C710, &scrap_heap::sh_alloc);
+		util::mem::patch_jmp(0x86C7B0, &scrap_heap::sh_free);
+		util::mem::patch_jmp(0x86CAA0, &scrap_heap::sh_purge);
 
 		util::mem::patch_nops(0x86C038, 0x86C086 - 0x86C038);
-		util::mem::patch_jmp(0x86BCB0, &ScrapHeap::get_thread_scrap_heap);
+		util::mem::patch_jmp(0x86BCB0, &scrap_heap::get_thread_scrap_heap);
 
 		util::mem::patch_nop_call(0x6E9B30);
 		util::mem::patch_nop_call(0x7FACDB);

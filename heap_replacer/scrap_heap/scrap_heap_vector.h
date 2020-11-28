@@ -2,15 +2,15 @@
 
 #include "main/util.h"
 
-namespace ScrapHeap
+namespace scrap_heap
 {
 
-	struct scrap_heap;
+	struct scrap_heap_block;
 
 	struct mt_sh
 	{
 		DWORD id;
-		scrap_heap* sh;
+		scrap_heap_block* sh;
 	};
 
 	class scrap_heap_vector
@@ -39,7 +39,7 @@ namespace ScrapHeap
 			nvhr::nvhr_free(this->data);
 		}
 
-		void insert(DWORD id, scrap_heap* sh)
+		void insert(DWORD id, scrap_heap_block* sh)
 		{
 			ECS(&this->lock_id);
 			if (this->size >= this->alloc)
@@ -54,7 +54,7 @@ namespace ScrapHeap
 			LCS(&this->lock_id);
 		}
 
-		scrap_heap* find(DWORD id)
+		scrap_heap_block* find(DWORD id)
 		{
 			ECS(&this->lock_id);
 			for (size_t i = 0; i < this->size; i++)
