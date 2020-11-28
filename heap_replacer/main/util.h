@@ -34,7 +34,7 @@ constexpr size_t GB = 1024u * MB;
 
 // FILE* file = fopen("log.log", "w");
 
-namespace NVHR
+namespace nvhr
 {
 
 	void* __fastcall nvhr_malloc(size_t size);
@@ -48,22 +48,22 @@ namespace NVHR
 
 void* __cdecl operator new(size_t size)
 {
-	return NVHR::nvhr_malloc(size);
+	return nvhr::nvhr_malloc(size);
 }
 
 void* __cdecl operator new[](size_t size)
 {
-	return NVHR::nvhr_malloc(size);
+	return nvhr::nvhr_malloc(size);
 }
 
 void __cdecl operator delete(void* address)
 {
-	NVHR::nvhr_free(address);
+	nvhr::nvhr_free(address);
 }
 
 void __cdecl operator delete[](void* address)
 {
-	NVHR::nvhr_free(address);
+	nvhr::nvhr_free(address);
 }
 
 namespace util

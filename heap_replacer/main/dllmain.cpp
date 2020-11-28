@@ -1,6 +1,9 @@
 #include "loader.h"
 
-void nvhr() { }
+namespace nvhr
+{
+	void nvhr() { }
+}
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 {

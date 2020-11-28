@@ -30,13 +30,13 @@ namespace ScrapHeap
 
 		scrap_heap_vector(size_t size) : size(0), alloc(size)
 		{
-			this->data = (mt_sh*)NVHR::nvhr_calloc(this->alloc, sizeof(mt_sh));
+			this->data = (mt_sh*)nvhr::nvhr_calloc(this->alloc, sizeof(mt_sh));
 			this->lock_id = NULL;
 		}
 
 		~scrap_heap_vector()
 		{
-			NVHR::nvhr_free(this->data);
+			nvhr::nvhr_free(this->data);
 		}
 
 		void insert(DWORD id, scrap_heap* sh)
@@ -45,9 +45,9 @@ namespace ScrapHeap
 			if (this->size >= this->alloc)
 			{
 				this->alloc <<= 1;
-				mt_sh* temp = (mt_sh*)NVHR::nvhr_realloc(this->data, this->alloc * sizeof(mt_sh));
+				mt_sh* temp = (mt_sh*)nvhr::nvhr_realloc(this->data, this->alloc * sizeof(mt_sh));
 				memmove(temp, this->data, this->size * sizeof(mt_sh));
-				NVHR::nvhr_free(this->data);
+				nvhr::nvhr_free(this->data);
 				this->data = temp;
 			}
 			this->data[size++] = mt_sh({ id, sh });

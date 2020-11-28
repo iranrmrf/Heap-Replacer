@@ -18,7 +18,7 @@
 #include "default_heap/default_heap_manager.h"
 #include "scrap_heap/scrap_heap_manager.h"
 
-namespace NVHR
+namespace nvhr
 {
 
 	memory_pool_manager* mpm;

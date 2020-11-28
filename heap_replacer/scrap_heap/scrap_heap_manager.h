@@ -196,7 +196,7 @@ namespace ScrapHeap
 		DWORD id = GetCurrentThreadId();
 		scrap_heap* sh;
 		if (sh = mt_sh_vector->find(id)) [[likely]] { return sh; }
-		sh = (scrap_heap*)NVHR::nvhr_malloc(sizeof(scrap_heap));
+		sh = (scrap_heap_block*)nvhr::nvhr_malloc(sizeof(scrap_heap_block));
 		sh_init_0x10000(TFCALL(sh));
 		mt_sh_vector->insert(id, sh);
 		return sh;

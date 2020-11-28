@@ -7,7 +7,7 @@
 BOOL WINAPI qpc_hook(LARGE_INTEGER* lpPerformanceCount)
 {
 	HR_PRINTF("Applying hooks.");
-	NVHR::apply_heap_hooks();
+	nvhr::apply_heap_hooks();
 	BYTE* base = (BYTE*)GetModuleHandle(NULL);
 	void* address = util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter");
 	HR_PRINTF("Cleaning QPC hook...");
