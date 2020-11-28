@@ -164,7 +164,7 @@ public:
 
 	void add_free_cell(mem_cell* cell)
 	{
-		ECS(&this->critical_section);
+		EnterCriticalSection(&this->critical_section);
 		this->add_free_cell_addr(cell);
 		mem_cell* temp;
 		if ((temp = cell->addr_node->prev->cell) && cell->is_adjacent_to(temp)) [[unlikely]]
@@ -184,14 +184,14 @@ public:
 		this->add_addr_array(cell);
 		this->add_free_cell_size(cell);
 		this->add_size_array(cell);
-		LCS(&this->critical_section);
+		LeaveCriticalSection(&this->critical_section);
 	}
 
 	mem_cell* get_free_cell(size_t size)
 	{
 		size = util::align(size, HEAP_CELL_SIZE);
 		mem_cell* cell;
-		ECS(&this->critical_section);
+		EnterCriticalSection(&this->critical_section);
 		while (!(cell = this->size_array[this->get_size_index(size)])) [[unlikely]]
 		{
 			this->add_free_cell(this->commit());
@@ -209,7 +209,7 @@ public:
 			this->add_size_array(cell);
 			cell = split;
 		}
-		LCS(&this->critical_section);
+		LeaveCriticalSection(&this->critical_section);
 		return cell;
 	}
 

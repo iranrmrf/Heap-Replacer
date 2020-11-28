@@ -14,8 +14,8 @@
 #define TFPARAM(self, ...) self, void* _, __VA_ARGS__
 #define TFCALL(self, ...) self, nullptr, __VA_ARGS__
 
-#define ECS(cs) EnterCriticalSection(cs)
-#define LCS(cs) LeaveCriticalSection(cs)
+#define ECS(v) while (InterlockedCompareExchange(v, 1, NULL));
+#define LCS(v) *v = NULL;
 
 #define BITWISE_NULLIFIER(c, v) ((DWORD)(v) & ((!(c)) - 1))
 #define BITWISE_IF_ELSE(c, t, f) ((BITWISE_NULLIFIER((c), (t))) + (BITWISE_NULLIFIER((!(c)), (f))))

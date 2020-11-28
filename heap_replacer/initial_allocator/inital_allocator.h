@@ -20,7 +20,7 @@ private:
 
 private:
 
-	CRITICAL_SECTION critical_section;
+	DWORD lock_id;
 
 public:
 
@@ -31,13 +31,11 @@ public:
 
 		this->last_alloc = this->ina_bgn;
 
-		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
+		this->lock_id = NULL;
 	}
 
 	~initial_allocator()
 	{
-
-		DeleteCriticalSection(&this->critical_section);
 		util::mem::winapi_free(this->ina_bgn);
 	}
 
@@ -45,12 +43,12 @@ public:
 	{
 		void* new_last_alloc = VPTRSUM(this->last_alloc, size + 4);
 		if (new_last_alloc > this->ina_end) { return nullptr; }
-		ECS(&this->critical_section);
+		ECS(&this->lock_id);
 		*(size_t*)this->last_alloc = size;
 		void* address = VPTRSUM(this->last_alloc, 4);
 		this->last_alloc = util::align(new_last_alloc, 4);
 		++this->count;
-		LCS(&this->critical_section);
+		LCS(&this->lock_id);
 		return address;
 	}
 

@@ -36,7 +36,7 @@ private:
 
 private:
 
-	CRITICAL_SECTION critical_section;
+	DWORD lock_id;
 
 public:
 
@@ -50,7 +50,7 @@ public:
 		this->free_cells = (cell*)util::mem::winapi_calloc(this->max_cell_count, sizeof(cell));
 		this->next_free = this->free_cells;
 
-		InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
+		this->lock_id = NULL;
 	}
 
 	~memory_pool()
@@ -58,8 +58,6 @@ public:
 		VirtualFree(this->free_cells, NULL, MEM_RELEASE);
 
 		VirtualFree(this->pool_bgn, NULL, MEM_RELEASE);
-
-		DeleteCriticalSection(&this->critical_section);
 	}
 
 	void* memory_pool_init()
@@ -109,12 +107,12 @@ public:
 
 	void* malloc()
 	{
-		ECS(&this->critical_section);
+		ECS(&this->lock_id);
 		if (!this->next_free->next) [[unlikely]]
 		{
 			if (this->pool_cur == this->pool_end) [[unlikely]]
 			{
-				LCS(&this->critical_section);
+				LCS(&this->lock_id);
 				return nullptr;
 			}
 			this->setup_new_block();
@@ -122,7 +120,7 @@ public:
 		cell* old_free = this->next_free;
 		this->next_free = this->next_free->next;
 		old_free->next = nullptr;
-		LCS(&this->critical_section);
+		LCS(&this->lock_id);
 		return this->free_ptr_to_real(old_free);
 	}
 
@@ -141,13 +139,13 @@ public:
 	void free(void* address)
 	{
 		cell* c = (cell*)this->real_to_free_ptr(address);
-		ECS(&this->critical_section);
+		ECS(&this->lock_id);
 		if (!c->next) [[likely]]
 		{
 			c->next = this->next_free;
 			this->next_free = c;
 		}
-		LCS(&this->critical_section);
+		LCS(&this->lock_id);
 	}
 
 	void* operator new(size_t size)

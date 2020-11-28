@@ -24,27 +24,24 @@ namespace ScrapHeap
 
 	private:
 
-		CRITICAL_SECTION critical_section;
+		DWORD lock_id;
 
 	public:
 
 		scrap_heap_vector(size_t size) : size(0), alloc(size)
 		{
 			this->data = (mt_sh*)NVHR::nvhr_calloc(this->alloc, sizeof(mt_sh));
-
-			InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
+			this->lock_id = NULL;
 		}
 
 		~scrap_heap_vector()
 		{
 			NVHR::nvhr_free(this->data);
-
-			DeleteCriticalSection(&this->critical_section);
 		}
 
 		void insert(DWORD id, scrap_heap* sh)
 		{
-			ECS(&this->critical_section);
+			ECS(&this->lock_id);
 			if (this->size >= this->alloc)
 			{
 				this->alloc <<= 1;
@@ -54,21 +51,21 @@ namespace ScrapHeap
 				this->data = temp;
 			}
 			this->data[size++] = mt_sh({ id, sh });
-			LCS(&this->critical_section);
+			LCS(&this->lock_id);
 		}
 
 		scrap_heap* find(DWORD id)
 		{
-			ECS(&this->critical_section);
+			ECS(&this->lock_id);
 			for (size_t i = 0; i < this->size; i++)
 			{
 				if (this->data[i].id == id)
 				{
-					LCS(&this->critical_section);
+					LCS(&this->lock_id);
 					return this->data[i].sh;
 				}
 			}
-			LCS(&this->critical_section);
+			LCS(&this->lock_id);
 			return nullptr;
 		}
 
