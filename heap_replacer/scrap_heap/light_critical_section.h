@@ -16,7 +16,6 @@ public:
 	~light_critical_section();
 
 	void lock(const char* msg);
-	bool try_lock();
 	void unlock();
 
 };

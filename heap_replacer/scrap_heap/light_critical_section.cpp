@@ -27,26 +27,6 @@ void light_critical_section::lock(const char* msg)
 	}
 }
 
-bool light_critical_section::try_lock()
-{
-	bool retval = false;
-	DWORD id = GetCurrentThreadId();
-	if (this->thread_id == id)
-	{
-		this->lock_count++;
-		retval = true;
-	}
-	else
-	{
-		retval = !InterlockedCompareExchange(&this->thread_id, id, 0u);
-		if (retval)
-		{
-			this->lock_count = 1;
-		}
-	}
-	return retval;
-}
-
 void light_critical_section::unlock()
 {
 	if (!--this->lock_count)

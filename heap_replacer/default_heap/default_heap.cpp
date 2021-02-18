@@ -227,7 +227,7 @@ mem_cell* default_heap::create_new_block()
 	size_t index = this->get_free_block_index(address);
 	if (index == -1) { HR_MSGBOX("ERROR!"); return nullptr; }
 
-	this->block_desc[index] = cell_desc(address, default_heap_block_size, index);
+	this->block_desc[index] = { address, default_heap_block_size, index };
 	this->addr_clist[index] = new cell_list();
 	this->addr_array[index] = (mem_cell**)util::winapi_calloc(default_heap_cell_count, sizeof(mem_cell*));
 	this->used_cells[index] = (size_t*)util::winapi_calloc(default_heap_cell_count, sizeof(size_t));
