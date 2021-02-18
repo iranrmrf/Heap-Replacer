@@ -2,30 +2,7 @@
 
 #include "main/util.h"
 
-#include "cell_list.h"
-
-struct cell_desc
-{
-
-	void* addr;
-	size_t size;
-
-	cell_desc(void* addr, size_t size) : addr(addr), size(size)
-	{
-
-	}
-
-	void* get_end()
-	{
-		return VPTRSUM(this->addr, this->size);
-	}
-
-	bool is_in_range(void* address)
-	{
-		return ((this->addr <= address) & (address < this->get_end()));
-	}
-
-};
+#include "cell_desc.h"
 
 class cell_node;
 
@@ -40,41 +17,15 @@ public:
 
 public:
 
-	mem_cell(void* address, size_t size) : size_node(nullptr), addr_node(nullptr), desc(address, size)
-	{
+	mem_cell(void* address, size_t size, size_t index);
+	~mem_cell();
 
-	}
+	bool precedes(mem_cell* cell);
 
-	~mem_cell()
-	{
+	void join(mem_cell* other);
+	mem_cell* split(size_t size);
 
-	}
-
-	bool is_adjacent_to(mem_cell* cell)
-	{
-		return ((this->desc.addr == cell->desc.get_end()) | (cell->desc.addr == this->desc.get_end()));
-	}
-
-	void join(mem_cell* other)
-	{
-		this->desc.addr = (this->desc.addr < other->desc.addr) ? this->desc.addr : other->desc.addr;
-		this->desc.size += other->desc.size;
-	}
-
-	mem_cell* split(size_t size)
-	{
-		this->desc.size -= size;
-		return new mem_cell(this->desc.get_end(), size);
-	}
-
-	bool swap_by_size(mem_cell* cell)
-	{
-		return (this->desc.size < cell->desc.size) | ((this->desc.size == cell->desc.size) & (this->desc.addr < cell->desc.addr));
-	}
-
-	bool swap_by_addr(mem_cell* cell)
-	{
-		return (this->desc.addr < cell->desc.addr);
-	}
+	bool swap_by_size(mem_cell* cell);
+	bool swap_by_addr(mem_cell* cell);
 
 };
