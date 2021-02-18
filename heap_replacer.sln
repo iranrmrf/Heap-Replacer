@@ -7,9 +7,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "heap_replacer", "heap_repla
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		No ops|x86 = No ops|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B4BEA3C-8ED2-4E05-819B-95155A9B58FC}.No ops|x86.ActiveCfg = No ops|Win32
+		{8B4BEA3C-8ED2-4E05-819B-95155A9B58FC}.No ops|x86.Build.0 = No ops|Win32
 		{8B4BEA3C-8ED2-4E05-819B-95155A9B58FC}.Release|x86.ActiveCfg = Release|Win32
 		{8B4BEA3C-8ED2-4E05-819B-95155A9B58FC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection

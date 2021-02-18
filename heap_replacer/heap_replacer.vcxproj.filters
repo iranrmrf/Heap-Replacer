@@ -21,11 +21,50 @@
     <ClCompile Include="main\d3dx9_exports.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="default_heap\cell_list.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="default_heap\cell_node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="default_heap\mem_cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main\util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="default_heap\cell_desc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="default_heap\default_heap_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="default_heap\default_heap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="initial_allocator\initial_allocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memory_pools\memory_pool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memory_pools\memory_pool_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scrap_heap\light_critical_section.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scrap_heap\scrap_heap_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scrap_heap\scrap_heap_block.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scrap_heap\scrap_heap_vector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main\loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="default_heap\cell_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -53,13 +92,31 @@
     <ClInclude Include="main\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="initial_allocator\inital_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scrap_heap\light_critical_section.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scrap_heap\scrap_heap_vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="default_heap\cell_node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="default_heap\cell_desc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="initial_allocator\initial_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_pools\memory_pool_constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="default_heap\default_heap_constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scrap_heap\scrap_heap_constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scrap_heap\scrap_heap_block.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
