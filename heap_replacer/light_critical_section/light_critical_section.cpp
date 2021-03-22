@@ -1,6 +1,6 @@
 #include "light_critical_section.h"
 
-light_critical_section::light_critical_section() : thread_id(0), lock_count(0)
+light_critical_section::light_critical_section() : thread_id(0u), lock_count(0u)
 {
 
 }
@@ -10,7 +10,12 @@ light_critical_section::~light_critical_section()
 
 }
 
-void light_critical_section::lock(const char* msg)
+void light_critical_section::lock()
+{
+	this->lock_game(nullptr);
+}
+
+void light_critical_section::lock_game(const char* msg)
 {
 	DWORD id = GetCurrentThreadId();
 	if (this->thread_id == id)
@@ -23,7 +28,7 @@ void light_critical_section::lock(const char* msg)
 		{
 			Sleep(0u);
 		}
-		this->lock_count = 1;
+		this->lock_count = 1u;
 	}
 }
 

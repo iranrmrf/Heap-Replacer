@@ -15,7 +15,8 @@ public:
 	light_critical_section();
 	~light_critical_section();
 
-	void lock(const char* msg);
+	void lock();
+	void lock_game(const char* msg);
 	void unlock();
 
 };
