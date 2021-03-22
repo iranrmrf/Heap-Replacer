@@ -2,6 +2,8 @@
 
 #include "main/util.h"
 
+#include "light_critical_section/light_critical_section.h"
+
 #include "cell_list.h"
 
 class default_heap
@@ -15,7 +17,7 @@ private:
 	mem_cell** size_array;
 	mem_cell*** addr_array;
 
-	volatile size_t** used_cells;
+	size_t** used_cells;
 
 private:
 
@@ -23,7 +25,13 @@ private:
 
 private:
 
-	CRITICAL_SECTION critical_section;
+	size_t used_size;
+	size_t curr_size;
+	size_t free_blocks;
+
+private:
+
+	light_critical_section critical_section;
 
 public:
 
@@ -67,5 +75,14 @@ private:
 
 	size_t get_free_block_index(void* address);
 	mem_cell* create_new_block();
+
+public:
+
+	size_t get_used_size() { return this->used_size; }
+	size_t get_free_size() { return this->curr_size - this->used_size; }
+	size_t get_curr_size() { return this->curr_size; }
+	size_t get_free_blocks() { return this->size_clist->get_size(); }
+
+	size_t get_addr_size_by_index(size_t index) { return this->used_cells[0u][index]; }
 
 };

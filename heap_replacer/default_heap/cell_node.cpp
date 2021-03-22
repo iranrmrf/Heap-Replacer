@@ -1,6 +1,6 @@
 #include "cell_node.h"
 
-cell_node::cell_node(mem_cell* cell) : next(nullptr), prev(nullptr), cell(cell), array_index(-1)
+cell_node::cell_node(mem_cell* cell) : next(nullptr), prev(nullptr), cell(cell), array_index(0xFFFFFFFF)
 {
 
 }

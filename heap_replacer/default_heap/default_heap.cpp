@@ -1,6 +1,6 @@
 #include "default_heap.h"
 
-default_heap::default_heap()
+default_heap::default_heap() : critical_section(), used_size(0u), curr_size(0u), free_blocks(0u)
 {
 	this->size_clist = new cell_list();
 	this->addr_clist = (cell_list**)util::winapi_calloc(default_heap_block_count, sizeof(cell_list*));
@@ -10,16 +10,14 @@ default_heap::default_heap()
 
 	this->block_desc = (cell_desc*)util::winapi_calloc(default_heap_block_count, sizeof(cell_desc));
 
-	this->used_cells = (volatile size_t**)util::winapi_calloc(default_heap_block_count, sizeof(volatile size_t*));
-
-	InitializeCriticalSectionEx(&this->critical_section, ~RTL_CRITICAL_SECTION_ALL_FLAG_BITS, RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO);
+	this->used_cells = (size_t**)util::winapi_calloc(default_heap_block_count, sizeof(size_t*));
 }
 
 default_heap::~default_heap()
 {
 	delete this->size_clist;
 
-	for (size_t i = 0; i < default_heap_block_count; i++)
+	for (size_t i = 0u; i < default_heap_block_count; i++)
 	{
 		delete this->addr_clist[i];
 	}
@@ -27,9 +25,9 @@ default_heap::~default_heap()
 
 	util::winapi_free(this->size_array);
 
-	for (size_t i = 0; i < default_heap_block_count; i++)
+	for (size_t i = 0u; i < default_heap_block_count; i++)
 	{
-		for (size_t j = 0; j < default_heap_cell_count; j++)
+		for (size_t j = 0u; j < default_heap_cell_count; j++)
 		{
 			delete this->addr_array[i][j];
 		}
@@ -39,13 +37,11 @@ default_heap::~default_heap()
 
 	util::winapi_free(this->block_desc);
 
-	for (size_t i = 0; i < default_heap_block_count; i++)
+	for (size_t i = 0u; i < default_heap_block_count; i++)
 	{
-		util::winapi_free((void*)this->used_cells[i]);
+		util::winapi_free(this->used_cells[i]);
 	}
 	util::winapi_free(this->used_cells);
-
-	DeleteCriticalSection(&this->critical_section);
 }
 
 size_t default_heap::get_size_index(size_t size)
@@ -134,7 +130,8 @@ void default_heap::rmv_free_cell(mem_cell* cell)
 
 void default_heap::add_free_cell(mem_cell* cell)
 {
-	EnterCriticalSection(&this->critical_section);
+	this->critical_section.lock();
+	this->used_size -= cell->desc.size;
 	this->add_free_cell_addr(cell);
 	mem_cell* temp;
 	if ((temp = cell->addr_node->prev->cell) && temp->precedes(cell)) [[unlikely]]
@@ -154,14 +151,14 @@ void default_heap::add_free_cell(mem_cell* cell)
 	this->add_addr_array(cell);
 	this->add_free_cell_size(cell);
 	this->add_size_array(cell);
-	LeaveCriticalSection(&this->critical_section);
+	this->critical_section.unlock();
 }
 
 mem_cell* default_heap::get_free_cell(size_t size)
 {
 	size = util::align<default_heap_cell_size>(size);
 	mem_cell* cell;
-	EnterCriticalSection(&this->critical_section);
+	this->critical_section.lock();
 	while (!(cell = this->size_array[this->get_size_index(size)])) [[unlikely]]
 	{
 		this->add_free_cell(this->create_new_block());
@@ -179,7 +176,8 @@ mem_cell* default_heap::get_free_cell(size_t size)
 		this->add_size_array(cell);
 		cell = split;
 	}
-	LeaveCriticalSection(&this->critical_section);
+	this->used_size += cell->desc.size;
+	this->critical_section.unlock();
 	return cell;
 }
 
@@ -189,7 +187,7 @@ size_t default_heap::get_block_index(void* address)
 	{
 		if (this->block_desc[i].is_in_range(address)) { return i; }
 	}
-	return -1;
+	return default_heap_block_count;
 }
 
 size_t default_heap::get_block_index(mem_cell* cell)
@@ -225,14 +223,15 @@ mem_cell* default_heap::create_new_block()
 {
 	void* address = VirtualAlloc(nullptr, default_heap_block_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	size_t index = this->get_free_block_index(address);
-	if (index == -1) { HR_MSGBOX("ERROR!"); return nullptr; }
+	if (index == default_heap_block_count) { HR_MSGBOX("ERROR!"); return nullptr; }
 
 	this->block_desc[index] = { address, default_heap_block_size, index };
 	this->addr_clist[index] = new cell_list();
 	this->addr_array[index] = (mem_cell**)util::winapi_calloc(default_heap_cell_count, sizeof(mem_cell*));
 	this->used_cells[index] = (size_t*)util::winapi_calloc(default_heap_cell_count, sizeof(size_t));
 
-	printf("%p, %08X, %d\n", address, default_heap_block_size, index);
+	this->curr_size += default_heap_block_size;
+	this->used_size += default_heap_block_size;
 
 	return new mem_cell(address, default_heap_block_size, index);
 }
