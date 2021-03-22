@@ -12,6 +12,7 @@ private:
 
 	cell_node* fake_head;
 	cell_node* fake_tail;
+	size_t size;
 
 public:
 
@@ -29,6 +30,7 @@ public:
 
 	void remove_node(cell_node* node);
 
+	size_t get_size();
 	bool is_empty();
 
 };

@@ -1,6 +1,6 @@
 #include "cell_list.h"
 
-cell_list::cell_list()
+cell_list::cell_list() : size(0u)
 {
 	this->fake_head = new cell_node(nullptr);
 	this->fake_tail = new cell_node(nullptr);
@@ -25,29 +25,39 @@ cell_node* cell_list::get_tail()
 
 cell_node* cell_list::add_head(mem_cell* cell)
 {
+	this->size++;
 	return (new cell_node(cell))->link(this->fake_head, this->fake_head->next);
 }
 
 cell_node* cell_list::add_tail(mem_cell* cell)
 {
+	this->size++;
 	return (new cell_node(cell))->link(this->fake_tail->prev, this->fake_tail);
 }
 
 cell_node* cell_list::insert_before(cell_node* position, mem_cell* cell)
 {
+	this->size++;
 	return (new cell_node(cell))->link(position->prev, position);
 }
 
 cell_node* cell_list::insert_after(cell_node* position, mem_cell* cell)
 {
+	this->size++;
 	return (new cell_node(cell))->link(position, position->next);
 }
 
 void cell_list::remove_node(cell_node* node)
 {
+	this->size--;
 	node->prev->next = node->next;
 	node->next->prev = node->prev;
 	delete node;
+}
+
+size_t cell_list::get_size()
+{
+	return this->size;
 }
 
 bool cell_list::is_empty()
