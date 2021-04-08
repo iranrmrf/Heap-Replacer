@@ -10,9 +10,6 @@
 #include "graph_data.h"
 #include "color_array.h"
 
-#include "imgui/imgui_impl_win32.h"
-#include "imgui/imgui_impl_dx9.h"
-
 #include <d3d9.h>
 #include <dinput.h>
 
@@ -101,6 +98,7 @@ private:
 	bool* bools[CHECKBOX_COUNT] = { &this->enable_overlay_fps, &this->enable_overlay_frametime, &this->enable_overlay_mouse_pos };
 	const char* templates[CHECKBOX_COUNT] = { " 0000.0 FPS ", " 000.00 ms ", " (-1000, -1000) " };
 
+#ifdef HR_USE_GUI
 	typedef void (get_data)(char*);
 	get_data* ops[CHECKBOX_COUNT] =
 	{
@@ -108,6 +106,7 @@ private:
 		[](char* buff) { sprintf(buff, "%.2f ms", 1000.0f / ImGui::GetIO().Framerate); },
 		[](char* buff) { POINT p; GetCursorPos(&p); sprintf(buff, "(%04d, %04d)", p.x, p.y); }
 	};
+#endif
 
 private:
 
