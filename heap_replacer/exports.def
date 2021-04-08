@@ -1,10 +1,10 @@
 LIBRARY	"d3dx9_38"
-VERSION 2.5
+VERSION 3.0
 EXPORTS
-	nvhr
-	nvhr_malloc
-	nvhr_calloc
-	nvhr_realloc
-	nvhr_recalloc
-	nvhr_mem_size
-	nvhr_free
+	hr
+	hr_malloc
+	hr_calloc
+	hr_realloc
+	hr_recalloc
+	hr_mem_size
+	hr_free
