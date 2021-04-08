@@ -19,6 +19,9 @@ private:
 
 public:
 	
+	scrap_heap_block();
+	~scrap_heap_block();
+
 	void init(size_t size);
 	void init_0x10000();
 	void init_var(size_t size);

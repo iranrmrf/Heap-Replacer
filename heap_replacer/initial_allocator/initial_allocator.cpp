@@ -1,8 +1,8 @@
 #include "initial_allocator.h"
 
-initial_allocator::initial_allocator(size_t size) : size(size), count(0)
+initial_allocator::initial_allocator(size_t size) : size(size), count(0u)
 {
-	this->ina_bgn = util::winapi_calloc(1, size);
+	this->ina_bgn = util::winapi_calloc(1u, size);
 	this->ina_end = VPTRSUM(this->ina_bgn, size);
 
 	this->last_alloc = this->ina_bgn;
@@ -43,7 +43,7 @@ void initial_allocator::free(void* address)
 
 size_t initial_allocator::mem_size(void* address)
 {
-	return (this->is_in_range(address)) ? *((size_t*)address - 1) : 0u;
+	return (this->is_in_range(address)) ? *((size_t*)address - 1u) : 0u;
 }
 
 bool initial_allocator::is_in_range(void* address)

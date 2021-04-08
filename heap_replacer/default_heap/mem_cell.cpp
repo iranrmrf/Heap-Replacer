@@ -29,7 +29,7 @@ mem_cell* mem_cell::split(size_t size)
 
 bool mem_cell::swap_by_size(mem_cell* cell)
 {
-	return (this->desc.size < cell->desc.size) | ((this->desc.size == cell->desc.size) & (this->desc.addr < cell->desc.addr));
+	return ((this->desc.size < cell->desc.size) | ((this->desc.size == cell->desc.size) & (this->desc.addr < cell->desc.addr)));
 }
 
 bool mem_cell::swap_by_addr(mem_cell* cell)

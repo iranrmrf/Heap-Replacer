@@ -12,6 +12,8 @@ public:
 	void* addr;
 	size_t size : size_bits, index : index_bits;
 
+public:
+
 	cell_desc(void* addr, size_t size, size_t index);
 	~cell_desc();
 

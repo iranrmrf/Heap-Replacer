@@ -66,7 +66,7 @@
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessorDefinitions>FNV;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>FO3;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -103,8 +103,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dx9\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
@@ -136,7 +135,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessorDefinitions>FNV;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>FO3;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
@@ -174,8 +173,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dx9\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
@@ -205,25 +203,49 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
     <ClCompile Include="default_heap\default_heap.cpp" />
     <ClCompile Include="default_heap\default_heap_manager.cpp" />
     <ClCompile Include="default_heap\mem_cell.cpp" />
+    <ClCompile Include="scrap_heap\scrap_heap_block.cpp" />
+    <ClCompile Include="scrap_heap\scrap_heap_manager.cpp" />
+    <ClCompile Include="ui\color_array.cpp" />
+    <ClCompile Include="ui\imgui\imgui_demo.cpp" />
+    <ClCompile Include="ui\graph_data.cpp" />
+    <ClCompile Include="ui\imgui\imgui.cpp" />
+    <ClCompile Include="ui\imgui\imgui_draw.cpp" />
+    <ClCompile Include="ui\imgui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="ui\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="ui\imgui\imgui_tables.cpp" />
+    <ClCompile Include="ui\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="ui\ui.cpp" />
     <ClCompile Include="initial_allocator\initial_allocator.cpp" />
     <ClCompile Include="main\d3dx9_exports.cpp" />
     <ClCompile Include="main\dllmain.cpp" />
     <ClCompile Include="main\util.cpp" />
     <ClCompile Include="memory_pools\memory_pool.cpp" />
     <ClCompile Include="memory_pools\memory_pool_manager.cpp" />
-    <ClCompile Include="scrap_heap\light_critical_section.cpp" />
-    <ClCompile Include="scrap_heap\scrap_heap_block.cpp" />
-    <ClCompile Include="scrap_heap\scrap_heap_manager.cpp" />
-    <ClCompile Include="scrap_heap\scrap_heap_vector.cpp" />
+    <ClCompile Include="light_critical_section\light_critical_section.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="default_heap\cell_desc.h" />
     <ClInclude Include="default_heap\cell_list.h" />
     <ClInclude Include="default_heap\cell_node.h" />
     <ClInclude Include="default_heap\default_heap_constants.h" />
+    <ClInclude Include="main\definitions.h" />
+    <ClInclude Include="scrap_heap\scrap_heap_block.h" />
+    <ClInclude Include="scrap_heap\scrap_heap_manager.h" />
+    <ClInclude Include="ui\color_array.h" />
+    <ClInclude Include="ui\imgui\imconfig.h" />
+    <ClInclude Include="ui\imgui\imgui.h" />
+    <ClInclude Include="ui\imgui\imgui_impl_dx9.h" />
+    <ClInclude Include="ui\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="ui\imgui\imgui_internal.h" />
+    <ClInclude Include="ui\imgui\imstb_rectpack.h" />
+    <ClInclude Include="ui\imgui\imstb_textedit.h" />
+    <ClInclude Include="ui\imgui\imstb_truetype.h" />
+    <ClInclude Include="ui\graph_data.h" />
+    <ClInclude Include="ui\ui.h" />
     <ClInclude Include="initial_allocator\initial_allocator.h" />
     <ClInclude Include="main\heap_replacer.h" />
     <ClInclude Include="default_heap\default_heap_manager.h" />
+    <ClInclude Include="main\types.h" />
     <ClInclude Include="memory_pools\memory_pool.h" />
     <ClInclude Include="memory_pools\memory_pool_constants.h" />
     <ClInclude Include="memory_pools\memory_pool_manager.h">
@@ -231,12 +253,9 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
     </ClInclude>
     <ClInclude Include="default_heap\default_heap.h" />
     <ClInclude Include="default_heap\mem_cell.h" />
-    <ClInclude Include="scrap_heap\light_critical_section.h" />
-    <ClInclude Include="scrap_heap\scrap_heap_block.h" />
+    <ClInclude Include="light_critical_section\light_critical_section.h" />
     <ClInclude Include="scrap_heap\scrap_heap_constants.h" />
-    <ClInclude Include="scrap_heap\scrap_heap_manager.h" />
     <ClInclude Include="main\util.h" />
-    <ClInclude Include="scrap_heap\scrap_heap_vector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

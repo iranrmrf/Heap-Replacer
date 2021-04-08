@@ -15,6 +15,7 @@ private:
 
 	size_t item_size;
 	size_t max_size;
+	size_t cell_count;
 	size_t max_cell_count;
 
 private:
@@ -59,6 +60,14 @@ public:
 	void* calloc();
 	size_t mem_size(void* address);
 	void free(void* address);
+	
+public:
+
+	size_t get_cell_count() { return this->cell_count; }
+	size_t get_max_cell_count() { return this->max_cell_count; }
+	size_t get_max_size() { return this->max_size; }
+
+public:
 
 	void* operator new(size_t size);
 	void operator delete(void* address);

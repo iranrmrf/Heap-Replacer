@@ -1,11 +1,17 @@
 #include "cell_list.h"
 
-cell_list::cell_list() : size(0u)
+cell_list::cell_list()
 {
 	this->fake_head = new cell_node(nullptr);
 	this->fake_tail = new cell_node(nullptr);
+
 	this->fake_head->next = this->fake_tail;
 	this->fake_tail->prev = this->fake_head;
+
+#ifdef HR_USE_GUI
+	this->size = 0u;
+#endif
+
 }
 
 cell_list::~cell_list()
@@ -25,42 +31,56 @@ cell_node* cell_list::get_tail()
 
 cell_node* cell_list::add_head(mem_cell* cell)
 {
+#ifdef HR_USE_GUI
 	this->size++;
+#endif
 	return (new cell_node(cell))->link(this->fake_head, this->fake_head->next);
 }
 
 cell_node* cell_list::add_tail(mem_cell* cell)
 {
+#ifdef HR_USE_GUI
 	this->size++;
+#endif
 	return (new cell_node(cell))->link(this->fake_tail->prev, this->fake_tail);
 }
 
 cell_node* cell_list::insert_before(cell_node* position, mem_cell* cell)
 {
+#ifdef HR_USE_GUI
 	this->size++;
+#endif
 	return (new cell_node(cell))->link(position->prev, position);
 }
 
 cell_node* cell_list::insert_after(cell_node* position, mem_cell* cell)
 {
+#ifdef HR_USE_GUI
 	this->size++;
+#endif
 	return (new cell_node(cell))->link(position, position->next);
 }
 
 void cell_list::remove_node(cell_node* node)
 {
+#ifdef HR_USE_GUI
 	this->size--;
+#endif
 	node->prev->next = node->next;
 	node->next->prev = node->prev;
 	delete node;
-}
-
-size_t cell_list::get_size()
-{
-	return this->size;
 }
 
 bool cell_list::is_empty()
 {
 	return this->fake_head->next == this->fake_tail;
 }
+
+#ifdef HR_USE_GUI
+
+size_t cell_list::get_size()
+{
+	return this->size;
+}
+
+#endif

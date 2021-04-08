@@ -12,7 +12,12 @@ private:
 
 	cell_node* fake_head;
 	cell_node* fake_tail;
+
+#ifdef HR_USE_GUI
+
 	size_t size;
+
+#endif
 
 public:
 
@@ -30,8 +35,12 @@ public:
 
 	void remove_node(cell_node* node);
 
-	size_t get_size();
 	bool is_empty();
 
-};
+#ifdef HR_USE_GUI
 
+	size_t get_size();
+
+#endif
+
+};

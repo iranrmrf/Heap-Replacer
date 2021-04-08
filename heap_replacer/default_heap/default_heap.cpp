@@ -1,6 +1,6 @@
 #include "default_heap.h"
 
-default_heap::default_heap() : critical_section(), used_size(0u), curr_size(0u), free_blocks(0u)
+default_heap::default_heap()
 {
 	this->size_clist = new cell_list();
 	this->addr_clist = (cell_list**)util::winapi_calloc(default_heap_block_count, sizeof(cell_list*));
@@ -11,6 +11,13 @@ default_heap::default_heap() : critical_section(), used_size(0u), curr_size(0u),
 	this->block_desc = (cell_desc*)util::winapi_calloc(default_heap_block_count, sizeof(cell_desc));
 
 	this->used_cells = (size_t**)util::winapi_calloc(default_heap_block_count, sizeof(size_t*));
+
+#ifdef HR_USE_GUI
+	this->used_size = 0u;
+	this->curr_size = 0u;
+	this->free_blocks = 0u;
+#endif
+
 }
 
 default_heap::~default_heap()
@@ -46,7 +53,7 @@ default_heap::~default_heap()
 
 size_t default_heap::get_size_index(size_t size)
 {
-	return (size / default_heap_cell_size) - 1;
+	return (size / default_heap_cell_size) - 1u;
 }
 
 size_t default_heap::get_size_index(mem_cell* cell)
@@ -68,26 +75,26 @@ void default_heap::add_size_array(mem_cell* cell)
 {
 	cell_node* curr;
 	for (curr = cell->size_node->prev; curr->is_valid() && cell->swap_by_size(curr->cell); curr = curr->prev);
-	for (size_t i = 0u; i < cell->size_node->array_index - curr->array_index; this->size_array[curr->array_index + 1 + i++] = cell);
+	for (size_t i = 0u; i < cell->size_node->array_index - curr->array_index; this->size_array[curr->array_index + 1u + i++] = cell);
 }
 
 void default_heap::add_addr_array(mem_cell* cell)
 {
 	cell_node* curr;
 	for (curr = cell->addr_node->prev; curr->is_valid() && cell->swap_by_addr(curr->cell); curr = curr->prev);
-	for (size_t i = 0u; i < cell->addr_node->array_index - curr->array_index; this->addr_array[cell->desc.index][curr->array_index + 1 + i++] = cell);
+	for (size_t i = 0u; i < cell->addr_node->array_index - curr->array_index; this->addr_array[cell->desc.index][curr->array_index + 1u + i++] = cell);
 }
 
 void default_heap::rmv_size_array(mem_cell* cell)
 {
 	cell_node* curr = cell->size_node->prev;
-	for (size_t i = 0u; i < cell->size_node->array_index - curr->array_index; this->size_array[curr->array_index + 1 + i++] = cell->size_node->next->cell);
+	for (size_t i = 0u; i < cell->size_node->array_index - curr->array_index; this->size_array[curr->array_index + 1u + i++] = cell->size_node->next->cell);
 }
 
 void default_heap::rmv_addr_array(mem_cell* cell)
 {
 	cell_node* curr = cell->addr_node->prev;
-	for (size_t i = 0u; i < cell->addr_node->array_index - curr->array_index; this->addr_array[cell->desc.index][curr->array_index + 1 + i++] = cell->addr_node->next->cell);
+	for (size_t i = 0u; i < cell->addr_node->array_index - curr->array_index; this->addr_array[cell->desc.index][curr->array_index + 1u + i++] = cell->addr_node->next->cell);
 }
 
 cell_node* default_heap::insert_size_dlist(mem_cell* cell)
@@ -131,7 +138,9 @@ void default_heap::rmv_free_cell(mem_cell* cell)
 void default_heap::add_free_cell(mem_cell* cell)
 {
 	this->critical_section.lock();
+#ifdef HR_USE_GUI
 	this->used_size -= cell->desc.size;
+#endif
 	this->add_free_cell_addr(cell);
 	mem_cell* temp;
 	if ((temp = cell->addr_node->prev->cell) && temp->precedes(cell)) [[unlikely]]
@@ -176,7 +185,9 @@ mem_cell* default_heap::get_free_cell(size_t size)
 		this->add_size_array(cell);
 		cell = split;
 	}
+#ifdef HR_USE_GUI
 	this->used_size += cell->desc.size;
+#endif
 	this->critical_section.unlock();
 	return cell;
 }
@@ -210,28 +221,27 @@ size_t default_heap::get_used(void* address, size_t index)
 	return this->used_cells[index][this->get_addr_index(address)];
 }
 
-size_t default_heap::get_free_block_index(void* address)
+size_t default_heap::get_next_free_block_index()
 {
-	for (size_t i = 0u; i < default_heap_block_count; i++)
-	{
-		if (!this->block_desc[i].addr) { return i; }
-	}
-	return -1;
+	for (size_t i = 0u; i < default_heap_block_count; i++) { if (!this->block_desc[i].addr) { return i; } }
+	return default_heap_block_count;
 }
 
 mem_cell* default_heap::create_new_block()
 {
 	void* address = VirtualAlloc(nullptr, default_heap_block_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-	size_t index = this->get_free_block_index(address);
-	if (index == default_heap_block_count) { HR_MSGBOX("ERROR!"); return nullptr; }
+	size_t index = this->get_next_free_block_index();
+	if (index == default_heap_block_count) { return nullptr; }
 
 	this->block_desc[index] = { address, default_heap_block_size, index };
 	this->addr_clist[index] = new cell_list();
 	this->addr_array[index] = (mem_cell**)util::winapi_calloc(default_heap_cell_count, sizeof(mem_cell*));
 	this->used_cells[index] = (size_t*)util::winapi_calloc(default_heap_cell_count, sizeof(size_t));
 
+#ifdef HR_USE_GUI
 	this->curr_size += default_heap_block_size;
 	this->used_size += default_heap_block_size;
+#endif
 
 	return new mem_cell(address, default_heap_block_size, index);
 }

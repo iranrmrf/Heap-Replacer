@@ -51,16 +51,43 @@
     <ClCompile Include="memory_pools\memory_pool_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scrap_heap\light_critical_section.cpp">
+    <ClCompile Include="light_critical_section\light_critical_section.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scrap_heap\scrap_heap_manager.cpp">
+    <ClCompile Include="ui\ui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\imgui\imgui_impl_dx9.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\imgui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\imgui\imgui_impl_win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\color_array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scrap_heap\scrap_heap_block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scrap_heap\scrap_heap_vector.cpp">
+    <ClCompile Include="scrap_heap\scrap_heap_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\graph_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,16 +113,7 @@
     <ClInclude Include="memory_pools\memory_pool_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrap_heap\scrap_heap_manager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="main\util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scrap_heap\light_critical_section.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scrap_heap\scrap_heap_vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="default_heap\cell_node.h">
@@ -116,7 +134,52 @@
     <ClInclude Include="scrap_heap\scrap_heap_constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="light_critical_section\light_critical_section.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="main\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\imgui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\imgui\imgui_impl_win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\imgui\imgui_impl_dx9.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\imgui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\color_array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="scrap_heap\scrap_heap_block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scrap_heap\scrap_heap_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="main\definitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\graph_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

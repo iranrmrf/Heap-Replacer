@@ -19,15 +19,17 @@ private:
 
 	size_t** used_cells;
 
-private:
-
 	cell_desc* block_desc;
+
+#ifdef HR_USE_GUI
 
 private:
 
 	size_t used_size;
 	size_t curr_size;
 	size_t free_blocks;
+
+#endif
 
 private:
 
@@ -73,16 +75,21 @@ public:
 
 private:
 
-	size_t get_free_block_index(void* address);
+	size_t get_next_free_block_index();
 	mem_cell* create_new_block();
 
 public:
 
+#ifdef HR_USE_GUI
+
 	size_t get_used_size() { return this->used_size; }
 	size_t get_free_size() { return this->curr_size - this->used_size; }
 	size_t get_curr_size() { return this->curr_size; }
-	size_t get_free_blocks() { return this->size_clist->get_size(); }
+	size_t get_free_cells() { return this->size_clist->get_size(); }
 
-	size_t get_addr_size_by_index(size_t index) { return this->used_cells[0u][index]; }
+	size_t get_block_count() { return this->get_next_free_block_index() - 1u; }
+	size_t get_addr_size_by_index(size_t block, size_t index) { return this->used_cells[block][index]; }
+
+#endif
 
 };

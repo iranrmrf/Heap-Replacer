@@ -1,20 +1,30 @@
-#include "util.h"
-
 #include "heap_replacer.h"
 
-namespace nvhr
+namespace hr
 {
-	void nvhr() { }
+	void hr() { }
 }
 
 BOOL WINAPI qpc_hook(LARGE_INTEGER* lpPerformanceCount)
 {
 	HR_PRINTF("Applying hooks.");
-	nvhr::apply_heap_hooks();
+	hr::apply_heap_hooks();
 	BYTE* base = (BYTE*)GetModuleHandle(nullptr);
-	void* address = util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter");
-	HR_PRINTF("Cleaning QPC hook...");
-	util::patch_DWORD((uintptr_t)address, (uintptr_t)&QueryPerformanceCounter);
+
+#ifdef HR_USE_GUI
+
+	HR_PRINTF("Applying ImGui hooks.");
+	hr::apply_imgui_hooks();
+
+	HR_PRINTF("Creating DI8C hook...");
+	void* address = util::get_IAT_address(base, "dinput8.dll", "DirectInput8Create");
+	ui::direct_input_8_create = decltype(ui::direct_input_8_create)(*(void**)address);
+	util::patch_func_ptr(address, &ui::direct_input_8_create_hook);
+
+#endif
+
+	HR_PRINTF("Cleaning QPC hook...");	
+	util::patch_func_ptr(util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter"), &QueryPerformanceCounter);
 	return QueryPerformanceCounter(lpPerformanceCount);
 }
 
@@ -28,7 +38,7 @@ void create_loader_hook()
 		{
 			if (util::file_exists("d3dx9_38.tmp")) { util::create_console(); }
 			HR_PRINTF("Creating QPC hook...");
-			util::patch_DWORD((uintptr_t)address, (uintptr_t)&qpc_hook);
+			util::patch_func_ptr(address, &qpc_hook);
 		}
 		else
 		{
@@ -43,6 +53,8 @@ void create_loader_hook()
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 {
+	//while (!IsDebuggerPresent()) { Sleep(1); }
+
 	if (fdwReason == DLL_PROCESS_ATTACH)
 	{
 		DisableThreadLibraryCalls(hModule);

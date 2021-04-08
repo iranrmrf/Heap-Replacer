@@ -11,8 +11,12 @@ public:
 
 	cell_node* next;
 	cell_node* prev;
+
 	mem_cell* cell;
+
 	size_t array_index;
+
+public:
 
 	cell_node(mem_cell* cell);
 	~cell_node();

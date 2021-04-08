@@ -1,5 +1,7 @@
 #pragma once
 
+#include "definitions.h"
+#include "types.h"
 #include "util.h"
 
 #include "initial_allocator/initial_allocator.h"
@@ -7,17 +9,35 @@
 #include "memory_pools/memory_pool_manager.h"
 #include "default_heap/default_heap_manager.h"
 #include "scrap_heap/scrap_heap_manager.h"
+#include "scrap_heap/scrap_heap_block.h"
 
-namespace nvhr
+#include "light_critical_section/light_critical_section.h"
+
+#include "ui/ui.h"
+
+namespace hr
 {
+
 	initial_allocator ina(INITIAL_ALLOCATOR_SIZE);
+
 	memory_pool_manager* mpm;
 	default_heap_manager* dhm;
+	scrap_heap_manager* shm;
+#ifdef HR_USE_GUI
+	ui* uim;
+#endif
 
-	void* __fastcall nvhr_malloc(size_t size)
+	memory_pool_manager* get_mpm() { return mpm; }
+	default_heap_manager* get_dhm() { return dhm; }
+	scrap_heap_manager* get_shm() { return shm; }
+#ifdef HR_USE_GUI
+	ui* get_uim() { return uim; }
+#endif
+
+	void* hr_malloc(size_t size)
 	{
-		if (size < 4) [[unlikely]] { size = 4; }
-		if (size <= 2 * KB) [[likely]]
+		if (size < 4u) [[unlikely]] { size = 4u; }
+		if (size <= 2u * KB) [[likely]]
 		{
 			if (void* address = mpm->malloc(size)) [[likely]] { return address; }
 		}
@@ -26,11 +46,11 @@ namespace nvhr
 		return nullptr;
 	}
 
-	void* __fastcall nvhr_calloc(size_t count, size_t size)
+	void* hr_calloc(size_t count, size_t size)
 	{
 		size *= count;
-		if (size < 4) [[unlikely]] { size = 4; }
-		if (size <= 2 * KB) [[likely]]
+		if (size < 4u) [[unlikely]] { size = 4u; }
+		if (size <= 2u * KB) [[likely]]
 		{
 			if (void* address = mpm->calloc(size)) [[likely]] { return address; }
 		}
@@ -39,111 +59,111 @@ namespace nvhr
 		return nullptr;
 	}
 
-	void* __fastcall nvhr_realloc(void* address, size_t size)
+	void* hr_realloc(void* address, size_t size)
 	{
-		if (!address) [[unlikely]] { return nvhr_malloc(size); }
+		if (!address) [[unlikely]] { return hr_malloc(size); }
 		size_t old_size, new_size;
-		if ((old_size = nvhr_mem_size(address)) >= (new_size = size)) { return address; }
-		void* new_address = nvhr_malloc(size);
+		if ((old_size = hr_mem_size(address)) >= (new_size = size)) { return address; }
+		void* new_address = hr_malloc(size);
 		memcpy(new_address, address, new_size < old_size ? new_size : old_size);
-		nvhr_free(address);
+		hr_free(address);
 		return new_address;
 	}
 
-	void* __fastcall nvhr_recalloc(void* address, size_t count, size_t size)
+	void* hr_recalloc(void* address, size_t count, size_t size)
 	{
-		if (!address) [[unlikely]] { return nvhr_calloc(count, size); }
+		if (!address) [[unlikely]] { return hr_calloc(count, size); }
 		size_t old_size, new_size;;
-		if ((old_size = nvhr_mem_size(address)) >= (new_size = size * count))
+		if ((old_size = hr_mem_size(address)) >= (new_size = size * count))
 		{
 			util::memset8(address, 0u, new_size);
 			return address;
 		}
-		void* new_address = nvhr_calloc(count, size);
-		nvhr_free(address);
+		void* new_address = hr_calloc(count, size);
+		hr_free(address);
 		return new_address;
 	}
 
-	size_t __fastcall nvhr_mem_size(void* address)
+	size_t hr_mem_size(void* address)
 	{
 		if (!address) [[unlikely]] { return 0u; }
 		if (size_t size = mpm->mem_size(address)) [[likely]] { return size; }
 		return dhm->mem_size(address);
 	}
 
-	void __fastcall nvhr_free(void* address)
+	void hr_free(void* address)
 	{
 		if (!address) [[unlikely]] { return; }
 		if (mpm->free(address)) [[likely]] { return; }
 		dhm->free(address);
 	}
 
-	void* __fastcall game_heap_allocate(TFPARAM(void* self, size_t size))
+	void* game_heap_allocate(TFPARAM(size_t size))
 	{
-		return nvhr_malloc(size);
+		return hr_malloc(size);
 	}
 
-	void* __fastcall game_heap_reallocate(TFPARAM(void* self, void* address, size_t size))
+	void* game_heap_reallocate(TFPARAM(void* address, size_t size))
 	{
-		return nvhr_realloc(address, size);
+		return hr_realloc(address, size);
 	}
 
-	size_t __fastcall game_heap_msize(TFPARAM(void* self, void* address))
+	size_t game_heap_msize(TFPARAM(void* address))
 	{
-		return nvhr_mem_size(address);
+		return hr_mem_size(address);
 	}
 
-	void __fastcall game_heap_free(TFPARAM(void* self, void* address))
+	void game_heap_free(TFPARAM(void* address))
 	{
-		nvhr_free(address);
+		hr_free(address);
 	}
 
 	void* __cdecl crt_malloc(size_t size)
 	{
-		return nvhr_malloc(size);
+		return hr_malloc(size);
 	}
 
 	void* __cdecl crt_calloc(size_t count, size_t size)
 	{
-		return nvhr_calloc(count, size);
+		return hr_calloc(count, size);
 	}
 
 	void* __cdecl crt_realloc(void* address, size_t size)
 	{
-		return nvhr_realloc(address, size);
+		return hr_realloc(address, size);
 	}
 
 	void* __cdecl crt_recalloc(void* address, size_t count, size_t size)
 	{
-		return nvhr_recalloc(address, count, size);
+		return hr_recalloc(address, count, size);
 	}
 
 	size_t __cdecl crt_msize(void* address)
 	{
-		return nvhr_mem_size(address);
+		return hr_mem_size(address);
 	}
 
 	void __cdecl crt_free(void* address)
 	{
-		nvhr_free(address);
+		hr_free(address);
 	}
 
-	void* __fastcall nvhr_ina_malloc(size_t size)
+	void* hr_ina_malloc(size_t size)
 	{
 		return ina.malloc(size);
 	}
 
-	void* __fastcall nvhr_ina_calloc(size_t count, size_t size)
+	void* hr_ina_calloc(size_t count, size_t size)
 	{
 		return ina.calloc(count, size);
 	}
 
-	size_t __fastcall nvhr_ina_mem_size(void* address)
+	size_t hr_ina_mem_size(void* address)
 	{
 		return ina.mem_size(address);
 	}
 
-	void __fastcall nvhr_ina_free(void* address)
+	void hr_ina_free(void* address)
 	{
 		ina.free(address);
 	}
@@ -153,7 +173,8 @@ namespace nvhr
 
 		mpm = new memory_pool_manager();
 		dhm = new default_heap_manager();
-		Sleep(5000);
+		shm = new scrap_heap_manager();
+
 #if defined(FNV)
 
 		util::patch_jmp(0xECD1C7, &crt_malloc);
@@ -182,7 +203,8 @@ namespace nvhr
 		util::patch_ret(0xAA7290);
 		util::patch_ret(0xAA7300);
 
-		util::patch_jmp(0x40FBF0, util::force_cast<void*>(&light_critical_section::lock));
+		util::patch_jmp(0x40FBF0, util::force_cast<void*>(&light_critical_section::lock_game));
+		//util::patch_jmp(0x78D200, util::force_cast<void*>(&light_critical_section::try_lock));
 		util::patch_jmp(0x40FBA0, util::force_cast<void*>(&light_critical_section::unlock));
 
 		util::patch_ret(0xAA58D0);
@@ -229,8 +251,8 @@ namespace nvhr
 		util::patch_ret(0x6E21F0);
 		util::patch_ret(0x6E1E10);
 
-		util::patch_jmp(0x409A80, &enter_light_critical_section); 
-		//util::patch_jmp(0x0, &leave_light_critical_section);
+		util::patch_jmp(0x409A80, util::force_cast<void*>(&light_critical_section::lock_game));
+		//util::patch_jmp(0x0, util::force_cast<void*>(&light_critical_section::unlock));
 
 		util::patch_ret(0x86C600);
 		util::patch_ret(0x6E1CD0);
@@ -245,14 +267,45 @@ namespace nvhr
 		util::patch_nops(0x86C038, 0x86C086 - 0x86C038);
 		util::patch_jmp(0x86BCB0, util::force_cast<void*>(&scrap_heap_block::get_thread_scrap_heap));
 
-		util::mem::patch_nop_call(0x6E9B30);
-		util::mem::patch_nop_call(0x7FACDB);
-		util::mem::patch_nop_call(0xAA6534);
+		util::patch_nop_call(0x6E9B30);
+		util::patch_nop_call(0x7FACDB);
+		util::patch_nop_call(0xAA6534);
 
 #endif
 
 		HR_PRINTF("Hooks applied.");
 
 	}
+
+#ifdef HR_USE_GUI
+
+	void apply_imgui_hooks()
+	{
+
+		uim = new ui();
+
+#if defined(FNV)
+			
+		util::patch_bytes(0x4DA942, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+		util::patch_bytes(0x4DA937, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+
+		util::patch_func_ptr(0xFDF2B8, &ui::create_window_hook);
+		util::patch_func_ptr(0xFDF294, &ui::dispatch_message_hook);
+		util::patch_func_ptr(0x10EE640, &ui::display_scene_hook);
+
+#elif defined(FO3)
+
+		//util::patch_bytes(0x4DA942, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+		//util::patch_bytes(0x4DA937, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+
+		util::patch_func_ptr(0xD9B2CC, &ui::create_window_hook);
+		util::patch_func_ptr(0xD9B284, &ui::dispatch_message_hook);
+		util::patch_func_ptr(0xE29188, &ui::display_scene_hook);
+
+#endif
+
+	}
+
+#endif
 
 }

@@ -10,7 +10,18 @@ class default_heap_manager
 private:
 
 	default_heap* heap;
-	size_t used_size;
+
+#ifdef HR_USE_GUI
+
+private:
+
+	size_t allocs;
+	size_t frees;
+
+	size_t total_allocs;
+	size_t total_frees;
+
+#endif
 
 public:
 
@@ -23,5 +34,28 @@ public:
 	void* calloc(size_t size);
 	size_t mem_size(void* address);
 	bool free(void* address);
+
+public:
+
+#ifdef HR_USE_GUI
+
+	size_t get_cell_count() { return default_heap_cell_count; }
+
+	size_t get_allocs() { size_t retval = this->allocs; this->total_allocs += this->allocs; this->allocs = 0u; return retval; }
+	size_t get_frees() { size_t retval = this->frees; this->total_frees += this->frees; this->frees = 0u; return retval; }
+
+	size_t get_total_allocs() { return this->total_allocs; }
+	size_t get_total_frees() { return this->total_frees; }
+
+	size_t get_used_size() { return this->heap->get_used_size(); }
+	size_t get_free_size() { return this->heap->get_free_size(); }
+	size_t get_curr_size() { return this->heap->get_curr_size(); }
+
+	size_t get_free_blocks() { return this->heap->get_free_cells(); }
+
+	size_t get_block_count() { return this->heap->get_block_count(); }
+	size_t get_addr_size_by_index(size_t block, size_t index) { return this->heap->get_addr_size_by_index(block, index); }
+
+#endif
 
 };
