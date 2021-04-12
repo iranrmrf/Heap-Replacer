@@ -1,5 +1,7 @@
 #pragma once
 
+#include <time.h>
+
 #include "main/util.h"
 
 struct col4

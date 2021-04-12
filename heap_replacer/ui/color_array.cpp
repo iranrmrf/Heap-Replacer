@@ -4,7 +4,8 @@
 
 color_array::color_array(size_t size) : colors(nullptr), size(size)
 {
-	this->colors = (col4*)hr::hr_calloc(size, sizeof(col4));
+	this->colors = (col4*)hr::hr_calloc(size, sizeof(col4));	
+	srand((size_t)time(NULL));
 	this->randomize();
 }
 
