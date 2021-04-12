@@ -295,8 +295,8 @@ namespace hr
 
 #elif defined(FO3)
 
-		//util::patch_bytes(0x4DA942, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
-		//util::patch_bytes(0x4DA937, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+		util::patch_bytes(0x4905C7, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+		util::patch_bytes(0x4905B7, (PBYTE)"\xBA\x00\x00\x00\x00\x90", 6);
 
 		util::patch_func_ptr(0xD9B2CC, &ui::create_window_hook);
 		util::patch_func_ptr(0xD9B284, &ui::dispatch_message_hook);
