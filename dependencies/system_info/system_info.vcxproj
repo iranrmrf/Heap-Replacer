@@ -166,6 +166,9 @@
     <ClInclude Include="repo\include\systemcommand.h" />
     <ClInclude Include="repo\include\systeminfo.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="README.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
