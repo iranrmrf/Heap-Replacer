@@ -16,7 +16,7 @@ uint color_value_getter(void* data, int index)
 	if (--running_size > 0) { return running_color.hex; }
 	if (!(running_size = hr::get_dhm()->get_addr_size_by_index(*(size_t*)data, index) / (4u * KB))) { return col4().hex; }
 	return (running_color = ca[index]).hex;
-};
+}
 
 void plot_lines(const char* label, const char* overlay, float width, float height, graph_data* data)
 {
@@ -25,6 +25,8 @@ void plot_lines(const char* label, const char* overlay, float width, float heigh
 
 ui::ui()
 {
+	ImGui::SetAllocatorFunctions([](size_t size, void* _) { return hr::hr_malloc(size); }, [](void* address, void* _) { hr::hr_free(address); });
+
 	ImGui::CreateContext();
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -522,7 +524,7 @@ void ui::render_default_heap_blocks()
 		{
 			char buff2[32];
 			sprintf(buff2, "##%d", i + 1);
-			//ImGui::PlotColorGrid(buff2, color_value_getter, &i, hr::get_dhm()->get_cell_count(), 0, ImVec2(0.0f, 0.0f));
+			ImGui::PlotColorGrid(buff2, color_value_getter, &i, hr::get_dhm()->get_cell_count(), 0, ImVec2(0.0f, 0.0f));
 		}
 		ImGui::End();
 	}

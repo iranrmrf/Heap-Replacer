@@ -1,5 +1,7 @@
 #pragma once
 
+#define FO3
+
 // ONE OF THESE NEED TO BE DEFINED!
 #if defined(FNV)
 
@@ -27,7 +29,7 @@
 
 #endif
 
-//#define HR_USE_GUI
+#define HR_USE_GUI
 //#define HR_ZERO_MEM
 
 #define HR_MSGBOX(msg) MessageBox(NULL, HR_NAME " - " msg, "Error", NULL)
