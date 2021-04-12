@@ -1,0 +1,6 @@
+[submodule "imgui"]
+	path = dependencies/imgui/repo
+	url = https://github.com/ocornut/imgui
+[submodule "system_info"]
+	path = dependencies/system_info/repo
+	url = https://github.com/tlewiscpp/SystemInfo
