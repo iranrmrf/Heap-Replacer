@@ -281,7 +281,7 @@ namespace hr
 
 	void apply_imgui_hooks()
 	{
-
+		
 		uim = new ui();
 
 #if defined(FNV)
@@ -289,9 +289,9 @@ namespace hr
 		util::patch_bytes(0x4DA942, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
 		util::patch_bytes(0x4DA937, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
 
-		util::patch_func_ptr(0xFDF2B8, &ui::create_window_hook);
-		util::patch_func_ptr(0xFDF294, &ui::dispatch_message_hook);
-		util::patch_func_ptr(0x10EE640, &ui::display_scene_hook);
+		util::patch_detour(0xFDF2B8, &ui::create_window_hook, (void**)&ui::create_window);
+		util::patch_detour(0xFDF294, &ui::dispatch_message_hook, (void**)&ui::dispatch_message);
+		util::patch_detour(0x10EE640, &ui::display_scene_hook, (void**)&ui::display_scene);
 
 #elif defined(FO3)
 

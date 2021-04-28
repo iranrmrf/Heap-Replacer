@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <stdio.h>
 
+#include <intrin.h>
+
+#include "MinHook.h"
 #include "types.h"
 
 #define TFPARAM(...) void* self, void* _, __VA_ARGS__
@@ -30,7 +33,7 @@
 #define DEBUG_BREAK __asm { int 3 }
 #define NOINLINE __declspec(noinline)
 
-template<size_t N, class T>
+template<size_t N, typename T>
 constexpr size_t countof(T(&)[N]) { return N; }
 
 constexpr size_t highest_bit(size_t v) { return ((v / ((v % 255u) + 1u) / 255u) % 255u) * 8u - 86u / ((v % 255u) + 12u) + 7u; }
@@ -74,6 +77,8 @@ namespace util
 	void patch_DWORD(void* address, DWORD data);
 	void patch_func_ptr(void* address, void* ptr);
 	void patch_func_ptr(uintptr_t address, void* ptr);
+	void patch_detour(void* address, void* new_func, void** old_func);
+	void patch_detour(uintptr_t address, void* new_func, void** old_func);
 
 	void patch_call(void* address, void* destination);
 	void patch_call(void* address, void* destination, size_t nops);

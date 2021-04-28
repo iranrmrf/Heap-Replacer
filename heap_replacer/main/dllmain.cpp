@@ -5,6 +5,8 @@ namespace hr
 	void hr() { }
 }
 
+void* old_qpc;
+
 BOOL WINAPI qpc_hook(LARGE_INTEGER* lpPerformanceCount)
 {
 	HR_PRINTF("Applying hooks.");
@@ -17,15 +19,15 @@ BOOL WINAPI qpc_hook(LARGE_INTEGER* lpPerformanceCount)
 	hr::apply_imgui_hooks();
 
 	HR_PRINTF("Creating DI8C hook...");
-	void* address = util::get_IAT_address(base, "dinput8.dll", "DirectInput8Create");
-	ui::direct_input_8_create = decltype(ui::direct_input_8_create)(*(void**)address);
-	util::patch_func_ptr(address, &ui::direct_input_8_create_hook);
+
+	util::patch_detour(util::get_IAT_address(base, "dinput8.dll", "DirectInput8Create"), &ui::direct_input_8_create_hook, (void**)&ui::direct_input_8_create);
 
 #endif
 
-	HR_PRINTF("Cleaning QPC hook...");	
-	util::patch_func_ptr(util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter"), &QueryPerformanceCounter);
-	return QueryPerformanceCounter(lpPerformanceCount);
+	HR_PRINTF("Cleaning QPC hook...");
+	util::patch_func_ptr(util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter"), old_qpc);
+
+	return ((decltype(qpc_hook)*)(old_qpc))(lpPerformanceCount);
 }
 
 void create_loader_hook()
@@ -38,7 +40,8 @@ void create_loader_hook()
 		{
 			if (util::file_exists("d3dx9_38.tmp")) { util::create_console(); }
 			HR_PRINTF("Creating QPC hook...");
-			util::patch_func_ptr(address, &qpc_hook);
+
+			util::patch_detour(address, &qpc_hook, &old_qpc);
 		}
 		else
 		{

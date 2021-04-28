@@ -126,6 +126,17 @@ namespace util
 		patch_func_ptr((void*)address, ptr);
 	}
 
+	void patch_detour(void* address, void* new_func, void** old_func)
+	{
+		*old_func = *(void**)address;
+		patch_func_ptr(address, new_func);
+	}
+
+	void patch_detour(uintptr_t address, void* new_func, void** old_func)
+	{
+		patch_detour((void*)address, new_func, old_func);
+	}
+
 	void patch_call(void* address, void* destination)
 	{
 		BYTE bytes[5];
@@ -256,11 +267,7 @@ namespace util
 
 	bool file_exists(const char* name)
 	{
-		if (FILE* file = fopen(name, "r"))
-		{
-			fclose(file);
-			return true;
-		}
+		if (FILE* file = fopen(name, "r")) { fclose(file); return true; }
 		return false;
 	}
 
@@ -269,8 +276,8 @@ namespace util
 		AllocConsole();
 		FILE* f;
 		f = freopen("CONIN$", "r", stdin);
-		f = freopen("CONOUT$", "w", stderr);
 		f = freopen("CONOUT$", "w", stdout);
+		f = freopen("CONOUT$", "w", stderr);
 	}
 
 }
