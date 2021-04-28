@@ -2,8 +2,8 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 
-#include "repo/imgui.h"
-#include "repo/imgui_internal.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 
 namespace ImGui
 {

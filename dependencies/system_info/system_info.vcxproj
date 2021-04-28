@@ -81,7 +81,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <ShowIncludes>false</ShowIncludes>
       <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)repo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)SystemInfo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CallingConvention>FastCall</CallingConvention>
     </ClCompile>
     <Link>
@@ -123,7 +123,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <ShowIncludes>false</ShowIncludes>
       <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)repo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)SystemInfo\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CallingConvention>FastCall</CallingConvention>
     </ClCompile>
     <Link>
@@ -140,31 +140,31 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="repo\src\cpuinfo.cpp" />
-    <ClCompile Include="repo\src\cpuinfodelegate.cpp" />
-    <ClCompile Include="repo\src\gpuinfo.cpp" />
-    <ClCompile Include="repo\src\gpuinfodelegate.cpp" />
-    <ClCompile Include="repo\src\motherboardinfo.cpp" />
-    <ClCompile Include="repo\src\motherboardinfodelegate.cpp" />
-    <ClCompile Include="repo\src\osinfo.cpp" />
-    <ClCompile Include="repo\src\osinfodelegate.cpp" />
-    <ClCompile Include="repo\src\raminfo.cpp" />
-    <ClCompile Include="repo\src\raminfodelegate.cpp" />
-    <ClCompile Include="repo\src\systemcommand.cpp" />
+    <ClCompile Include="SystemInfo\src\cpuinfo.cpp" />
+    <ClCompile Include="SystemInfo\src\cpuinfodelegate.cpp" />
+    <ClCompile Include="SystemInfo\src\gpuinfo.cpp" />
+    <ClCompile Include="SystemInfo\src\gpuinfodelegate.cpp" />
+    <ClCompile Include="SystemInfo\src\motherboardinfo.cpp" />
+    <ClCompile Include="SystemInfo\src\motherboardinfodelegate.cpp" />
+    <ClCompile Include="SystemInfo\src\osinfo.cpp" />
+    <ClCompile Include="SystemInfo\src\osinfodelegate.cpp" />
+    <ClCompile Include="SystemInfo\src\raminfo.cpp" />
+    <ClCompile Include="SystemInfo\src\raminfodelegate.cpp" />
+    <ClCompile Include="SystemInfo\src\systemcommand.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="repo\include\cpuinfo.h" />
-    <ClInclude Include="repo\include\cpuinfodelegate.h" />
-    <ClInclude Include="repo\include\gpuinfo.h" />
-    <ClInclude Include="repo\include\gpuinfodelegate.h" />
-    <ClInclude Include="repo\include\motherboardinfo.h" />
-    <ClInclude Include="repo\include\motherboardinfodelegate.h" />
-    <ClInclude Include="repo\include\osinfo.h" />
-    <ClInclude Include="repo\include\osinfodelegate.h" />
-    <ClInclude Include="repo\include\raminfo.h" />
-    <ClInclude Include="repo\include\raminfodelegate.h" />
-    <ClInclude Include="repo\include\systemcommand.h" />
-    <ClInclude Include="repo\include\systeminfo.h" />
+    <ClInclude Include="SystemInfo\include\cpuinfo.h" />
+    <ClInclude Include="SystemInfo\include\cpuinfodelegate.h" />
+    <ClInclude Include="SystemInfo\include\gpuinfo.h" />
+    <ClInclude Include="SystemInfo\include\gpuinfodelegate.h" />
+    <ClInclude Include="SystemInfo\include\motherboardinfo.h" />
+    <ClInclude Include="SystemInfo\include\motherboardinfodelegate.h" />
+    <ClInclude Include="SystemInfo\include\osinfo.h" />
+    <ClInclude Include="SystemInfo\include\osinfodelegate.h" />
+    <ClInclude Include="SystemInfo\include\raminfo.h" />
+    <ClInclude Include="SystemInfo\include\raminfodelegate.h" />
+    <ClInclude Include="SystemInfo\include\systemcommand.h" />
+    <ClInclude Include="SystemInfo\include\systeminfo.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.md" />

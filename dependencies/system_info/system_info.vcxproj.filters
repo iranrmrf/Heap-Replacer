@@ -15,75 +15,75 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="repo\src\cpuinfo.cpp">
+    <ClCompile Include="SystemInfo\src\cpuinfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\cpuinfodelegate.cpp">
+    <ClCompile Include="SystemInfo\src\cpuinfodelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\gpuinfo.cpp">
+    <ClCompile Include="SystemInfo\src\gpuinfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\gpuinfodelegate.cpp">
+    <ClCompile Include="SystemInfo\src\gpuinfodelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\motherboardinfodelegate.cpp">
+    <ClCompile Include="SystemInfo\src\motherboardinfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\osinfo.cpp">
+    <ClCompile Include="SystemInfo\src\motherboardinfodelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\osinfodelegate.cpp">
+    <ClCompile Include="SystemInfo\src\osinfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\raminfo.cpp">
+    <ClCompile Include="SystemInfo\src\osinfodelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\raminfodelegate.cpp">
+    <ClCompile Include="SystemInfo\src\raminfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\systemcommand.cpp">
+    <ClCompile Include="SystemInfo\src\raminfodelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="repo\src\motherboardinfo.cpp">
+    <ClCompile Include="SystemInfo\src\systemcommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="repo\include\systeminfo.h">
+    <ClInclude Include="SystemInfo\include\cpuinfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\cpuinfo.h">
+    <ClInclude Include="SystemInfo\include\cpuinfodelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\cpuinfodelegate.h">
+    <ClInclude Include="SystemInfo\include\gpuinfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\gpuinfo.h">
+    <ClInclude Include="SystemInfo\include\gpuinfodelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\gpuinfodelegate.h">
+    <ClInclude Include="SystemInfo\include\motherboardinfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\motherboardinfo.h">
+    <ClInclude Include="SystemInfo\include\motherboardinfodelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\motherboardinfodelegate.h">
+    <ClInclude Include="SystemInfo\include\osinfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\osinfo.h">
+    <ClInclude Include="SystemInfo\include\osinfodelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\osinfodelegate.h">
+    <ClInclude Include="SystemInfo\include\raminfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\raminfo.h">
+    <ClInclude Include="SystemInfo\include\raminfodelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\raminfodelegate.h">
+    <ClInclude Include="SystemInfo\include\systemcommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="repo\include\systemcommand.h">
+    <ClInclude Include="SystemInfo\include\systeminfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

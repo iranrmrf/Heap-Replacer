@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>FNV;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\SystemInfo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\imgui;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -184,7 +184,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>FO3;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\SystemInfo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\imgui;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -255,7 +255,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>FNV;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\SystemInfo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\imgui;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
@@ -326,7 +326,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>FO3;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\SystemInfo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\imgui;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>

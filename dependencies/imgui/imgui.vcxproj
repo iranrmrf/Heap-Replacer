@@ -81,7 +81,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <ShowIncludes>false</ShowIncludes>
       <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)repo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CallingConvention>FastCall</CallingConvention>
     </ClCompile>
     <Link>
@@ -127,7 +127,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <ShowIncludes>false</ShowIncludes>
       <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)repo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CallingConvention>FastCall</CallingConvention>
     </ClCompile>
     <Link>
@@ -149,24 +149,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="custom_widgets.cpp" />
-    <ClCompile Include="repo\backends\imgui_impl_dx9.cpp" />
-    <ClCompile Include="repo\backends\imgui_impl_win32.cpp" />
-    <ClCompile Include="repo\imgui.cpp" />
-    <ClCompile Include="repo\imgui_demo.cpp" />
-    <ClCompile Include="repo\imgui_draw.cpp" />
-    <ClCompile Include="repo\imgui_tables.cpp" />
-    <ClCompile Include="repo\imgui_widgets.cpp" />
+    <ClCompile Include="imgui\backends\imgui_impl_dx9.cpp" />
+    <ClCompile Include="imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="custom_widgets.h" />
-    <ClInclude Include="repo\backends\imgui_impl_dx9.h" />
-    <ClInclude Include="repo\backends\imgui_impl_win32.h" />
-    <ClInclude Include="repo\imconfig.h" />
-    <ClInclude Include="repo\imgui.h" />
-    <ClInclude Include="repo\imgui_internal.h" />
-    <ClInclude Include="repo\imstb_rectpack.h" />
-    <ClInclude Include="repo\imstb_textedit.h" />
-    <ClInclude Include="repo\imstb_truetype.h" />
+    <ClInclude Include="imgui\backends\imgui_impl_dx9.h" />
+    <ClInclude Include="imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
