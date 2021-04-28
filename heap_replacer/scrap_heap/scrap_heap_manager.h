@@ -22,6 +22,9 @@ private:
 
 	size_t used_buffer_count;
 
+	size_t allocs;
+	size_t frees;
+
 	size_t used_size;
 	size_t free_size;
 
@@ -44,11 +47,18 @@ public:
 
 #ifdef HR_USE_GUI
 
+	void increment_allocs() { this->allocs++; }
+	void increment_frees() { this->frees++; }
+
 public:
+
+	size_t get_allocs() { size_t retval = this->allocs; this->allocs = 0u; return retval; }
+	size_t get_frees() { size_t retval = this->frees; this->frees = 0u; return retval; }
 
 	size_t get_used_buffer_count() { return this->used_buffer_count; }
 	size_t get_free_buffer_count() { return this->free_buffer_count; }
 	size_t get_max_buffer_count() { return scrap_heap_manager_buffer_count; }
+
 	size_t get_used_size() { return 0u; }
 	size_t get_free_size() { return 0u; }
 

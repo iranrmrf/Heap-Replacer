@@ -30,6 +30,9 @@ void scrap_heap_block::init_var(size_t size)
 
 void* scrap_heap_block::alloc(size_t size, size_t alignment)
 {
+#ifdef HR_USE_GUI
+	hr::get_shm()->increment_allocs();
+#endif
 	// alignment always 4
 	void* body = util::align<4u>(VPTRSUM(this->unused, sizeof(scrap_heap_chunk)));
 	void* desired_end = VPTRSUM(body, size);
@@ -64,6 +67,9 @@ void* scrap_heap_block::alloc(size_t size, size_t alignment)
 
 void scrap_heap_block::free(void* address)
 {
+#ifdef HR_USE_GUI
+	hr::get_shm()->increment_frees();
+#endif
 	scrap_heap_chunk* chunk = (scrap_heap_chunk*)VPTRDIFF(address, sizeof(scrap_heap_chunk));
 	if (address && !(chunk->size & scrap_heap_free_flag)) [[likely]]
 	{
