@@ -157,20 +157,28 @@ private:
 public:
 
 	static HRESULT(WINAPI* direct_input_8_create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID* ppvOut, IUnknown* punkOuter);
-	static HRESULT(WINAPI* create_devicea)(IDirectInput8A* self, REFGUID rguid, IDirectInputDevice8A** lplpDirectInputDevice, IUnknown* pUnkOuter);
+	static HRESULT(WINAPI* create_device)(IDirectInput8A* self, REFGUID rguid, IDirectInputDevice8A** lplpDirectInputDevice, IUnknown* pUnkOuter);
 	static HRESULT(APIENTRY* get_device_state)(IDirectInputDevice8A* self, DWORD cbData, LPVOID lpvData);
 	static HRESULT(APIENTRY* get_device_data)(IDirectInputDevice8A* self, DWORD cbObjectData, LPDIDEVICEOBJECTDATA rgdod, LPDWORD pdwInOut, DWORD dwFlags);
 	static HRESULT(APIENTRY* set_cooperative_level)(IDirectInputDevice8A* self, HWND hwnd, DWORD dwFlags);
 
+	static LRESULT(CALLBACK* window_proc)(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 public:
 
 	static HRESULT WINAPI direct_input_8_create_hook(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID* ppvOut, IUnknown* punkOuter);
-	static HRESULT WINAPI create_devicea_hook(IDirectInput8A* self, REFGUID rguid, IDirectInputDevice8A** lplpDirectInputDevice, IUnknown* pUnkOuter);
+	static HRESULT WINAPI create_device_hook(IDirectInput8A* self, REFGUID rguid, IDirectInputDevice8A** lplpDirectInputDevice, IUnknown* pUnkOuter);
 	static HRESULT APIENTRY get_device_state_hook(IDirectInputDevice8A* self, DWORD cbData, LPVOID lpvData);
 	static HRESULT APIENTRY get_device_data_hook(IDirectInputDevice8A* self, DWORD cbObjectData, LPDIDEVICEOBJECTDATA rgdod, LPDWORD pdwInOut, DWORD dwFlags);
 	static HRESULT APIENTRY set_cooperative_level_hook(IDirectInputDevice8A* self, HWND hwnd, DWORD dwFlags);
 
-	static LRESULT CALLBACK window_proc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK window_proc_hook(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+public:
+
+	static HWND(WINAPI* create_window)(DWORD dwExStyle, LPCSTR lpClassName, LPCSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
+	static LRESULT(WINAPI* dispatch_message)(const MSG* Msg);
+	static HRESULT(*display_scene)(IDirect3DDevice9* self);
 
 public:
 
