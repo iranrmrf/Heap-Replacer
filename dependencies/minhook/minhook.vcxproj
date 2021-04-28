@@ -79,7 +79,7 @@
       <CallingConvention>FastCall</CallingConvention>
       <CompileAs>CompileAsC</CompileAs>
       <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew %(AdditionalOptions)</AdditionalOptions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
