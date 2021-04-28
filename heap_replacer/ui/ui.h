@@ -7,6 +7,8 @@
 #include "default_heap/default_heap_manager.h"
 #include "scrap_heap/scrap_heap_manager.h"
 
+#include "settings.h"
+
 #include "graph_data.h"
 #include "color_array.h"
 
@@ -15,8 +17,12 @@
 #include "backends/imgui_impl_dx9.h"
 #include "backends/imgui_impl_win32.h"
 
+#define CINTERFACE
+
 #include <d3d9.h>
 #include <dinput.h>
+
+#define COUNTER_INIT_VALUE (100L)
 
 #define CHECKBOX_COUNT (3)
 
@@ -27,9 +33,9 @@ class ui
 
 private:
 
-	bool enable_input;
+	settings ui_settings;
 
-	WNDPROC original_wnd_proc;
+	bool enable_input;
 
 	float plot_height;
 
@@ -66,6 +72,7 @@ private: // OVERLAY
 
 private: // INFO
 
+	bool enable_info_computer_stats;
 	bool enable_info_fps_graph;
 	bool enable_info_frametime_graph;
 
@@ -73,7 +80,6 @@ private: // MEMORY POOL MANAGER
 
 	bool enable_mpm_allocs_graph;
 	bool enable_mpm_frees_graph;
-	bool enable_mpm_total_counters;
 
 	bool enable_mpm_pool_stats;
 
@@ -83,10 +89,8 @@ private: // DEFAULT HEAP MANAGER
 	bool enable_dhm_frees_graph;
 	bool enable_dhm_free_blocks_graph;
 
-	bool enable_dhm_used;
-	bool enable_dhm_free;
-
-	bool enable_dhm_total_counters; // allocs / frees to date
+	//bool enable_dhm_used;
+	//bool enable_dhm_free;
 
 	size_t dhm_block_count;
 
@@ -94,6 +98,10 @@ private: // SCRAP HEAP MANAGER
 
 	bool enable_shm_allocs_graph;
 	bool enable_shm_frees_graph;
+	bool enable_shm_free_buffers_graph;
+
+	//bool enable_shm_used;
+	//bool enable_shm_free;
 
 private:
 
@@ -101,15 +109,24 @@ private:
 	bool* bools[CHECKBOX_COUNT] = { &this->enable_overlay_fps, &this->enable_overlay_frametime, &this->enable_overlay_mouse_pos };
 	const char* templates[CHECKBOX_COUNT] = { " 0000.0 FPS ", " 000.00 ms ", " (-1000, -1000) " };
 
-#ifdef HR_USE_GUI
 	typedef void (get_data)(char*);
-	get_data* ops[CHECKBOX_COUNT] =
-	{
-		[](char* buff) { sprintf(buff, "%.1f FPS", ImGui::GetIO().Framerate); },
-		[](char* buff) { sprintf(buff, "%.2f ms", 1000.0f / ImGui::GetIO().Framerate); },
-		[](char* buff) { POINT p; GetCursorPos(&p); sprintf(buff, "(%04d, %04d)", p.x, p.y); }
-	};
-#endif
+	get_data* ops[CHECKBOX_COUNT];
+
+private:
+
+	size_t gd_info_fps_count;
+	size_t gd_info_frametime_count;
+
+	size_t gd_mpm_allocs_count;
+	size_t gd_mpm_frees_count;
+
+	size_t gd_dhm_allocs_count;
+	size_t gd_dhm_frees_count;
+	size_t gd_dhm_free_blocks_count;
+
+	size_t gd_shm_allocs_count;
+	size_t gd_shm_frees_count;
+	size_t gd_shm_free_buffers_count;
 
 private:
 
@@ -125,6 +142,7 @@ private:
 
 	graph_data* gd_shm_allocs;
 	graph_data* gd_shm_frees;
+	graph_data* gd_shm_free_buffers;
 
 public:
 
@@ -137,6 +155,9 @@ private:
 	void handle_input(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	void set_imgui_mouse_state(bool enabled);
+
+	void load_settings();
+	void save_settings();
 
 	void init_graph_data_counters();
 	void fini_graph_data_counters();
