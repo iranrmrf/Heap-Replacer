@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>FNV;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -144,7 +144,7 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
@@ -171,8 +171,7 @@
       <DataExecutionPrevention>false</DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"
-copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
+      <Command>copy "$(TargetPath)" "$(FalloutNVPath)$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (FO3)|Win32'">
@@ -185,7 +184,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>FO3;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -216,7 +215,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
@@ -243,8 +242,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <DataExecutionPrevention>false</DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"
-copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
+      <Command>copy "$(TargetPath)" "$(Fallout3Path)$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FNV)|Win32'">
@@ -257,7 +255,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>FNV;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
@@ -288,7 +286,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
@@ -315,8 +313,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <DataExecutionPrevention>false</DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"
-copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
+      <Command>copy "$(TargetPath)" "$(FalloutNVPath)$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FO3)|Win32'">
@@ -329,7 +326,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessorDefinitions>FO3;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\repo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\repo;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
@@ -387,8 +384,7 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
       <DataExecutionPrevention>false</DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(FalloutNVPath)\$(TargetFileName)"
-copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
+      <Command>copy "$(TargetPath)" "$(Fallout3Path)$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -445,6 +441,12 @@ copy "$(TargetPath)" "$(Fallout3Path)\$(TargetFileName)"</Command>
   <ItemGroup>
     <ProjectReference Include="..\dependencies\imgui\imgui.vcxproj">
       <Project>{c168044e-4054-4418-a544-2b1afad7baca}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\dependencies\minhook\minhook.vcxproj">
+      <Project>{336ba5f6-058f-45f2-8b52-9e3290c27f1e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\dependencies\simple_ini\simple_ini.vcxproj">
+      <Project>{a228a8a1-9375-4587-adce-38e49ec9848b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\dependencies\system_info\system_info.vcxproj">
       <Project>{5e9d9c90-e477-41d0-86e5-36c1ff384556}</Project>
