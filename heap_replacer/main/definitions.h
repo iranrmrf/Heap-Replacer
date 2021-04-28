@@ -22,7 +22,6 @@
 #define HR_MAIN_WINDOW (*(HWND*)0x106F4F8)
 #define HR_SUB_WINDOW (*(HWND*)0x106F4F4)
 #define HR_D3DEVICE (*(LPDIRECT3DDEVICE9*)(*(uintptr_t*)0x106F8D8 + 0x288))
-#define HR_DISPLAY_SCENE ((HRESULT(__thiscall*)(IDirect3DDevice9*))(0x879EF0))
 
 #endif
 
