@@ -8,7 +8,8 @@ decltype(ui::get_device_state) ui::get_device_state = nullptr;
 decltype(ui::get_device_data) ui::get_device_data = nullptr;
 decltype(ui::set_cooperative_level) ui::set_cooperative_level = nullptr;
 
-decltype(ui::window_proc) ui::window_proc = nullptr;
+decltype(ui::window_proc_main) ui::window_proc_main = nullptr;
+decltype(ui::window_proc_sub) ui::window_proc_sub = nullptr;
 
 decltype(ui::create_window) ui::create_window = nullptr;
 decltype(ui::dispatch_message) ui::dispatch_message = nullptr;
@@ -819,19 +820,18 @@ LRESULT CALLBACK ui::window_proc_hook(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 		}
 		return 0;
 	}
-	return CallWindowProc(ui::window_proc, hwnd, uMsg, wParam, lParam);
+	return CallWindowProc((hwnd == HR_MAIN_WINDOW) ? ui::window_proc_main : ui::window_proc_sub, hwnd, uMsg, wParam, lParam);
 }
 
 HWND WINAPI ui::create_window_hook(DWORD dwExStyle, LPCSTR lpClassName, LPCSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam)
 {
 	if (lpWindowName && !_stricmp(lpWindowName, HR_WINDOW_NAME)) { dwStyle = WS_POPUP; dwExStyle = WS_EX_APPWINDOW; }
-	HWND wnd = ui::create_window(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
-	if (wnd && !_stricmp(lpClassName, HR_WINDOW_NAME))
+	HWND hwnd = ui::create_window(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam);
+	if (hwnd && !_stricmp(lpClassName, HR_WINDOW_NAME))
 	{
-		ui::window_proc = (WNDPROC)GetWindowLongPtr(wnd, GWL_WNDPROC);
-		SetWindowLongPtr(wnd, GWL_WNDPROC, (LONG_PTR)&ui::window_proc_hook);
+		(lpWindowName ? ui::window_proc_main : ui::window_proc_sub) = (WNDPROC)SetWindowLongPtr(hwnd, GWL_WNDPROC, (LONG_PTR)&ui::window_proc_hook);
 	}
-	return wnd;
+	return hwnd;
 }
 
 LRESULT WINAPI ui::dispatch_message_hook(const MSG* msg)

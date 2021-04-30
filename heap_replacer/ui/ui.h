@@ -183,7 +183,8 @@ public:
 	static HRESULT(APIENTRY* get_device_data)(IDirectInputDevice8A* self, DWORD cbObjectData, LPDIDEVICEOBJECTDATA rgdod, LPDWORD pdwInOut, DWORD dwFlags);
 	static HRESULT(APIENTRY* set_cooperative_level)(IDirectInputDevice8A* self, HWND hwnd, DWORD dwFlags);
 
-	static LRESULT(CALLBACK* window_proc)(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	static LRESULT(CALLBACK* window_proc_main)(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	static LRESULT(CALLBACK* window_proc_sub)(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
 
