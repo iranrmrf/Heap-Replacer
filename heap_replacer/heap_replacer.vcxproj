@@ -292,7 +292,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
+      <OptimizeReferences>false</OptimizeReferences>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
@@ -363,7 +363,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
+      <OptimizeReferences>false</OptimizeReferences>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
@@ -441,9 +441,6 @@
   <ItemGroup>
     <ProjectReference Include="..\dependencies\imgui\imgui.vcxproj">
       <Project>{c168044e-4054-4418-a544-2b1afad7baca}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\dependencies\minhook\minhook.vcxproj">
-      <Project>{336ba5f6-058f-45f2-8b52-9e3290c27f1e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\dependencies\simple_ini\simple_ini.vcxproj">
       <Project>{a228a8a1-9375-4587-adce-38e49ec9848b}</Project>

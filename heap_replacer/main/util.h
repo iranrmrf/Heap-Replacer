@@ -9,7 +9,6 @@
 
 #include <intrin.h>
 
-#include "MinHook.h"
 #include "types.h"
 
 #define TFPARAM(...) void* self, void* _, __VA_ARGS__
