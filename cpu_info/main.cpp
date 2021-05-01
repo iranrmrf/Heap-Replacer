@@ -40,6 +40,14 @@ int main(int argc, char** argv)
     printf("AVX\t: %s\n", btos(f1_ECX & (1 << 28)));
     printf("AVX2\t: %s\n", btos(f7_EBX & (1 << 05)));
     printf("AVX512\t: %s\n", btos(f7_EBX & (1 << 16)));
+    printf("\n => ");
+    if (f7_EBX & (1 << 16)) { printf("Use AVX512"); }
+    else if (f7_EBX & (1 << 05)) { printf("Use AVX2"); }
+    else if (f1_ECX & (1 << 28)) { printf("Use AVX"); }
+    else if (f1_EDX& (1 << 26)) { printf("Use SSE2"); }
+    else if (f1_EDX& (1 << 25)) { printf("Use SSE"); }
+    else { printf("Use IA32"); }
+    printf(" <= \n");
     printf("\n");
     system("pause");
 }
