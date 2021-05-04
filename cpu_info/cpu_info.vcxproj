@@ -144,6 +144,9 @@
   <ItemGroup>
     <Image Include="icon\cpu_info.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cpu_info.aps" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
