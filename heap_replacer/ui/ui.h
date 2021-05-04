@@ -26,6 +26,8 @@
 
 #define CHECKBOX_COUNT (3)
 
+enum { R, G, B, A };
+
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 class ui
@@ -114,22 +116,6 @@ private:
 
 private:
 
-	size_t gd_info_fps_count;
-	size_t gd_info_frametime_count;
-
-	size_t gd_mpm_allocs_count;
-	size_t gd_mpm_frees_count;
-
-	size_t gd_dhm_allocs_count;
-	size_t gd_dhm_frees_count;
-	size_t gd_dhm_free_blocks_count;
-
-	size_t gd_shm_allocs_count;
-	size_t gd_shm_frees_count;
-	size_t gd_shm_free_buffers_count;
-
-private:
-
 	graph_data* gd_info_fps;
 	graph_data* gd_info_frametime;
 
@@ -159,12 +145,11 @@ private:
 	void load_settings();
 	void save_settings();
 
-	void init_graph_data_counters();
-	void fini_graph_data_counters();
-
 	void render();
 
 	void update_graphs();
+	void clear_graphs();
+
 	void render_ui();
 
 	void render_game_menu();
