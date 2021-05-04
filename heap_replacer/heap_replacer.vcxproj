@@ -442,6 +442,9 @@
     <ProjectReference Include="..\dependencies\imgui\imgui.vcxproj">
       <Project>{c168044e-4054-4418-a544-2b1afad7baca}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\dependencies\minhook\minhook.vcxproj">
+      <Project>{873bb540-f977-428b-b67a-bfb8862a8503}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\dependencies\simple_ini\simple_ini.vcxproj">
       <Project>{a228a8a1-9375-4587-adce-38e49ec9848b}</Project>
     </ProjectReference>

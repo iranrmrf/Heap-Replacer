@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simple_ini", "dependencies\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpu_info", "cpu_info\cpu_info.vcxproj", "{3799EEFC-1E61-43E5-A3E8-6162FA4CDBE9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minhook", "dependencies\minhook\minhook.vcxproj", "{873BB540-F977-428B-B67A-BFB8862A8503}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (FNV)|x86 = Debug (FNV)|x86
@@ -65,6 +67,14 @@ Global
 		{3799EEFC-1E61-43E5-A3E8-6162FA4CDBE9}.Release (FNV)|x86.Build.0 = Release|Win32
 		{3799EEFC-1E61-43E5-A3E8-6162FA4CDBE9}.Release (FO3)|x86.ActiveCfg = Release|Win32
 		{3799EEFC-1E61-43E5-A3E8-6162FA4CDBE9}.Release (FO3)|x86.Build.0 = Release|Win32
+		{873BB540-F977-428B-B67A-BFB8862A8503}.Debug (FNV)|x86.ActiveCfg = Debug|Win32
+		{873BB540-F977-428B-B67A-BFB8862A8503}.Debug (FNV)|x86.Build.0 = Debug|Win32
+		{873BB540-F977-428B-B67A-BFB8862A8503}.Debug (FO3)|x86.ActiveCfg = Debug|Win32
+		{873BB540-F977-428B-B67A-BFB8862A8503}.Debug (FO3)|x86.Build.0 = Debug|Win32
+		{873BB540-F977-428B-B67A-BFB8862A8503}.Release (FNV)|x86.ActiveCfg = Release|Win32
+		{873BB540-F977-428B-B67A-BFB8862A8503}.Release (FNV)|x86.Build.0 = Release|Win32
+		{873BB540-F977-428B-B67A-BFB8862A8503}.Release (FO3)|x86.ActiveCfg = Release|Win32
+		{873BB540-F977-428B-B67A-BFB8862A8503}.Release (FO3)|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
