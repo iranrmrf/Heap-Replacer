@@ -18,6 +18,7 @@ void graph_data::add_data(float data)
 	if (this->alloc != this->count)
 	{
 		this->values = (float*)hr::hr_realloc(this->values, this->count * sizeof(float));
+		if (this->count > this->alloc) { util::memset8(this->values + this->alloc, 0u, this->count - this->alloc); }
 		this->alloc = this->count;
 		this->offset %= this->count;
 	}
@@ -48,6 +49,13 @@ float graph_data::get_back()
 {
 	if (this->offset) { return this->values[this->offset - 1u]; }
 	return this->values[this->count - 1u];
+}
+
+void graph_data::clear()
+{
+	if (this->values) { delete this->values; this->values = nullptr; }
+	this->alloc = 0u;
+	this->offset = 0u;
 }
 
 #endif

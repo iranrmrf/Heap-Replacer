@@ -27,4 +27,5 @@ public:
 	void add_data(float data);
 	float get_back();
 
+	void clear();
 };
