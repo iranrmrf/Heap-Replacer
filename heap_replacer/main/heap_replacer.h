@@ -42,7 +42,6 @@ namespace hr
 			if (void* address = mpm->malloc(size)) [[likely]] { return address; }
 		}
 		if (void* address = dhm->malloc(size)) [[likely]] { return address; }
-		HR_MSGBOX("Failed malloc.");
 		return nullptr;
 	}
 
@@ -55,7 +54,6 @@ namespace hr
 			if (void* address = mpm->calloc(size)) [[likely]] { return address; }
 		}
 		if (void* address = dhm->calloc(size)) [[likely]] { return address; }
-		HR_MSGBOX("Failed calloc.");
 		return nullptr;
 	}
 

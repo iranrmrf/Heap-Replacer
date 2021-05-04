@@ -13,7 +13,7 @@
 
 #define TFPARAM(...) void* self, void* _, __VA_ARGS__
 
-#define LOCK(v) while (InterlockedCompareExchange((v), TRUE, FALSE)) { }
+#define LOCK(v) while (InterlockedCompareExchange((v), TRUE, FALSE))
 #define UNLOCK(v) *(v) = FALSE
 
 #define BIT_SET(w, m, f) w = ((w & ~(m)) | (-(f) & (m)))
@@ -42,6 +42,8 @@ constexpr size_t GB = 1024u * MB;
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;
+typedef unsigned long int ulong;
+typedef unsigned long long int ullong;
 
 void* __cdecl operator new(size_t size);
 void* __cdecl operator new[](size_t size);
