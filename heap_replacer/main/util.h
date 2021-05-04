@@ -13,15 +13,12 @@
 
 #define TFPARAM(...) void* self, void* _, __VA_ARGS__
 
-#define LOCK(v) while (InterlockedCompareExchange((v), 1u, 0u)) { }
-#define UNLOCK(v) *(v) = 0u
+#define LOCK(v) while (InterlockedCompareExchange((v), TRUE, FALSE)) { }
+#define UNLOCK(v) *(v) = FALSE
 
 #define BIT_SET(w, m, f) w = ((w & ~(m)) | (-(f) & (m)))
 #define BIT_ON(w, m) BIT_SET(w, m, true)
 #define BIT_OFF(w, m) BIT_SET(w, m, false)
-
-#define BITWISE_NULLIFIER(c, v) ((DWORD)(v) & ((!(c)) - 1u))
-#define BITWISE_IF_ELSE_NULL(c, t, f) ((BITWISE_NULLIFIER((c), (t))) + (BITWISE_NULLIFIER((!(c)), (f))))
 
 #define UPTRSUM(x, y) ((uintptr_t)(x) + (uintptr_t)(y))
 #define UPTRDIFF(x, y) ((uintptr_t)(x) - (uintptr_t)(y))
@@ -57,8 +54,8 @@ namespace util
 	template <typename O, typename I>
 	O force_cast(I in) { union { I in; O out; } u = { in }; return u.out; };
 
-	size_t get_highest_bit(DWORD value);
-	size_t round_pow2(size_t value);
+	size_t get_highest_bit(size_t n);
+	size_t round_pow2(size_t n);
 
 	void* winapi_alloc(size_t size);
 	void* winapi_malloc(size_t size);
@@ -98,7 +95,7 @@ namespace util
 	void detour_vtable(void* obj, size_t index, void* new_func, void** old_func);
 
 	template <size_t A>
-	size_t align(size_t size) { DWORD s = (size + (A - 1u)) & ~(A - 1u); return BITWISE_IF_ELSE_NULL(size & (A - 1u), s, size); }
+	size_t align(size_t size) { return (size + A - 1u) & ~(A - 1u); }
 
 	template <size_t A>
 	void* align(void* address) { return (void*)align<A>((uintptr_t)address); }

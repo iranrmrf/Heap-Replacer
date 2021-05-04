@@ -23,26 +23,14 @@ void __cdecl operator delete[](void* address)
 namespace util
 {
 
-	size_t get_highest_bit(DWORD value)
+	size_t get_highest_bit(size_t n)
 	{
-		DWORD index;
-		_BitScanReverse(&index, value);
-		return index;
+		return 31u - __lzcnt(n);
 	}
 
-	size_t round_pow2(size_t value)
+	size_t round_pow2(size_t n)
 	{
-		if (value & (value - 1u))
-		{
-			value--;
-			value |= value >> 1u;
-			value |= value >> 2u;
-			value |= value >> 4u;
-			value |= value >> 8u;
-			value |= value >> 16u;
-			value++;
-		}
-		return value;
+		return (1u << (32u - __lzcnt(n - 1u)));
 	}
 
 	void* winapi_alloc(size_t size)
@@ -86,10 +74,10 @@ namespace util
 	void patch_bytes(void* address, BYTE* data, DWORD size)
 	{
 		DWORD p;
-		VirtualProtect((void*)address, size, PAGE_EXECUTE_READWRITE, &p);
-		memcpy((void*)address, data, size);
-		VirtualProtect((void*)address, size, p, &p);
-		FlushInstructionCache(GetCurrentProcess(), (void*)address, size);
+		VirtualProtect(address, size, PAGE_EXECUTE_READWRITE, &p);
+		memcpy(address, data, size);
+		VirtualProtect(address, size, p, &p);
+		FlushInstructionCache(GetCurrentProcess(), address, size);
 	}
 
 	void patch_bytes(uintptr_t address, BYTE* data, DWORD size)
