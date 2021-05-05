@@ -20,12 +20,14 @@ BOOL WINAPI qpc_hook(LARGE_INTEGER* lpPerformanceCount)
 
 	HR_PRINTF("Creating DI8C hook...");
 
-	util::patch_detour(util::get_IAT_address(base, "dinput8.dll", "DirectInput8Create"), &ui::direct_input_8_create_hook, (void**)&ui::direct_input_8_create);
+	void* target;
+	MH_CreateHookApiEx(L"dinput8.dll", "DirectInput8Create", &ui::direct_input_8_create_hook, (void**)&ui::direct_input_8_create, &target);
+	MH_EnableHook(target);
 
 #endif
 
 	HR_PRINTF("Cleaning QPC hook...");
-	util::patch_func_ptr(util::get_IAT_address(base, "kernel32.dll", "QueryPerformanceCounter"), old_qpc);
+	MH_DisableHook(old_qpc);
 
 	return ((decltype(qpc_hook)*)(old_qpc))(lpPerformanceCount);
 }
@@ -40,8 +42,9 @@ void create_loader_hook()
 		{
 			if (util::file_exists("d3dx9_38.tmp")) { util::create_console(); }
 			HR_PRINTF("Creating QPC hook...");
-
-			util::patch_detour(address, &qpc_hook, &old_qpc);
+			MH_Initialize();
+			MH_CreateHookApiEx(L"kernel32.dll", "QueryPerformanceCounter", &qpc_hook, nullptr, &old_qpc);
+			MH_EnableHook(old_qpc);
 		}
 		else
 		{

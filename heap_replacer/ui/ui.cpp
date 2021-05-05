@@ -801,7 +801,9 @@ HRESULT WINAPI ui::direct_input_8_create_hook(HINSTANCE hinst, DWORD dwVersion, 
 	HRESULT hr = ui::direct_input_8_create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
 	if (SUCCEEDED(hr))
 	{
-		util::patch_detour(&((IDirectInput8A*)*ppvOut)->lpVtbl->CreateDevice, &ui::create_device_hook, (void**)&ui::create_device);
+		hr::get_uim()->create_device_addr = ((IDirectInput8A*)*ppvOut)->lpVtbl->CreateDevice;
+		MH_CreateHook(hr::get_uim()->create_device_addr, &ui::create_device_hook, (void**)&ui::create_device);
+		MH_EnableHook(hr::get_uim()->create_device_addr);
 	}
 	return hr;
 }
@@ -811,12 +813,15 @@ HRESULT WINAPI ui::create_device_hook(IDirectInput8A* self, REFGUID rguid, IDire
 	HRESULT hr = ui::create_device(self, rguid, lplpDirectInputDevice, pUnkOuter);
 	if (SUCCEEDED(hr))
 	{		
-		if (rguid == GUID_SysKeyboard)
-		{
-			util::patch_detour(&(*lplpDirectInputDevice)->lpVtbl->GetDeviceState, &ui::get_device_state_hook, (void**)&ui::get_device_state);
-			util::patch_detour(&(*lplpDirectInputDevice)->lpVtbl->GetDeviceData, &ui::get_device_data_hook, (void**)&ui::get_device_data);
-			util::patch_detour(&(*lplpDirectInputDevice)->lpVtbl->SetCooperativeLevel, &ui::set_cooperative_level_hook, (void**)&ui::set_cooperative_level);
-		}
+		void* get_device_state_addr = (*lplpDirectInputDevice)->lpVtbl->GetDeviceState;
+		MH_CreateHook(get_device_state_addr, &ui::get_device_state_hook, (void**)&ui::get_device_state);
+		MH_EnableHook(get_device_state_addr);
+		void* get_device_data_addr = (*lplpDirectInputDevice)->lpVtbl->GetDeviceData;
+		MH_CreateHook(get_device_data_addr, &ui::get_device_data_hook, (void**)&ui::get_device_data);
+		MH_EnableHook(get_device_data_addr);
+		hr::get_uim()->set_cooperative_level_addr = (*lplpDirectInputDevice)->lpVtbl->SetCooperativeLevel;
+		MH_CreateHook(hr::get_uim()->set_cooperative_level_addr, &ui::set_cooperative_level_hook, (void**)&ui::set_cooperative_level);
+		MH_EnableHook(hr::get_uim()->set_cooperative_level_addr);
 	}
 	return hr;
 }
@@ -925,3 +930,4 @@ HRESULT ui::display_scene_hook(IDirect3DDevice9* self)
 
 // TODO
 // save theme
+// save order

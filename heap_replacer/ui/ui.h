@@ -160,6 +160,12 @@ private:
 	void render_scrap_heap_menu();
 	void render_default_heap_blocks();
 
+private:
+
+	void* direct_input_8_create_addr;
+	void* create_device_addr;
+	void* set_cooperative_level_addr;
+
 public:
 
 	static HRESULT(WINAPI* direct_input_8_create)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID* ppvOut, IUnknown* punkOuter);

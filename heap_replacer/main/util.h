@@ -10,6 +10,7 @@
 #include <intrin.h>
 
 #include "types.h"
+#include "MinHook.h"
 
 #define TFPARAM(...) void* self, void* _, __VA_ARGS__
 
