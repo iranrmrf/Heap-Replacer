@@ -2,6 +2,8 @@
 
 #include "main/util.h"
 
+#include "locks/nonreentrant_lock.h"
+
 #include "memory_pool_constants.h"
 
 class memory_pool
@@ -36,7 +38,7 @@ private:
 
 private:
 
-	DWORD lock_id;
+	nonreentrant_lock lock;
 
 public:
 

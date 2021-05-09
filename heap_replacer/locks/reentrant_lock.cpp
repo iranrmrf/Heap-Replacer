@@ -1,21 +1,21 @@
-#include "light_critical_section.h"
+#include "reentrant_lock.h"
 
-light_critical_section::light_critical_section() : thread_id(0u), lock_count(0u)
+reentrant_lock::reentrant_lock() : thread_id(0u), lock_count(0u)
 {
 
 }
 
-light_critical_section::~light_critical_section()
+reentrant_lock::~reentrant_lock()
 {
 
 }
 
-void light_critical_section::lock()
+void reentrant_lock::lock()
 {
 	this->lock_game(nullptr);
 }
 
-void light_critical_section::lock_game(const char* msg)
+void reentrant_lock::lock_game(const char* msg)
 {
 	DWORD id = GetCurrentThreadId();
 	if (this->thread_id == id)
@@ -32,7 +32,7 @@ void light_critical_section::lock_game(const char* msg)
 	}
 }
 
-void light_critical_section::unlock()
+void reentrant_lock::unlock()
 {
 	if (!--this->lock_count)
 	{

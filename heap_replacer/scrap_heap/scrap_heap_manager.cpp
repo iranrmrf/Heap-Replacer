@@ -42,13 +42,13 @@ void scrap_heap_manager::free_buffer(void* address, size_t size)
 
 void* scrap_heap_manager::request_buffer(size_t* size)
 {
-	this->critical_section.lock();
+	this->lock.lock();
 #ifdef HR_USE_GUI
 	this->used_buffer_count++;
 #endif
 	if (!this->free_buffer_count)
 	{
-		this->critical_section.unlock();
+		this->lock.unlock();
 		return this->create_buffer(*size);
 	}
 	size_t max_index = 0u;
@@ -60,7 +60,7 @@ void* scrap_heap_manager::request_buffer(size_t* size)
 			*size = this->buffers[i].size;
 			void* address = this->buffers[i].addr;
 			this->replace_with_last_buffer(i);
-			this->critical_section.unlock();
+			this->lock.unlock();
 			return address;
 		}
 		if (this->buffers[i].size > max_size)
@@ -72,13 +72,13 @@ void* scrap_heap_manager::request_buffer(size_t* size)
 	void* address = this->buffers[max_index].addr;
 	VirtualAlloc(VPTRSUM(address, max_size), *size - max_size, MEM_COMMIT, PAGE_READWRITE);
 	this->replace_with_last_buffer(max_index);
-	this->critical_section.unlock();
+	this->lock.unlock();
 	return address;
 }
 
 void scrap_heap_manager::release_buffer(void* address, size_t size)
 {
-	this->critical_section.lock();
+	this->lock.lock();
 #ifdef HR_USE_GUI
 	this->used_buffer_count--;
 #endif
@@ -92,5 +92,5 @@ void scrap_heap_manager::release_buffer(void* address, size_t size)
 		this->buffers[this->free_buffer_count].size = size;
 		this->free_buffer_count++;
 	}
-	this->critical_section.unlock();
+	this->lock.unlock();
 }

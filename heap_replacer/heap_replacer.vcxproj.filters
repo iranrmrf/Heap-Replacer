@@ -51,7 +51,7 @@
     <ClCompile Include="memory_pools\memory_pool_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="light_critical_section\light_critical_section.cpp">
+    <ClCompile Include="locks\reentrant_lock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ui\ui.cpp">
@@ -67,6 +67,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ui\graph_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="locks\nonreentrant_lock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -113,7 +116,7 @@
     <ClInclude Include="scrap_heap\scrap_heap_constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="light_critical_section\light_critical_section.h">
+    <ClInclude Include="locks\reentrant_lock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="main\types.h">
@@ -135,6 +138,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ui\graph_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="locks\nonreentrant_lock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

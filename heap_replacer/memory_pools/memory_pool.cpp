@@ -9,8 +9,6 @@ memory_pool::memory_pool(size_t item_size, size_t max_size) : item_size(item_siz
 
 	this->free_cells = (cell*)util::winapi_calloc(this->max_cell_count, sizeof(cell));
 	this->next_free = this->free_cells;
-
-	this->lock_id = 0u;
 }
 
 memory_pool::~memory_pool()
@@ -64,12 +62,12 @@ bool memory_pool::is_in_range(void* address)
 
 void* memory_pool::malloc()
 {
-	LOCK(&this->lock_id);
+	this->lock.lock();
 	if (!this->next_free->next) [[unlikely]]
 	{
 		if (this->pool_cur == this->pool_end) [[unlikely]]
 		{
-			UNLOCK(&this->lock_id);
+			this->lock.unlock();
 			return nullptr;
 		}
 		this->setup_new_block();
@@ -77,7 +75,7 @@ void* memory_pool::malloc()
 	cell* old_free = this->next_free;
 	this->next_free = this->next_free->next;
 	this->cell_count--;
-	UNLOCK(&this->lock_id);
+	this->lock.unlock();
 	old_free->next = nullptr;
 	return this->free_ptr_to_real(old_free);
 }
@@ -97,7 +95,7 @@ size_t memory_pool::mem_size(void* address)
 void memory_pool::free(void* address)
 {
 	cell* c = (cell*)this->real_to_free_ptr(address);
-	LOCK(&this->lock_id);
+	this->lock.lock();
 	if (!c->next) [[likely]]
 	{
 		this->cell_count++;
@@ -107,7 +105,7 @@ void memory_pool::free(void* address)
 		util::memset32(address, 0u, this->item_size >> 2u);
 #endif
 	}
-	UNLOCK(&this->lock_id);
+	this->lock.unlock();
 }
 
 void* memory_pool::operator new(size_t size)

@@ -11,7 +11,8 @@
 #include "scrap_heap/scrap_heap_manager.h"
 #include "scrap_heap/scrap_heap_block.h"
 
-#include "light_critical_section/light_critical_section.h"
+#include "locks/reentrant_lock.h"
+#include "locks/nonreentrant_lock.h"
 
 #include "ui/ui.h"
 
@@ -201,9 +202,9 @@ namespace hr
 		util::patch_ret(0xAA7290);
 		util::patch_ret(0xAA7300);
 
-		util::patch_jmp(0x40FBF0, util::force_cast<void*>(&light_critical_section::lock_game));
-		//util::patch_jmp(0x78D200, util::force_cast<void*>(&light_critical_section::try_lock));
-		util::patch_jmp(0x40FBA0, util::force_cast<void*>(&light_critical_section::unlock));
+		util::patch_jmp(0x40FBF0, util::force_cast<void*>(&reentrant_lock::lock_game));
+		//util::patch_jmp(0x78D200, util::force_cast<void*>(&reentrant_lock::try_lock));
+		util::patch_jmp(0x40FBA0, util::force_cast<void*>(&reentrant_lock::unlock));
 
 		util::patch_ret(0xAA58D0);
 		util::patch_ret(0x866D10);
@@ -249,8 +250,8 @@ namespace hr
 		util::patch_ret(0x6E21F0);
 		util::patch_ret(0x6E1E10);
 
-		util::patch_jmp(0x409A80, util::force_cast<void*>(&light_critical_section::lock_game));
-		//util::patch_jmp(0x0, util::force_cast<void*>(&light_critical_section::unlock));
+		util::patch_jmp(0x409A80, util::force_cast<void*>(&reentrant_lock::lock_game));
+		//util::patch_jmp(0x0, util::force_cast<void*>(&reentrant_lock::unlock));
 
 		util::patch_ret(0x86C600);
 		util::patch_ret(0x6E1CD0);

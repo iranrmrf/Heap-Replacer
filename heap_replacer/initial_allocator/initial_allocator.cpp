@@ -6,8 +6,6 @@ initial_allocator::initial_allocator(size_t size) : size(size), count(0u)
 	this->ina_end = VPTRSUM(this->ina_bgn, size);
 
 	this->last_alloc = this->ina_bgn;
-
-	this->lock_id = 0u;
 }
 
 initial_allocator::~initial_allocator()
@@ -19,12 +17,12 @@ void* initial_allocator::malloc(size_t size)
 {
 	void* new_last_alloc = VPTRSUM(this->last_alloc, size + sizeof(size_t));
 	if (new_last_alloc > this->ina_end) { return nullptr; }
-	LOCK(&this->lock_id);
+	this->lock.lock();
 	*(size_t*)this->last_alloc = size;
 	void* address = VPTRSUM(this->last_alloc, sizeof(size_t));
 	this->last_alloc = util::align<4u>(new_last_alloc);
 	++this->count;
-	UNLOCK(&this->lock_id);
+	this->lock.unlock();
 	return address;
 }
 

@@ -2,7 +2,7 @@
 
 #include "main/util.h"
 
-class light_critical_section
+class reentrant_lock
 {
 
 private:
@@ -12,8 +12,8 @@ private:
 
 public:
 
-	light_critical_section();
-	~light_critical_section();
+	reentrant_lock();
+	~reentrant_lock();
 
 	void lock();
 	void lock_game(const char* msg);

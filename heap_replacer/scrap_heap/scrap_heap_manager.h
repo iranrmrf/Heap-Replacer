@@ -2,7 +2,8 @@
 
 #include "main/util.h"
 
-#include "light_critical_section/light_critical_section.h"
+#include "locks/reentrant_lock.h"
+
 #include "scrap_heap_constants.h"
 
 class scrap_heap_manager
@@ -30,7 +31,7 @@ private:
 
 #endif
 
-	light_critical_section critical_section;
+	reentrant_lock lock;
 
 public:
 

@@ -2,7 +2,7 @@
 
 #include "main/util.h"
 
-#include "light_critical_section/light_critical_section.h"
+#include "locks/reentrant_lock.h"
 
 #include "cell_list.h"
 
@@ -33,7 +33,7 @@ private:
 
 private:
 
-	light_critical_section critical_section;
+	reentrant_lock lock;
 
 public:
 

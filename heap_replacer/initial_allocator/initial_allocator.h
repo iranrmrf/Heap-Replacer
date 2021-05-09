@@ -2,6 +2,8 @@
 
 #include "main/util.h"
 
+#include "locks/nonreentrant_lock.h"
+
 #define INITIAL_ALLOCATOR_SIZE (0x00001000u)
 
 class initial_allocator
@@ -20,7 +22,7 @@ private:
 
 private:
 
-	DWORD lock_id;
+	nonreentrant_lock lock;
 
 public:
 

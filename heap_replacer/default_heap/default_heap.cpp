@@ -137,7 +137,7 @@ void default_heap::rmv_free_cell(mem_cell* cell)
 
 void default_heap::add_free_cell(mem_cell* cell)
 {
-	this->critical_section.lock();
+	this->lock.lock();
 #ifdef HR_USE_GUI
 	this->used_size -= cell->desc.size;
 #endif
@@ -160,14 +160,14 @@ void default_heap::add_free_cell(mem_cell* cell)
 	this->add_addr_array(cell);
 	this->add_free_cell_size(cell);
 	this->add_size_array(cell);
-	this->critical_section.unlock();
+	this->lock.unlock();
 }
 
 mem_cell* default_heap::get_free_cell(size_t size)
 {
 	size = util::align<default_heap_cell_size>(size);
 	mem_cell* cell;
-	this->critical_section.lock();
+	this->lock.lock();
 	while (!(cell = this->size_array[this->get_size_index(size)])) [[unlikely]]
 	{
 		this->add_free_cell(this->create_new_block());
@@ -188,7 +188,7 @@ mem_cell* default_heap::get_free_cell(size_t size)
 #ifdef HR_USE_GUI
 	this->used_size += cell->desc.size;
 #endif
-	this->critical_section.unlock();
+	this->lock.unlock();
 	return cell;
 }
 
