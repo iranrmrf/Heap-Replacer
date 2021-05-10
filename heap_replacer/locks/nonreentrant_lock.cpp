@@ -5,11 +5,6 @@ nonreentrant_lock::nonreentrant_lock() : locked(false)
 
 }
 
-nonreentrant_lock::~nonreentrant_lock()
-{
-
-}
-
 void nonreentrant_lock::lock()
 {
 	while (InterlockedCompareExchange(&this->locked, true, false));

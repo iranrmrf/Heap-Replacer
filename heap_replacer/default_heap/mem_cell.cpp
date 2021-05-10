@@ -1,11 +1,6 @@
 #include "mem_cell.h"
 
-mem_cell::mem_cell(void* address, size_t size, size_t index) : size_node(nullptr), addr_node(nullptr), desc(address, size, index)
-{
-
-}
-
-mem_cell::~mem_cell()
+mem_cell::mem_cell(void* address, size_t size, size_t index) : size_node(nullptr), addr_node(nullptr), desc{ address, size, index }
 {
 
 }

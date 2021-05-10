@@ -18,7 +18,6 @@ public:
 public:
 
 	mem_cell(void* address, size_t size, size_t index);
-	~mem_cell();
 
 	bool precedes(mem_cell* cell);
 

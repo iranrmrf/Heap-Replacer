@@ -22,7 +22,6 @@ private:
 public:
 
 	cell_list();
-	~cell_list();
 
 	cell_node* get_head();
 	cell_node* get_tail();

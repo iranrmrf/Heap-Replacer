@@ -13,7 +13,6 @@ private:
 public:
 
 	reentrant_lock();
-	~reentrant_lock();
 
 	void lock();
 	void lock_game(const char* msg);

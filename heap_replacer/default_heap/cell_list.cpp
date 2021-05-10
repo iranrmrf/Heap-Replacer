@@ -14,11 +14,6 @@ cell_list::cell_list()
 
 }
 
-cell_list::~cell_list()
-{
-
-}
-
 cell_node* cell_list::get_head()
 {
 	return this->fake_head->next;

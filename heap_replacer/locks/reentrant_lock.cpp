@@ -5,11 +5,6 @@ reentrant_lock::reentrant_lock() : thread_id(0u), lock_count(0u)
 
 }
 
-reentrant_lock::~reentrant_lock()
-{
-
-}
-
 void reentrant_lock::lock()
 {
 	this->lock_game(nullptr);

@@ -14,9 +14,6 @@ public:
 
 public:
 
-	cell_desc(void* addr, size_t size, size_t index);
-	~cell_desc();
-
 	void* get_end();
 
 	bool is_in_range(void* address);

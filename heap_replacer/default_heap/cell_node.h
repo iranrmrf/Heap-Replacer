@@ -19,7 +19,6 @@ public:
 public:
 
 	cell_node(mem_cell* cell);
-	~cell_node();
 
 	cell_node* link(cell_node* prev, cell_node* next);
 

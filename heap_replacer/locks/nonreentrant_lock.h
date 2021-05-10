@@ -12,7 +12,6 @@ private:
 public:
 
 	nonreentrant_lock();
-	~nonreentrant_lock();
 
 	void lock();
 	void unlock();
