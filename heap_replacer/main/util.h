@@ -14,9 +14,6 @@
 
 #define TFPARAM(...) void* self, void* _, __VA_ARGS__
 
-#define LOCK(v) while (InterlockedCompareExchange((v), TRUE, FALSE))
-#define UNLOCK(v) *(v) = FALSE
-
 #define BIT_SET(w, m, f) w = ((w & ~(m)) | (-(f) & (m)))
 #define BIT_ON(w, m) BIT_SET(w, m, true)
 #define BIT_OFF(w, m) BIT_SET(w, m, false)
@@ -64,6 +61,11 @@ namespace util
 	void* winapi_malloc(size_t size);
 	void* winapi_calloc(size_t count, size_t size);
 	void winapi_free(void* address);
+
+	char ctolower(char c);
+	int cstrcmp(const char* s1, const char* s2);
+	int cstricmp(const char* s1, const char* s2);
+	void cmemcpy(void* dst, const void* src, size_t cnt);
 
 	void cmemset8(void* dst, BYTE val, size_t cnt);
 	void cmemset16(void* dst, WORD val, size_t cnt);

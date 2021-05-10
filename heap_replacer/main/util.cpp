@@ -53,22 +53,44 @@ namespace util
 		VirtualFree(address, 0u, MEM_RELEASE);
 	}
 
-	void memset8(void* destination, BYTE value, size_t count)
+	char ctoupper(char c)
 	{
-		BYTE* position = (BYTE*)destination;
-		for (size_t i = 0u; i < count; i++) { *position++ = value; }
+		return c &= ~(!((c < 'a') | (c > 'z')) << 5);
 	}
 
-	void memset16(void* destination, WORD value, size_t count)
+	char ctolower(char c)
 	{
-		WORD* position = (WORD*)destination;
-		for (size_t i = 0u; i < count; i++) { *position++ = value; }
+		return c |= (!((c < 'A') | (c > 'Z')) << 5);
 	}
 
-	void memset32(void* destination, DWORD value, size_t count)
+	int cstrcmp(const char* s1, const char* s2)
 	{
-		DWORD* position = (DWORD*)destination;
-		for (size_t i = 0u; i < count; i++) { *position++ = value; }
+		while ((!!(*s1)) & (*s1 == *s2)) { s1++; s2++; } return *s1 - *s2;
+	}
+
+	int cstricmp(const char* s1, const char* s2)
+	{
+		while ((!!(*s1)) & (tolower(*s1) == tolower(*s2))) { s1++; s2++; } return tolower(*s1) - tolower(*s2);
+	}
+
+	void cmemcpy(void* dst, const void* src, size_t cnt)
+	{
+		for (BYTE* d = (BYTE*)dst, *s = (BYTE*)src; cnt--; d++, s++) { *d = *s; }
+	}
+
+	void cmemset8(void* dst, BYTE val, size_t cnt)
+	{
+		for (BYTE* pos = (BYTE*)dst; cnt--; pos++) { *pos = val; }
+	}
+
+	void cmemset16(void* dst, WORD val, size_t cnt)
+	{
+		for (WORD* pos = (WORD*)dst; cnt--; pos++) { *pos = val; }
+	}
+
+	void cmemset32(void* dst, DWORD val, size_t cnt)
+	{
+		for (DWORD* pos = (DWORD*)dst; cnt--; pos++) { *pos = val; }
 	}
 
 	void patch_bytes(void* address, BYTE* data, DWORD size)
@@ -225,21 +247,27 @@ namespace util
 		IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*)(base + dos_header->e_lfanew);
 		IMAGE_DATA_DIRECTORY section = nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
 		IMAGE_IMPORT_DESCRIPTOR* import_descriptor = (IMAGE_IMPORT_DESCRIPTOR*)(base + section.VirtualAddress);
-		for (size_t i = 0u; import_descriptor[i].Name != NULL; i++)
+		for (size_t i = 0u; import_descriptor[i].Name; i++)
 		{
-			if (!_stricmp((char*)(base + import_descriptor[i].Name), dll_name))
+			const char* loaded_dll = (const char*)(base + import_descriptor[i].Name);
+			if (!cstricmp(loaded_dll, dll_name))
 			{
 				if (!import_descriptor[i].FirstThunk) { return nullptr; }
 				IMAGE_THUNK_DATA* name_table = (IMAGE_THUNK_DATA*)(base + import_descriptor[i].OriginalFirstThunk);
 				IMAGE_THUNK_DATA* import_table = (IMAGE_THUNK_DATA*)(base + import_descriptor[i].FirstThunk);
-				for (; name_table->u1.Ordinal != 0u; ++name_table, ++import_table)
+				while (name_table->u1.Ordinal)
 				{
 					if (!IMAGE_SNAP_BY_ORDINAL(name_table->u1.Ordinal))
 					{
 						IMAGE_IMPORT_BY_NAME* import_name = (IMAGE_IMPORT_BY_NAME*)(base + name_table->u1.ForwarderString);
 						char* func_name = import_name->Name;
-						if (!_stricmp(func_name, search)) { return &import_table->u1.AddressOfData; }
+						if (!cstricmp(func_name, search))
+						{
+							return &import_table->u1.AddressOfData;
+						}
 					}
+					name_table++;
+					import_table++;
 				}
 			}
 		}
