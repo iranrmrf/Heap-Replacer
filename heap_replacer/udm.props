@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <Fallout3Path>D:\Games\Fallout 3\</Fallout3Path>
-    <FalloutNVPath>F:\Games\Fallout New Vegas\</FalloutNVPath>
+    <FalloutNVPath>C:\Games\Fallout New Vegas\</FalloutNVPath>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />

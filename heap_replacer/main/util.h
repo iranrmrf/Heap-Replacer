@@ -82,6 +82,7 @@ namespace util
 	void patch_detour(uintptr_t address, void* new_func, void** old_func);
 
 	void patch_call(void* address, void* destination);
+	void patch_call(uintptr_t address, void* destination);
 	void patch_call(void* address, void* destination, size_t nops);
 	void patch_jmp(void* address, void* destination);
 	void patch_jmp(uintptr_t address, void* destination);

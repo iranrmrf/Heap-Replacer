@@ -155,6 +155,11 @@ namespace util
 		patch_bytes(address, bytes, 5u);
 	}
 
+	void patch_call(uintptr_t address, void* destination)
+	{
+		patch_call((void*)address, destination);
+	}
+
 	void patch_call(void* address, void* destination, size_t nops)
 	{
 		patch_call(address, destination);

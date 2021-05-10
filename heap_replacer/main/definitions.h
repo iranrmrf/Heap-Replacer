@@ -4,7 +4,7 @@
 #if defined(FNV)
 
 #define HR_NAME "NVHR"
-#define HR_VERSION "1.4.0.525"
+#define HR_GAME_VERSION "1.4.0.525"
 #define HR_WINDOW_NAME "Fallout: New Vegas"
 #define HR_GAME_QPC_HOOK ((void*)(0x00FDF0A0))
 #define HR_GECK_QPC_HOOK ((void*)(0x00D2320C))
@@ -14,7 +14,7 @@
 #elif defined(FO3)
 
 #define HR_NAME "F3HR"
-#define HR_VERSION "1.7.0.3"
+#define HR_GAME_VERSION "1.7.0.3"
 #define HR_WINDOW_NAME "Fallout3"
 #define HR_GAME_QPC_HOOK ((void*)(0x00D9B0E4))
 #define HR_GECK_QPC_HOOK ((void*)(0x00D03208))

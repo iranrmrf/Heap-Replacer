@@ -394,6 +394,7 @@
     <ClCompile Include="default_heap\default_heap.cpp" />
     <ClCompile Include="default_heap\default_heap_manager.cpp" />
     <ClCompile Include="default_heap\mem_cell.cpp" />
+    <ClCompile Include="locks\nonreentrant_lock.cpp" />
     <ClCompile Include="scrap_heap\scrap_heap_block.cpp" />
     <ClCompile Include="scrap_heap\scrap_heap_manager.cpp" />
     <ClCompile Include="ui\color_array.cpp" />

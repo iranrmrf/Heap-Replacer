@@ -5,7 +5,7 @@ default_heap::default_heap()
 	this->size_clist = new cell_list();
 	this->addr_clist = (cell_list**)util::winapi_calloc(default_heap_block_count, sizeof(cell_list*));
 
-	this->size_array = (mem_cell**)util::winapi_calloc(default_heap_cell_count, sizeof(mem_cell*));
+	this->size_array = (mem_cell**)util::winapi_calloc(default_heap_cell_count + 1u, sizeof(mem_cell*));
 	this->addr_array = (mem_cell***)util::winapi_calloc(default_heap_block_count, sizeof(mem_cell**));
 
 	this->block_desc = (cell_desc*)util::winapi_calloc(default_heap_block_count, sizeof(cell_desc));
@@ -53,7 +53,7 @@ default_heap::~default_heap()
 
 size_t default_heap::get_size_index(size_t size)
 {
-	return (size / default_heap_cell_size) - 1u;
+	return size / default_heap_cell_size;
 }
 
 size_t default_heap::get_size_index(mem_cell* cell)
@@ -75,26 +75,26 @@ void default_heap::add_size_array(mem_cell* cell)
 {
 	cell_node* curr;
 	for (curr = cell->size_node->prev; curr->is_valid() && cell->swap_by_size(curr->cell); curr = curr->prev);
-	for (size_t i = 0u; i < cell->size_node->array_index - curr->array_index; this->size_array[curr->array_index + 1u + i++] = cell);
+	util::cmemset32(&this->size_array[curr->array_index + 1u], (DWORD)cell, cell->size_node->array_index - curr->array_index);
 }
 
 void default_heap::add_addr_array(mem_cell* cell)
 {
 	cell_node* curr;
 	for (curr = cell->addr_node->prev; curr->is_valid() && cell->swap_by_addr(curr->cell); curr = curr->prev);
-	for (size_t i = 0u; i < cell->addr_node->array_index - curr->array_index; this->addr_array[cell->desc.index][curr->array_index + 1u + i++] = cell);
+	util::cmemset32(&this->addr_array[cell->desc.index][curr->array_index + 1u], (DWORD)cell, cell->addr_node->array_index - curr->array_index);
 }
 
 void default_heap::rmv_size_array(mem_cell* cell)
 {
 	cell_node* curr = cell->size_node->prev;
-	for (size_t i = 0u; i < cell->size_node->array_index - curr->array_index; this->size_array[curr->array_index + 1u + i++] = cell->size_node->next->cell);
+	util::cmemset32(&this->size_array[curr->array_index + 1u], (DWORD)cell->size_node->next->cell, cell->size_node->array_index - curr->array_index);
 }
 
 void default_heap::rmv_addr_array(mem_cell* cell)
 {
 	cell_node* curr = cell->addr_node->prev;
-	for (size_t i = 0u; i < cell->addr_node->array_index - curr->array_index; this->addr_array[cell->desc.index][curr->array_index + 1u + i++] = cell->addr_node->next->cell);
+	util::cmemset32(&this->addr_array[cell->desc.index][curr->array_index + 1u], (DWORD)cell->addr_node->next->cell, cell->addr_node->array_index - curr->array_index);
 }
 
 cell_node* default_heap::insert_size_dlist(mem_cell* cell)
@@ -229,9 +229,9 @@ size_t default_heap::get_next_free_block_index()
 
 mem_cell* default_heap::create_new_block()
 {
-	void* address = VirtualAlloc(nullptr, default_heap_block_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	void* address = util::winapi_malloc(default_heap_block_size);
 	size_t index = this->get_next_free_block_index();
-	if (index == default_heap_block_count) { return nullptr; }
+	if (index == default_heap_block_count) { HR_MSGBOX("DHM no more free blocks"); return nullptr; }
 
 	this->block_desc[index] = { address, default_heap_block_size, index };
 	this->addr_clist[index] = new cell_list();
