@@ -243,6 +243,7 @@ namespace hr
 
 		util::patch_bytes(0x86EED4, (BYTE*)"\xEB\x55", 2);
 
+		util::patch_nops(0xAA306A, 5);
 		util::patch_call(0xAA85FF, &queue_io_request);
 		util::patch_call(0xAA864F, &queue_io_request);
 		util::patch_call(0xAA869F, &queue_io_request);

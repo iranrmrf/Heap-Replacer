@@ -53,7 +53,7 @@ void create_loader_hook()
 	}
 	else if (address != HR_GECK_QPC_HOOK)
 	{
-		HR_MSGBOX("Incompatible game executable. Please use version (" HR_VERSION ")");
+		HR_MSGBOX("Incompatible game executable. Please use version (" HR_GAME_VERSION ")");
 	}
 }
 
