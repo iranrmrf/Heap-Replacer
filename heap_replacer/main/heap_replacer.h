@@ -167,6 +167,22 @@ namespace hr
 		ina.free(address);
 	}
 
+	struct io_req { FILE* file; enum IOMode { NONE, SEEK, READ, WRITE, TERMINATE } type; DWORD whence; void* ptr; DWORD offset; DWORD status; DWORD bytes; };
+
+	void __cdecl queue_io_request(io_req* req)
+	{
+		size_t(__cdecl* f_fseek)(FILE*, int, int) = decltype(f_fseek)(0xECB65A);
+		size_t(__cdecl* f_fread)(void*, size_t, size_t, FILE*) = decltype(f_fread)(0xECB3A8);
+		size_t(__cdecl* f_fwrite)(void*, size_t, size_t, FILE*) = decltype(f_fwrite)(0xECB086);
+		switch (req->type)
+		{
+			case io_req::IOMode::SEEK: req->bytes = f_fseek(req->file, req->offset, req->whence); break;
+			case io_req::IOMode::READ: req->bytes = f_fread(req->ptr, 1u, req->offset, req->file); break;
+			case io_req::IOMode::WRITE: req->bytes = f_fwrite(req->ptr, 1u, req->offset, req->file); break;
+			default: break;
+		}
+	}
+
 	void apply_heap_hooks()
 	{
 
@@ -226,6 +242,10 @@ namespace hr
 		util::patch_nop_call(0xEC1701);
 
 		util::patch_bytes(0x86EED4, (BYTE*)"\xEB\x55", 2);
+
+		util::patch_call(0xAA85FF, &queue_io_request);
+		util::patch_call(0xAA864F, &queue_io_request);
+		util::patch_call(0xAA869F, &queue_io_request);
 
 #elif defined(FO3)
 
