@@ -32,7 +32,7 @@ void* default_heap_manager::malloc(size_t size)
 void* default_heap_manager::calloc(size_t size)
 {
 	void* address = this->malloc(size);
-	if (address) [[likely]] { util::memset32(address, 0u, (size + 3u) >> 2u); }
+	if (address) [[likely]] { util::cmemset32(address, 0u, (size + 3u) >> 2u); }
 	return address;
 }
 

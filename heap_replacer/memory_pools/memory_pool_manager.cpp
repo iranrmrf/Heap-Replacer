@@ -2,8 +2,8 @@
 
 memory_pool_manager::memory_pool_manager()
 {
-	util::memset8(this->pools_by_size, 0u, pool_size_array_length * sizeof(memory_pool*));
-	util::memset8(this->pools_by_addr, 0u, pool_addr_array_length * sizeof(memory_pool*));
+	util::cmemset8(this->pools_by_size, 0u, pool_size_array_length * sizeof(memory_pool*));
+	util::cmemset8(this->pools_by_addr, 0u, pool_addr_array_length * sizeof(memory_pool*));
 	this->init_all_pools();
 
 #ifdef HR_USE_GUI

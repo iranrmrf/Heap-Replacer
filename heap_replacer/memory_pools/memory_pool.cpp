@@ -83,7 +83,7 @@ void* memory_pool::malloc()
 void* memory_pool::calloc()
 {
 	void* address = this->malloc();
-	if (address) [[likely]] { util::memset32(address, 0u, this->item_size >> 2u); }
+	if (address) [[likely]] { util::cmemset32(address, 0u, this->item_size >> 2u); }
 	return address;
 }
 

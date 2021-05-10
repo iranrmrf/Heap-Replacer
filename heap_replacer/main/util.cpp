@@ -75,7 +75,7 @@ namespace util
 	{
 		DWORD p;
 		VirtualProtect(address, size, PAGE_EXECUTE_READWRITE, &p);
-		memcpy(address, data, size);
+		cmemcpy(address, data, size);
 		VirtualProtect(address, size, p, &p);
 		FlushInstructionCache(GetCurrentProcess(), address, size);
 	}
@@ -192,7 +192,7 @@ namespace util
 	void patch_nops(void* address, size_t count)
 	{
 		BYTE* bytes = new BYTE[count];
-		memset8(bytes, 0x90u, count);
+		cmemset8(bytes, 0x90u, count);
 		patch_bytes(address, bytes, count);
 		delete[] bytes;
 	}

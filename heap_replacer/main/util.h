@@ -65,9 +65,9 @@ namespace util
 	void* winapi_calloc(size_t count, size_t size);
 	void winapi_free(void* address);
 
-	void memset8(void* destination, BYTE value, size_t count);
-	void memset16(void* destination, WORD value, size_t count);
-	void memset32(void* destination, DWORD value, size_t count);
+	void cmemset8(void* dst, BYTE val, size_t cnt);
+	void cmemset16(void* dst, WORD val, size_t cnt);
+	void cmemset32(void* dst, DWORD val, size_t cnt);
 
 	void patch_bytes(void* address, BYTE* data, DWORD size);
 	void patch_bytes(uintptr_t address, BYTE* data, DWORD size);

@@ -75,7 +75,7 @@ namespace hr
 		size_t old_size, new_size;;
 		if ((old_size = hr_mem_size(address)) >= (new_size = size * count))
 		{
-			util::memset8(address, 0u, new_size);
+			util::cmemset8(address, 0u, new_size);
 			return address;
 		}
 		void* new_address = hr_calloc(count, size);

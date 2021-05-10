@@ -2,7 +2,7 @@
 
 scrap_heap_manager::scrap_heap_manager()
 {
-	util::memset8(this->buffers, 0u, scrap_heap_manager_buffer_count * sizeof(scrap_heap_buffer));
+	util::cmemset8(this->buffers, 0u, scrap_heap_manager_buffer_count * sizeof(scrap_heap_buffer));
 
 	this->free_buffer_count = 0u;
 
