@@ -2,7 +2,6 @@
 
 default_heap_manager::default_heap_manager()
 {
-	this->heap = new default_heap();
 
 #ifdef HR_USE_GUI
 	this->allocs = 0u;
@@ -13,14 +12,14 @@ default_heap_manager::default_heap_manager()
 
 default_heap_manager::~default_heap_manager()
 {
-	delete this->heap;
+
 }
 
 void* default_heap_manager::malloc(size_t size)
 {
-	mem_cell* cell = this->heap->get_free_cell(size);
+	mem_cell* cell = this->heap.get_free_cell(size);
 	if (!cell) [[unlikely]] { return nullptr; }
-	this->heap->add_used(cell);
+	this->heap.add_used(cell);
 	void* address = cell->desc.addr;
 #ifdef HR_USE_GUI
 	this->allocs++;
@@ -38,25 +37,25 @@ void* default_heap_manager::calloc(size_t size)
 
 size_t default_heap_manager::mem_size(void* address)
 {
-	size_t index = this->heap->get_block_index(address);
+	size_t index = this->heap.get_block_index(address);
 	if (index == default_heap_block_count) [[unlikely]] { return 0u; }
-	return this->heap->get_used(address, index);
+	return this->heap.get_used(address, index);
 }
 
 bool default_heap_manager::free(void* address)
 {
-	size_t index = this->heap->get_block_index(address);
+	size_t index = this->heap.get_block_index(address);
 	if (index == default_heap_block_count) [[unlikely]] { return false; }
-		if (size_t size = this->heap->rmv_used(address, index))
-		{
+	if (size_t size = this->heap.rmv_used(address, index))
+	{
 #ifdef HR_ZERO_MEM
-			util::memset32(address, 0u, (size + 3u) >> 2u);
+		util::memset32(address, 0u, (size + 3u) >> 2u);
 #endif
 #ifdef HR_USE_GUI
-			this->frees++;
+		this->frees++;
 #endif
-			mem_cell* cell = new mem_cell(address, size, index);
-			this->heap->add_free_cell(cell);
-		}
+		mem_cell* cell = new mem_cell(address, size, index);
+		this->heap.add_free_cell(cell);
+	}
 	return true;
 }

@@ -9,7 +9,7 @@ class default_heap_manager
 
 private:
 
-	default_heap* heap;
+	default_heap heap;
 
 #ifdef HR_USE_GUI
 
