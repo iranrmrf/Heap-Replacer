@@ -25,12 +25,15 @@ namespace util
 
 	size_t get_highest_bit(size_t n)
 	{
-		return 31u - __lzcnt(n);
+		DWORD index;
+		_BitScanReverse(&index, n);
+		return index;
 	}
 
 	size_t round_pow2(size_t n)
 	{
-		return (1u << (32u - __lzcnt(n - 1u)));
+		return (1u << (get_highest_bit(--n) + 1u));
+	}
 	}
 
 	void* winapi_alloc(size_t size)
