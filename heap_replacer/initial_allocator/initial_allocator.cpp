@@ -33,7 +33,10 @@ void* initial_allocator::calloc(size_t count, size_t size)
 
 void initial_allocator::free(void* address)
 {
-	if (this->is_in_range(address) && !(--this->count))
+	this->lock.lock();
+	this->count--;
+	this->lock.unlock();
+	if (this->is_in_range(address) && !this->count)
 	{
 		util::winapi_free(this->ina_bgn);
 	}
