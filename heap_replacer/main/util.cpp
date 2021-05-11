@@ -34,6 +34,12 @@ namespace util
 	{
 		return (1u << (get_highest_bit(--n) + 1u));
 	}
+
+	size_t round_pow2(size_t n, size_t* b)
+	{
+		size_t bit = get_highest_bit(--n) + 1u;
+		*b = bit;
+		return (1u << bit);
 	}
 
 	void* winapi_alloc(size_t size)

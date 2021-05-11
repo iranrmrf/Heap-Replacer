@@ -75,14 +75,20 @@ memory_pool* memory_pool_manager::pool_from_addr(void* address)
 	return this->pools_by_addr[(uintptr_t)address / pool_alignment];
 }
 
+memory_pool* memory_pool_manager::pool_from_index(size_t index)
+{
+	return this->pools_by_size[index];
+}
+
 void* memory_pool_manager::malloc(size_t size)
 {
 #ifdef HR_USE_GUI
 	this->allocs++;
 #endif
-	for (size = util::round_pow2(size); size <= 2u * KB; size <<= 1u)
+	size_t bit;
+	for (size = util::round_pow2(size, &bit); size <= 2u * KB; size <<= 1u, bit <<= 1u)
 	{
-		if (void* address = this->pool_from_size(size)->malloc()) [[likely]] { return address; }
+		if (void* address = this->pool_from_index(bit)->malloc()) [[likely]] { return address; }
 	}
 	[[unlikely]]
 	return nullptr;
@@ -93,9 +99,10 @@ void* memory_pool_manager::calloc(size_t size)
 #ifdef HR_USE_GUI
 	this->allocs++;
 #endif
-	for (size = util::round_pow2(size); size <= 2u * KB; size <<= 1u)
+	size_t bit;
+	for (size = util::round_pow2(size, &bit); size <= 2u * KB; size <<= 1u, bit <<= 1u)
 	{
-		if (void* address = this->pool_from_size(size)->calloc()) [[likely]] { return address; }
+		if (void* address = this->pool_from_index(bit)->calloc()) [[likely]] { return address; }
 	}
 	[[unlikely]]
 	return nullptr;

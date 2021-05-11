@@ -56,6 +56,7 @@ namespace util
 
 	size_t get_highest_bit(size_t n);
 	size_t round_pow2(size_t n);
+	size_t round_pow2(size_t n, size_t* b);
 
 	void* winapi_alloc(size_t size);
 	void* winapi_malloc(size_t size);

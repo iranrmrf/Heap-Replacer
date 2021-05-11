@@ -33,6 +33,7 @@ private:
 
 	memory_pool* pool_from_size(size_t size);
 	memory_pool* pool_from_addr(void* address);
+	memory_pool* pool_from_index(size_t index);
 
 public:
 
