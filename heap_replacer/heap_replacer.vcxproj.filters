@@ -45,6 +45,9 @@
     <ClCompile Include="initial_allocator\initial_allocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="memory_pools\memory_pool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="memory_pools\memory_pool_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -138,9 +141,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="locks\nonreentrant_lock.h">
-      <Filter>Header Files</Filter>
-	</ClInclude>
-    <ClInclude Include="memory_pools\memory_pool_interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
