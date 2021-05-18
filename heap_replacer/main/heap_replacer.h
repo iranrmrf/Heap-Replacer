@@ -38,24 +38,20 @@ namespace hr
 	void* hr_malloc(size_t size)
 	{
 		if (size < 4u) [[unlikely]] { size = 4u; }
-		if (size <= 2u * KB) [[likely]]
-		{
-			if (void* address = mpm->malloc(size)) [[likely]] { return address; }
-		}
-		if (void* address = dhm->malloc(size)) [[likely]] { return address; }
-		return nullptr;
+		if (size <= 2u * KB) [[likely]] { if (void* address = mpm->malloc(size)) [[likely]] { return address; } }
+		if (size >= 64u * MB) [[unlikely]] { return util::winapi_malloc(size); }
+		if (void* address = dhm->malloc(size)) [[likely]] {	return address; }
+		return util::winapi_malloc(size);
 	}
 
 	void* hr_calloc(size_t count, size_t size)
 	{
 		size *= count;
 		if (size < 4u) [[unlikely]] { size = 4u; }
-		if (size <= 2u * KB) [[likely]]
-		{
-			if (void* address = mpm->calloc(size)) [[likely]] { return address; }
-		}
+		if (size <= 2u * KB) [[likely]] { if (void* address = mpm->calloc(size)) [[likely]] { return address; } }
+		if (size >= 64u * MB) [[unlikely]] { return util::winapi_malloc(size); }
 		if (void* address = dhm->calloc(size)) [[likely]] { return address; }
-		return nullptr;
+		return util::winapi_malloc(size);
 	}
 
 	void* hr_realloc(void* address, size_t size)
@@ -87,14 +83,16 @@ namespace hr
 	{
 		if (!address) [[unlikely]] { return 0u; }
 		if (size_t size = mpm->mem_size(address)) [[likely]] { return size; }
-		return dhm->mem_size(address);
+		if (size_t size = dhm->mem_size(address)) [[likely]] { return size; }
+		return 0u;
 	}
 
 	void hr_free(void* address)
 	{
 		if (!address) [[unlikely]] { return; }
 		if (mpm->free(address)) [[likely]] { return; }
-		dhm->free(address);
+		if (dhm->free(address)) [[likely]] { return; }
+		util::winapi_free(address);
 	}
 
 	void* game_heap_allocate(TFPARAM(size_t size))
@@ -205,7 +203,7 @@ namespace hr
 
 		util::patch_jmp(0xAA3E40, &game_heap_allocate);
 		util::patch_jmp(0xAA4150, &game_heap_reallocate);
-		util::patch_jmp(0xAA4200, &game_heap_reallocate);
+		//util::patch_jmp(0xAA4200, &game_heap_reallocate);
 		util::patch_jmp(0xAA44C0, &game_heap_msize);
 		util::patch_jmp(0xAA4060, &game_heap_free);
 
@@ -243,10 +241,10 @@ namespace hr
 
 		util::patch_bytes(0x86EED4, (BYTE*)"\xEB\x55", 2);
 
-		util::patch_nops(0xAA306A, 5);
-		util::patch_call(0xAA85FF, &queue_io_request);
-		util::patch_call(0xAA864F, &queue_io_request);
-		util::patch_call(0xAA869F, &queue_io_request);
+		//util::patch_nops(0xAA306A, 5);
+		//util::patch_call(0xAA85FF, &queue_io_request);
+		//util::patch_call(0xAA864F, &queue_io_request);
+		//util::patch_call(0xAA869F, &queue_io_request);
 
 #elif defined(FO3)
 
@@ -263,7 +261,7 @@ namespace hr
 
 		util::patch_jmp(0x86B930, &game_heap_allocate);
 		util::patch_jmp(0x86BAE0, &game_heap_reallocate);
-		util::patch_jmp(0x86BB50, &game_heap_reallocate);
+		//util::patch_jmp(0x86BB50, &game_heap_reallocate);
 		util::patch_jmp(0x86B8C0, &game_heap_msize);
 		util::patch_jmp(0x86BA60, &game_heap_free);
 
