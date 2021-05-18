@@ -42,7 +42,6 @@ void memory_pool::setup_new_block()
 	}
 	this->next_free = &this->free_cells[bank_offset + this->block_item_count - 1u];
 	this->pool_cur = VPTRSUM(this->pool_cur, pool_growth);
-	this->cell_count += this->block_item_count;
 }
 
 void* memory_pool::free_ptr_to_real(void* address)
@@ -74,7 +73,7 @@ void* memory_pool::malloc()
 	}
 	cell* old_free = this->next_free;
 	this->next_free = this->next_free->next;
-	this->cell_count--;
+	this->cell_count++;
 	this->lock.unlock();
 	old_free->next = nullptr;
 	return this->free_ptr_to_real(old_free);
@@ -98,7 +97,7 @@ void memory_pool::free(void* address)
 	this->lock.lock();
 	if (!c->next) [[likely]]
 	{
-		this->cell_count++;
+		this->cell_count--;
 		c->next = this->next_free;
 		this->next_free = c;
 #ifdef HR_ZERO_MEM
