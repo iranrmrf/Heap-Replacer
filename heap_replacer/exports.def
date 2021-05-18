@@ -1,5 +1,5 @@
 LIBRARY	"d3dx9_38"
-VERSION 3.0
+VERSION 3.1
 EXPORTS
 	hr
 	hr_malloc

@@ -29,27 +29,29 @@ void memory_pool_manager::init_all_pools()
 	struct pool_data { size_t item_size; size_t max_size; } pool_desc[pool_count] =
 	{
 #if defined(FNV)
-			{ 4u	, 0x01000000u },
-			{ 8u	, 0x04000000u },
-			{ 16u	, 0x04000000u },
-			{ 32u	, 0x08000000u },
-			{ 64u	, 0x04000000u },
-			{ 128u	, 0x10000000u },
-			{ 256u	, 0x08000000u },
-			{ 512u	, 0x04000000u },
-			{ 1024u	, 0x08000000u },
-			{ 2048u	, 0x08000000u },
+			{ 4u	, 4u	* MB },
+			{ 8u	, 32u	* MB },
+			{ 16u	, 64u	* MB },
+			{ 32u	, 128u	* MB },
+			{ 64u	, 64u	* MB },
+			{ 128u	, 256u	* MB },
+			{ 256u	, 128u	* MB },
+			{ 512u	, 64u	* MB },
+			{ 1024u	, 128u	* MB },
+			{ 2048u	, 128u	* MB },
+			// 996 MB
 #elif defined(FO3)
-			{ 4u	, 0x01000000u },
-			{ 8u	, 0x04000000u },
-			{ 16u	, 0x04000000u },
-			{ 32u	, 0x08000000u },
-			{ 64u	, 0x04000000u },
-			{ 128u	, 0x10000000u },
-			{ 256u	, 0x08000000u },
-			{ 512u	, 0x04000000u },
-			{ 1024u	, 0x08000000u },
-			{ 2048u	, 0x08000000u },
+			{ 4u	, 4u	* MB },
+			{ 8u	, 32u	* MB },
+			{ 16u	, 64u	* MB },
+			{ 32u	, 128u	* MB },
+			{ 64u	, 64u	* MB },
+			{ 128u	, 256u	* MB },
+			{ 256u	, 128u	* MB },
+			{ 512u	, 64u	* MB },
+			{ 1024u	, 128u	* MB },
+			{ 2048u	, 128u	* MB },
+			// 996 MB
 #endif
 	};
 	for (size_t i = 0u; i < pool_count; i++)
@@ -86,7 +88,7 @@ void* memory_pool_manager::malloc(size_t size)
 	this->allocs++;
 #endif
 	size_t bit;
-	for (size = util::round_pow2(size, &bit); size <= 2u * KB; size <<= 1u, bit <<= 1u)
+	for (size = util::round_pow2(size, &bit); size <= 2u * KB; size <<= 1u, bit++)
 	{
 		if (void* address = this->pool_from_index(bit)->malloc()) [[likely]] { return address; }
 	}
@@ -100,7 +102,7 @@ void* memory_pool_manager::calloc(size_t size)
 	this->allocs++;
 #endif
 	size_t bit;
-	for (size = util::round_pow2(size, &bit); size <= 2u * KB; size <<= 1u, bit <<= 1u)
+	for (size = util::round_pow2(size, &bit); size <= 2u * KB; size <<= 1u, bit++)
 	{
 		if (void* address = this->pool_from_index(bit)->calloc()) [[likely]] { return address; }
 	}
