@@ -18,7 +18,7 @@ void graph_data::add_data(float data)
 	if (this->alloc != this->count)
 	{
 		this->values = (float*)hr::hr_realloc(this->values, this->count * sizeof(float));
-		if (this->count > this->alloc) { util::memset8(this->values + this->alloc, 0u, this->count - this->alloc); }
+		if (this->count > this->alloc) { util::cmemset8(this->values + this->alloc, 0u, this->count - this->alloc); }
 		this->alloc = this->count;
 		this->offset %= this->count;
 	}

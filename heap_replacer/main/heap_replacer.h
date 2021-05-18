@@ -64,7 +64,7 @@ namespace hr
 		size_t old_size, new_size;
 		if ((old_size = hr_mem_size(address)) >= (new_size = size)) { return address; }
 		void* new_address = hr_malloc(size);
-		memcpy(new_address, address, new_size < old_size ? new_size : old_size);
+		util::cmemcpy(new_address, address, new_size < old_size ? new_size : old_size);
 		hr_free(address);
 		return new_address;
 	}

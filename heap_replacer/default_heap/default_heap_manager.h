@@ -47,14 +47,14 @@ public:
 	size_t get_total_allocs() { return this->total_allocs; }
 	size_t get_total_frees() { return this->total_frees; }
 
-	size_t get_used_size() { return this->heap->get_used_size(); }
-	size_t get_free_size() { return this->heap->get_free_size(); }
-	size_t get_curr_size() { return this->heap->get_curr_size(); }
+	size_t get_used_size() { return this->heap.get_used_size(); }
+	size_t get_free_size() { return this->heap.get_free_size(); }
+	size_t get_curr_size() { return this->heap.get_curr_size(); }
 
-	size_t get_free_blocks() { return this->heap->get_free_cells(); }
+	size_t get_free_blocks() { return this->heap.get_free_cells(); }
 
-	size_t get_block_count() { return this->heap->get_block_count(); }
-	size_t get_addr_size_by_index(size_t block, size_t index) { return this->heap->get_addr_size_by_index(block, index); }
+	size_t get_block_count() { return this->heap.get_block_count(); }
+	size_t get_addr_size_by_index(size_t block, size_t index) { return this->heap.get_addr_size_by_index(block, index); }
 
 #endif
 

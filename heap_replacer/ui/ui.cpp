@@ -801,6 +801,7 @@ HRESULT WINAPI ui::direct_input_8_create_hook(HINSTANCE hinst, DWORD dwVersion, 
 	HRESULT hr = ui::direct_input_8_create(hinst, dwVersion, riidltf, ppvOut, punkOuter);
 	if (SUCCEEDED(hr))
 	{
+		MH_Initialize();
 		hr::get_uim()->create_device_addr = ((IDirectInput8A*)*ppvOut)->lpVtbl->CreateDevice;
 		MH_CreateHook(hr::get_uim()->create_device_addr, &ui::create_device_hook, (void**)&ui::create_device);
 		MH_EnableHook(hr::get_uim()->create_device_addr);
@@ -829,14 +830,14 @@ HRESULT WINAPI ui::create_device_hook(IDirectInput8A* self, REFGUID rguid, IDire
 HRESULT APIENTRY ui::get_device_state_hook(IDirectInputDevice8A* self, DWORD cbData, LPVOID lpvData)
 {
 	HRESULT hr = ui::get_device_state(self, cbData, lpvData);
-	if (lpvData && !hr::get_uim()->enable_input) { util::memset8(lpvData, 0u, cbData); }
+	if (lpvData && !hr::get_uim()->enable_input) { util::cmemset8(lpvData, 0u, cbData); }
 	return hr;
 }
 
 HRESULT APIENTRY ui::get_device_data_hook(IDirectInputDevice8A* self, DWORD cbObjectData, LPDIDEVICEOBJECTDATA rgdod, LPDWORD pdwInOut, DWORD dwFlags)
 {
 	HRESULT hr = ui::get_device_data(self, cbObjectData, rgdod, pdwInOut, dwFlags);
-	if (rgdod && !hr::get_uim()->enable_input) { util::memset8(rgdod, 0u, cbObjectData * *pdwInOut); }
+	if (rgdod && !hr::get_uim()->enable_input) { util::cmemset8(rgdod, 0u, cbObjectData * *pdwInOut); }
 	return hr;
 }
 
