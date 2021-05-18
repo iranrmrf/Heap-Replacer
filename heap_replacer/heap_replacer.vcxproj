@@ -408,7 +408,6 @@
     <ClCompile Include="main\d3dx9_exports.cpp" />
     <ClCompile Include="main\dllmain.cpp" />
     <ClCompile Include="main\util.cpp" />
-    <ClCompile Include="memory_pools\memory_pool.cpp" />
     <ClCompile Include="memory_pools\memory_pool_manager.cpp" />
     <ClCompile Include="locks\reentrant_lock.cpp" />
   </ItemGroup>
@@ -419,6 +418,7 @@
     <ClInclude Include="default_heap\default_heap_constants.h" />
     <ClInclude Include="locks\nonreentrant_lock.h" />
     <ClInclude Include="main\definitions.h" />
+    <ClInclude Include="memory_pools\memory_pool_interface.h" />
     <ClInclude Include="scrap_heap\scrap_heap_block.h" />
     <ClInclude Include="scrap_heap\scrap_heap_manager.h" />
     <ClInclude Include="ui\color_array.h" />
