@@ -1,6 +1,6 @@
 #include "memory_pool.h"
 
-memory_pool::memory_pool(size_t item_size, size_t max_size) : item_size(item_size), max_size(max_size), cell_count(0u), pool_bgn(nullptr), pool_cur(nullptr), pool_end(nullptr)
+memory_pool::memory_pool(size_t item_size, size_t max_size, size_t index) : item_size(item_size), max_size(max_size), cell_count(0u), pool_bgn(nullptr), pool_cur(nullptr), pool_end(nullptr)
 {
 	this->block_count = this->max_size / pool_growth;
 	this->block_item_count = pool_growth / this->item_size;
@@ -9,22 +9,24 @@ memory_pool::memory_pool(size_t item_size, size_t max_size) : item_size(item_siz
 
 	this->free_cells = (cell*)util::winapi_calloc(this->max_cell_count, sizeof(cell));
 	this->next_free = this->free_cells;
+
+	this->index = index;
 }
 
 memory_pool::~memory_pool()
 {
-	VirtualFree(this->free_cells, 0u, MEM_RELEASE);
+	util::winapi_free(this->free_cells);
 
-	VirtualFree(this->pool_bgn, 0u, MEM_RELEASE);
+	util::winapi_free(this->pool_bgn);
 }
 
 void* memory_pool::memory_pool_init()
 {
-	size_t i = 0x10u;
+	size_t i = 0u;
 	while (!this->pool_bgn)
 	{
-		this->pool_bgn = VirtualAlloc((void*)(i * pool_alignment), this->max_size, MEM_RESERVE, PAGE_READWRITE);
-		if (++i == 0xFFu) { i = 0x10u; }
+		this->pool_bgn = VirtualAlloc((void*)(++i * pool_alignment), this->max_size, MEM_RESERVE, PAGE_READWRITE);
+		if (i == 0xFFu) { i = 0u; }
 	}
 	this->pool_cur = this->pool_bgn;
 	this->pool_end = VPTRSUM(this->pool_bgn, this->max_size);
@@ -100,11 +102,13 @@ void memory_pool::free(void* address)
 		this->cell_count--;
 		c->next = this->next_free;
 		this->next_free = c;
-#ifdef HR_ZERO_MEM
-		util::memset32(address, 0u, this->item_size >> 2u);
-#endif
 	}
 	this->lock.unlock();
+}
+
+size_t memory_pool::get_index()
+{
+	return this->index;
 }
 
 void* memory_pool::operator new(size_t size)

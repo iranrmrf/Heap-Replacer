@@ -38,11 +38,15 @@ private:
 
 private:
 
+	size_t index;
+
+private:
+
 	nonreentrant_lock lock;
 
 public:
 
-	memory_pool(size_t item_size, size_t max_size);
+	memory_pool(size_t item_size, size_t max_size, size_t index);
 	~memory_pool();
 
 	void* memory_pool_init();
@@ -63,6 +67,10 @@ public:
 	size_t mem_size(void* address);
 	void free(void* address);
 	
+public:
+
+	size_t get_index();
+
 public:
 
 	size_t get_cell_count() { return this->cell_count; }

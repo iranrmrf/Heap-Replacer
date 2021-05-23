@@ -12,6 +12,7 @@ private:
 
 	memory_pool* pools_by_size[pool_size_array_length];
 	memory_pool* pools_by_addr[pool_addr_array_length];
+	memory_pool* pools_by_indx[pool_indx_array_length];
 
 #ifdef HR_USE_GUI
 
@@ -33,7 +34,7 @@ private:
 
 	memory_pool* pool_from_size(size_t size);
 	memory_pool* pool_from_addr(void* address);
-	memory_pool* pool_from_index(size_t index);
+	memory_pool* pool_from_indx(size_t index);
 
 public:
 
