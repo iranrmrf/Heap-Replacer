@@ -4,7 +4,6 @@
 
 class memory_pool_manager;
 class default_heap_manager;
-class scrap_heap_manager;
 #ifdef HR_USE_GUI
 class ui;
 #endif
@@ -14,7 +13,6 @@ namespace hr
 
 	memory_pool_manager* get_mpm();
 	default_heap_manager* get_dhm();
-	scrap_heap_manager* get_shm();
 #ifdef HR_USE_GUI
 	ui* get_uim();
 #endif

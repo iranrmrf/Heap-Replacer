@@ -8,8 +8,8 @@
 
 #include "memory_pools/memory_pool_manager.h"
 #include "default_heap/default_heap_manager.h"
-#include "scrap_heap/scrap_heap_manager.h"
-#include "scrap_heap/scrap_heap_block.h"
+
+#include "scrap_heap/scrap_heap.h"
 
 #include "locks/reentrant_lock.h"
 #include "locks/nonreentrant_lock.h"
@@ -23,14 +23,12 @@ namespace hr
 
 	memory_pool_manager* mpm;
 	default_heap_manager* dhm;
-	scrap_heap_manager* shm;
 #ifdef HR_USE_GUI
 	ui* uim;
 #endif
 
 	memory_pool_manager* get_mpm() { return mpm; }
 	default_heap_manager* get_dhm() { return dhm; }
-	scrap_heap_manager* get_shm() { return shm; }
 #ifdef HR_USE_GUI
 	ui* get_uim() { return uim; }
 #endif
@@ -39,8 +37,8 @@ namespace hr
 	{
 		if (size < 4u) [[unlikely]] { size = 4u; }
 		if (size <= 2u * KB) [[likely]] { if (void* address = mpm->malloc(size)) [[likely]] { return address; } }
-		if (size >= 64u * MB) [[unlikely]] { return util::winapi_malloc(size); }
-		if (void* address = dhm->malloc(size)) [[likely]] {	return address; }
+		if (size >= 64u * MB) [[unlikely]] { HR_PRINTF("Alloc > 64 MB"); return util::winapi_malloc(size); }
+		if (void* address = dhm->malloc(size)) [[likely]] { return address; }
 		return util::winapi_malloc(size);
 	}
 
@@ -49,7 +47,7 @@ namespace hr
 		size *= count;
 		if (size < 4u) [[unlikely]] { size = 4u; }
 		if (size <= 2u * KB) [[likely]] { if (void* address = mpm->calloc(size)) [[likely]] { return address; } }
-		if (size >= 64u * MB) [[unlikely]] { return util::winapi_malloc(size); }
+		if (size >= 64u * MB) [[unlikely]] { HR_PRINTF("Alloc > 64 MB"); return util::winapi_malloc(size); }
 		if (void* address = dhm->calloc(size)) [[likely]] { return address; }
 		return util::winapi_malloc(size);
 	}
@@ -186,7 +184,6 @@ namespace hr
 
 		mpm = new memory_pool_manager();
 		dhm = new default_heap_manager();
-		shm = new scrap_heap_manager();
 
 #if defined(FNV)
 
@@ -203,7 +200,7 @@ namespace hr
 
 		util::patch_jmp(0xAA3E40, &game_heap_allocate);
 		util::patch_jmp(0xAA4150, &game_heap_reallocate);
-		//util::patch_jmp(0xAA4200, &game_heap_reallocate);
+		util::patch_jmp(0xAA4200, &game_heap_reallocate);
 		util::patch_jmp(0xAA44C0, &game_heap_msize);
 		util::patch_jmp(0xAA4060, &game_heap_free);
 
@@ -224,14 +221,14 @@ namespace hr
 		util::patch_ret(0x866D10);
 		util::patch_ret(0xAA5C80);
 
-		util::patch_jmp(0xAA53F0, util::force_cast<void*>(&scrap_heap_block::init_0x10000));
-		util::patch_jmp(0xAA5410, util::force_cast<void*>(&scrap_heap_block::init_var));
-		util::patch_jmp(0xAA54A0, util::force_cast<void*>(&scrap_heap_block::alloc));
-		util::patch_jmp(0xAA5610, util::force_cast<void*>(&scrap_heap_block::free));
-		util::patch_jmp(0xAA5460, util::force_cast<void*>(&scrap_heap_block::purge));
+		util::patch_jmp(0xAA53F0, util::force_cast<void*>(&scrap_heap::init_0x10000));
+		util::patch_jmp(0xAA5410, util::force_cast<void*>(&scrap_heap::init_var));
+		util::patch_jmp(0xAA54A0, util::force_cast<void*>(&scrap_heap::alloc));
+		util::patch_jmp(0xAA5610, util::force_cast<void*>(&scrap_heap::free));
+		util::patch_jmp(0xAA5460, util::force_cast<void*>(&scrap_heap::purge));
 
 		util::patch_nops(0xAA38CA, 0xAA38E8 - 0xAA38CA);
-		util::patch_jmp(0xAA42E0, util::force_cast<void*>(&scrap_heap_block::get_thread_scrap_heap));
+		util::patch_jmp(0xAA42E0, util::force_cast<void*>(&scrap_heap::get_thread_scrap_heap));
 
 		util::patch_nop_call(0xAA3060);
 
@@ -241,10 +238,10 @@ namespace hr
 
 		util::patch_bytes(0x86EED4, (BYTE*)"\xEB\x55", 2);
 
-		//util::patch_nops(0xAA306A, 5);
-		//util::patch_call(0xAA85FF, &queue_io_request);
-		//util::patch_call(0xAA864F, &queue_io_request);
-		//util::patch_call(0xAA869F, &queue_io_request);
+		util::patch_nops(0xAA306A, 5);
+		util::patch_call(0xAA85FF, &queue_io_request);
+		util::patch_call(0xAA864F, &queue_io_request);
+		util::patch_call(0xAA869F, &queue_io_request);
 
 #elif defined(FO3)
 
@@ -261,7 +258,7 @@ namespace hr
 
 		util::patch_jmp(0x86B930, &game_heap_allocate);
 		util::patch_jmp(0x86BAE0, &game_heap_reallocate);
-		//util::patch_jmp(0x86BB50, &game_heap_reallocate);
+		util::patch_jmp(0x86BB50, &game_heap_reallocate);
 		util::patch_jmp(0x86B8C0, &game_heap_msize);
 		util::patch_jmp(0x86BA60, &game_heap_free);
 
@@ -276,14 +273,14 @@ namespace hr
 		util::patch_ret(0x6E1CD0);
 		util::patch_ret(0x86CA30);
 
-		util::patch_jmp(0x86CB70, util::force_cast<void*>(&scrap_heap_block::init_0x10000));
-		util::patch_jmp(0x86CB90, util::force_cast<void*>(&scrap_heap_block::init_var));
-		util::patch_jmp(0x86C710, util::force_cast<void*>(&scrap_heap_block::alloc));
-		util::patch_jmp(0x86C7B0, util::force_cast<void*>(&scrap_heap_block::free));
-		util::patch_jmp(0x86CAA0, util::force_cast<void*>(&scrap_heap_block::purge));
+		util::patch_jmp(0x86CB70, util::force_cast<void*>(&scrap_heap::init_0x10000));
+		util::patch_jmp(0x86CB90, util::force_cast<void*>(&scrap_heap::init_var));
+		util::patch_jmp(0x86C710, util::force_cast<void*>(&scrap_heap::alloc));
+		util::patch_jmp(0x86C7B0, util::force_cast<void*>(&scrap_heap::free));
+		util::patch_jmp(0x86CAA0, util::force_cast<void*>(&scrap_heap::purge));
 
 		util::patch_nops(0x86C038, 0x86C086 - 0x86C038);
-		util::patch_jmp(0x86BCB0, util::force_cast<void*>(&scrap_heap_block::get_thread_scrap_heap));
+		util::patch_jmp(0x86BCB0, util::force_cast<void*>(&scrap_heap::get_thread_scrap_heap));
 
 		util::patch_nop_call(0x6E9B30);
 		util::patch_nop_call(0x7FACDB);
