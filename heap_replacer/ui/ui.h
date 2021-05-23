@@ -5,7 +5,6 @@
 
 #include "memory_pools/memory_pool_manager.h"
 #include "default_heap/default_heap_manager.h"
-#include "scrap_heap/scrap_heap_manager.h"
 
 #include "settings.h"
 
@@ -96,15 +95,6 @@ private: // DEFAULT HEAP MANAGER
 
 	size_t dhm_block_count;
 
-private: // SCRAP HEAP MANAGER
-
-	bool enable_shm_allocs_graph;
-	bool enable_shm_frees_graph;
-	bool enable_shm_free_buffers_graph;
-
-	//bool enable_shm_used;
-	//bool enable_shm_free;
-
 private:
 
 	const char* names[CHECKBOX_COUNT] = { "FPS Counter", "Frametime Counter", "Mouse XY Counter" };
@@ -125,10 +115,6 @@ private:
 	graph_data* gd_dhm_allocs;
 	graph_data* gd_dhm_frees;
 	graph_data* gd_dhm_free_blocks;
-
-	graph_data* gd_shm_allocs;
-	graph_data* gd_shm_frees;
-	graph_data* gd_shm_free_buffers;
 
 public:
 
@@ -157,7 +143,6 @@ private:
 	void render_info_window();
 	void render_memory_pool_menu();
 	void render_default_heap_menu();
-	void render_scrap_heap_menu();
 	void render_default_heap_blocks();
 
 private:

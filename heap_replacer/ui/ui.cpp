@@ -108,15 +108,6 @@ ui::ui() : ui_settings("hr_settings.ini")
 
 	this->dhm_block_count = 0u;
 
-	// SCRAP HEAP MANAGER
-
-	this->enable_shm_allocs_graph = false;
-	this->enable_shm_frees_graph = false;
-	this->enable_shm_free_buffers_graph = false;
-
-	//this->enable_shm_used = false;
-	//this->enable_shm_free = false;
-
 	// GRAPH DATA
 
 	this->gd_info_fps = new graph_data(COUNTER_INIT_VALUE);
@@ -128,10 +119,6 @@ ui::ui() : ui_settings("hr_settings.ini")
 	this->gd_dhm_allocs = new graph_data(COUNTER_INIT_VALUE);
 	this->gd_dhm_frees = new graph_data(COUNTER_INIT_VALUE);
 	this->gd_dhm_free_blocks = new graph_data(COUNTER_INIT_VALUE);
-
-	this->gd_shm_allocs = new graph_data(COUNTER_INIT_VALUE);
-	this->gd_shm_frees = new graph_data(COUNTER_INIT_VALUE);
-	this->gd_shm_free_buffers = new graph_data(COUNTER_INIT_VALUE);
 
 	this->load_settings();
 }
@@ -212,12 +199,6 @@ void ui::load_settings()
 
 	this->dhm_block_count = 0u;
 
-	// SCRAP HEAP MANAGER
-
-	this->enable_shm_allocs_graph = this->ui_settings.load_bool("SCRAP HEAP MANAGER", "enable_shm_allocs_graph");
-	this->enable_shm_frees_graph = this->ui_settings.load_bool("SCRAP HEAP MANAGER", "enable_shm_frees_graph");
-	this->enable_shm_free_buffers_graph = this->ui_settings.load_bool("SCRAP HEAP MANAGER", "enable_shm_free_buffers_graph");
-
 	// GRAPH DATA COUNTERS
 
 	this->gd_info_fps->count = this->ui_settings.load_long("COUNTERS", "gd_info_fps_count", COUNTER_INIT_VALUE);
@@ -229,11 +210,6 @@ void ui::load_settings()
 	this->gd_dhm_allocs->count = this->ui_settings.load_long("COUNTERS", "gd_dhm_allocs_count", COUNTER_INIT_VALUE);
 	this->gd_dhm_frees->count = this->ui_settings.load_long("COUNTERS", "gd_dhm_frees_count", COUNTER_INIT_VALUE);
 	this->gd_dhm_free_blocks->count = this->ui_settings.load_long("COUNTERS", "gd_dhm_free_blocks_count", COUNTER_INIT_VALUE);
-
-	this->gd_shm_allocs->count = this->ui_settings.load_long("COUNTERS", "gd_shm_allocs_count", COUNTER_INIT_VALUE);
-	this->gd_shm_frees->count = this->ui_settings.load_long("COUNTERS", "gd_shm_frees_count", COUNTER_INIT_VALUE);
-	this->gd_shm_free_buffers->count = this->ui_settings.load_long("COUNTERS", "gd_shm_free_buffers_count", COUNTER_INIT_VALUE);
-
 }
 
 void ui::save_settings()
@@ -282,12 +258,6 @@ void ui::save_settings()
 	this->ui_settings.save_bool("DEFAULT HEAP MANAGER", "enable_dhm_frees_graph", this->enable_dhm_frees_graph);
 	this->ui_settings.save_bool("DEFAULT HEAP MANAGER", "enable_dhm_free_blocks_graph", this->enable_dhm_free_blocks_graph);
 
-	// SCRAP HEAP MANAGER
-
-	this->ui_settings.save_bool("SCRAP HEAP MANAGER", "enable_shm_allocs_graph", this->enable_shm_allocs_graph);
-	this->ui_settings.save_bool("SCRAP HEAP MANAGER", "enable_shm_frees_graph", this->enable_shm_frees_graph);
-	this->ui_settings.save_bool("SCRAP HEAP MANAGER", "enable_shm_free_buffers_graph", this->enable_shm_free_buffers_graph);
-
 	// GRAPH DATA COUNTERS
 
 	this->ui_settings.save_long("COUNTERS", "gd_info_fps_count", this->gd_info_fps->count);
@@ -299,10 +269,6 @@ void ui::save_settings()
 	this->ui_settings.save_long("COUNTERS", "gd_dhm_allocs_count", this->gd_dhm_allocs->count);
 	this->ui_settings.save_long("COUNTERS", "gd_dhm_frees_count", this->gd_dhm_frees->count);
 	this->ui_settings.save_long("COUNTERS", "gd_dhm_free_blocks_count", this->gd_dhm_free_blocks->count);
-
-	this->ui_settings.save_long("COUNTERS", "gd_shm_allocs_count", this->gd_shm_allocs->count);
-	this->ui_settings.save_long("COUNTERS", "gd_shm_frees_count", this->gd_shm_frees->count);
-	this->ui_settings.save_long("COUNTERS", "gd_shm_free_buffers_count", this->gd_shm_free_buffers->count);
 
 	this->ui_settings.save();
 }
@@ -334,10 +300,6 @@ void ui::update_graphs()
 			this->gd_dhm_allocs->add_data((float)hr::get_dhm()->get_allocs());
 			this->gd_dhm_frees->add_data((float)hr::get_dhm()->get_frees());
 			this->gd_dhm_free_blocks->add_data((float)hr::get_dhm()->get_free_blocks());
-
-			this->gd_shm_allocs->add_data((float)hr::get_shm()->get_allocs());
-			this->gd_shm_frees->add_data((float)hr::get_shm()->get_frees());
-			this->gd_shm_free_buffers->add_data((float)hr::get_shm()->get_free_buffer_count());
 		}
 
 		this->refresh_time += 1.0f / 60.0f;
@@ -359,10 +321,6 @@ void ui::clear_graphs()
 		if (!this->enable_dhm_allocs_graph) { this->gd_dhm_allocs->clear(); }
 		if (!this->enable_dhm_frees_graph) { this->gd_dhm_frees->clear(); }
 		if (!this->enable_dhm_free_blocks_graph) { this->gd_dhm_free_blocks->clear(); }
-
-		if (!this->enable_shm_allocs_graph) { this->gd_shm_allocs->clear(); }
-		if (!this->enable_shm_frees_graph) { this->gd_shm_frees->clear(); }
-		if (!this->enable_shm_free_buffers_graph) { this->gd_shm_free_buffers->clear(); }
 	}
 	else
 	{
@@ -375,10 +333,6 @@ void ui::clear_graphs()
 		this->gd_dhm_allocs->clear();
 		this->gd_dhm_frees->clear();
 		this->gd_dhm_free_blocks->clear();
-
-		this->gd_shm_allocs->clear();
-		this->gd_shm_frees->clear();
-		this->gd_shm_free_buffers->clear();
 	}
 }
 
@@ -391,7 +345,6 @@ void ui::render_ui()
 		if (this->enable_info_window) { this->render_info_window(); }
 		if (this->enable_mpm_window) { this->render_memory_pool_menu(); }
 		if (this->enable_dhm_window) { this->render_default_heap_menu(); }
-		if (this->enable_shm_window) { this->render_scrap_heap_menu(); }
 		if (this->dhm_block_count) { this->render_default_heap_blocks(); }
 	}
 }
@@ -524,36 +477,6 @@ void ui::render_game_menu()
 				ImGui::Text("Block Count : %d", this->dhm_block_count);
 
 				this->enable_dhm_window = this->enable_dhm_allocs_graph || this->enable_dhm_frees_graph;
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Scrap Heap Manager"))
-			{
-				if (ImGui::BeginTable("##info", 2))
-				{
-					ImGui::TableNextRow();
-					ImGui::TableNextColumn(); ImGui::Checkbox("Allocations per Frame Graph", &this->enable_shm_allocs_graph);
-					ImGui::TableNextColumn();
-					ImGui::SetNextItemWidth(150.0f);
-					ImGui::InputScalar("##allocs_count", ImGuiDataType_U16, &this->gd_shm_allocs->count, &this->slider_lo, &this->slider_hi, "%u");
-
-					ImGui::TableNextRow();
-					ImGui::TableNextColumn(); ImGui::Checkbox("Frees per Frame Graph", &this->enable_shm_frees_graph);
-					ImGui::TableNextColumn();
-					ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
-					ImGui::InputScalar("##frees_count", ImGuiDataType_U16, &this->gd_shm_frees->count, &this->slider_lo, &this->slider_hi, "%u");
-
-					ImGui::TableNextRow();
-					ImGui::TableNextColumn(); ImGui::Checkbox("Frees Buffers Graph", &this->enable_shm_free_buffers_graph);
-					ImGui::TableNextColumn();
-					ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
-					ImGui::InputScalar("##free_buffers_count", ImGuiDataType_U16, &this->gd_shm_free_buffers->count, &this->slider_lo, &this->slider_hi, "%u");
-
-					ImGui::EndTable();
-				}
-
-				this->enable_shm_window = this->enable_shm_allocs_graph || this->enable_shm_frees_graph || this->enable_shm_free_buffers_graph;
 
 				ImGui::EndMenu();
 			}
@@ -740,42 +663,6 @@ void ui::render_default_heap_menu()
 		sprintf(buff, "free: %.2f / %.2f MB", (float)hr::get_dhm()->get_free_size() / MB, (float)hr::get_dhm()->get_curr_size() / MB);
 		ImGui::ProgressBar((float)hr::get_dhm()->get_free_size() / hr::get_dhm()->get_curr_size(), ImVec2(-1.0f, 32.0f), buff);
 
-	}
-	ImGui::End();
-}
-
-void ui::render_scrap_heap_menu()
-{
-	if (ImGui::Begin("Scrap Heap Manager", nullptr, ImGuiWindowFlags_NoFocusOnAppearing))
-	{
-		char buff[32];
-
-		if (this->enable_shm_allocs_graph)
-		{
-			sprintf(buff, "%.0f\n\n%.0f\n\n0", this->gd_shm_allocs->window_max, this->gd_shm_allocs->get_back());
-			plot_lines(buff, "shm allocs", 0.0f, this->plot_height, this->gd_shm_allocs);
-			ImGui::NewLine();
-		}
-
-		if (this->enable_shm_frees_graph)
-		{
-			sprintf(buff, "%.0f\n\n%.0f\n\n0", this->gd_shm_frees->window_max, this->gd_shm_frees->get_back());
-			plot_lines(buff, "shm frees", 0.0f, this->plot_height, this->gd_shm_frees);
-			ImGui::NewLine();
-		}
-
-		if (this->enable_shm_free_buffers_graph)
-		{
-			sprintf(buff, "%.0f\n\n%.0f\n\n0", this->gd_shm_free_buffers->window_max, this->gd_shm_free_buffers->get_back());
-			plot_lines(buff, "shm free buffers", 0.0f, this->plot_height, this->gd_shm_free_buffers);
-			ImGui::NewLine();
-		}
-
-		//sprintf(buff, "used: %.2f / %.2f MB", (float)hr::get_shm()->get_used_size() / MB, (float)hr::get_shm()->get_curr_size() / MB);
-		//ImGui::ProgressBar((float)hr::get_shm()->get_used_size() / hr::get_dhm()->get_curr_size(), ImVec2(-1.0f, 32.0f), buff);
-
-		//sprintf(buff, "free: %.2f / %.2f MB", (float)hr::get_shm()->get_free_size() / MB, (float)hr::get_shm()->get_curr_size() / MB);
-		//ImGui::ProgressBar((float)hr::get_shm()->get_free_size() / hr::get_dhm()->get_curr_size(), ImVec2(-1.0f, 32.0f), buff);
 	}
 	ImGui::End();
 }
