@@ -11,6 +11,7 @@ namespace hr
 	{
 		HR_PRINTF("Applying hooks.");
 		hr::apply_heap_hooks();
+
 		BYTE* base = (BYTE*)GetModuleHandle(nullptr);
 
 #ifdef HR_USE_GUI
@@ -45,12 +46,12 @@ namespace hr
 			}
 			else
 			{
-				HR_MSGBOX("Your game is not LAA, please apply a 4GB patcher");
+				HR_MSGBOX("Your game is not LAA, please apply a 4GB patcher", MB_ICONERROR);
 			}
 		}
 		else if (address != HR_GECK_QPC_HOOK)
 		{
-			HR_MSGBOX("Incompatible game executable. Please use version (" HR_GAME_VERSION ")");
+			HR_MSGBOX("Incompatible game executable. Please use version (" HR_GAME_VERSION ")", MB_ICONERROR);
 		}
 	}
 

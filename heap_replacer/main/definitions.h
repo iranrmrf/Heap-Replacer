@@ -26,5 +26,7 @@
 //#define HR_USE_GUI
 //#define HR_ZERO_MEM
 
-#define HR_MSGBOX(msg) MessageBox(NULL, HR_NAME " - " msg, "Error", NULL)
-#define HR_PRINTF(msg) printf(HR_NAME " - " msg "\n")
+#pragma warning(disable : 5105)
+
+#define HR_MSGBOX(msg, type) MessageBox(NULL, HR_NAME " - " msg, "Error", type)
+#define HR_PRINTF(fmt, ...) printf(HR_NAME " - " fmt "\n" __VA_OPT__(,) __VA_ARGS__)

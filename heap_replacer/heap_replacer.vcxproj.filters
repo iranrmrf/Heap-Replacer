@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main\dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main\d3dx9_exports.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -60,16 +57,16 @@
     <ClCompile Include="ui\color_array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scrap_heap\scrap_heap_block.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scrap_heap\scrap_heap_manager.cpp">
+    <ClCompile Include="scrap_heap\scrap_heap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ui\graph_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="locks\nonreentrant_lock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,10 +125,7 @@
     <ClInclude Include="ui\color_array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrap_heap\scrap_heap_block.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scrap_heap\scrap_heap_manager.h">
+    <ClInclude Include="scrap_heap\scrap_heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="main\definitions.h">

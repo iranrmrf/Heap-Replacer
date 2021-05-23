@@ -14,7 +14,7 @@
 
 #define TFPARAM(...) void* self, void* _, __VA_ARGS__
 
-#define BIT_SET(w, m, f) w = ((w & ~(m)) | (-(f) & (m)))
+#define BIT_SET(w, m, s) w = ((w & ~(m)) | (-(s) & (m)))
 #define BIT_ON(w, m) BIT_SET(w, m, true)
 #define BIT_OFF(w, m) BIT_SET(w, m, false)
 
@@ -52,7 +52,7 @@ namespace util
 {
 
 	template <typename O, typename I>
-	O force_cast(I in) { union { I in; O out; } u = { in }; return u.out; };
+	O force_cast(I i) { union { I i; O o; } u = { i }; return u.o; };
 
 	size_t get_highest_bit(size_t n);
 	size_t round_pow2(size_t n);
@@ -63,6 +63,7 @@ namespace util
 	void* winapi_calloc(size_t count, size_t size);
 	void winapi_free(void* address);
 
+	char ctoupper(char c);
 	char ctolower(char c);
 	int cstrcmp(const char* s1, const char* s2);
 	int cstricmp(const char* s1, const char* s2);

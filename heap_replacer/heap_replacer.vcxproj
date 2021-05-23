@@ -133,7 +133,7 @@
       <StructMemberAlignment>Default</StructMemberAlignment>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsCpp</CompileAs>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
@@ -144,7 +144,7 @@
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <FloatingPointModel>Fast</FloatingPointModel>
       <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /Zc:preprocessor /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
@@ -204,7 +204,7 @@
       <StructMemberAlignment>Default</StructMemberAlignment>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsCpp</CompileAs>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
@@ -215,7 +215,7 @@
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <FloatingPointModel>Fast</FloatingPointModel>
       <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /Zc:preprocessor /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
@@ -275,7 +275,7 @@
       <StructMemberAlignment>Default</StructMemberAlignment>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsCpp</CompileAs>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
@@ -286,7 +286,7 @@
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <FloatingPointModel>Fast</FloatingPointModel>
       <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /Zc:preprocessor /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
@@ -346,7 +346,7 @@
       <StructMemberAlignment>Default</StructMemberAlignment>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <CompileAs>CompileAsCpp</CompileAs>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
@@ -357,7 +357,7 @@
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <FloatingPointModel>Fast</FloatingPointModel>
       <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /Zc:preprocessor /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
@@ -399,14 +399,13 @@
     <ClCompile Include="default_heap\default_heap_manager.cpp" />
     <ClCompile Include="default_heap\mem_cell.cpp" />
     <ClCompile Include="locks\nonreentrant_lock.cpp" />
-    <ClCompile Include="scrap_heap\scrap_heap_block.cpp" />
-    <ClCompile Include="scrap_heap\scrap_heap_manager.cpp" />
+    <ClCompile Include="main\dllmain.cpp" />
+    <ClCompile Include="scrap_heap\scrap_heap.cpp" />
     <ClCompile Include="ui\color_array.cpp" />
     <ClCompile Include="ui\graph_data.cpp" />
     <ClCompile Include="ui\ui.cpp" />
     <ClCompile Include="initial_allocator\initial_allocator.cpp" />
     <ClCompile Include="main\d3dx9_exports.cpp" />
-    <ClCompile Include="main\dllmain.cpp" />
     <ClCompile Include="main\util.cpp" />
     <ClCompile Include="memory_pools\memory_pool.cpp" />
     <ClCompile Include="memory_pools\memory_pool_manager.cpp" />
@@ -419,8 +418,7 @@
     <ClInclude Include="default_heap\default_heap_constants.h" />
     <ClInclude Include="locks\nonreentrant_lock.h" />
     <ClInclude Include="main\definitions.h" />
-    <ClInclude Include="scrap_heap\scrap_heap_block.h" />
-    <ClInclude Include="scrap_heap\scrap_heap_manager.h" />
+    <ClInclude Include="scrap_heap\scrap_heap.h" />
     <ClInclude Include="ui\color_array.h" />
     <ClInclude Include="ui\graph_data.h" />
     <ClInclude Include="ui\ui.h" />
