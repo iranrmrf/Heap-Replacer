@@ -137,6 +137,7 @@ void default_heap::rmv_free_cell(mem_cell* cell)
 
 void default_heap::add_free_cell(mem_cell* cell)
 {
+	if (!cell) [[unlikely]] { return; }
 	this->lock.lock();
 #ifdef HR_USE_GUI
 	this->used_size -= cell->desc.size;
@@ -166,11 +167,12 @@ void default_heap::add_free_cell(mem_cell* cell)
 mem_cell* default_heap::get_free_cell(size_t size)
 {
 	size = util::align<default_heap_cell_size>(size);
-	mem_cell* cell;
 	this->lock.lock();
-	while (!(cell = this->size_array[this->get_size_index(size)])) [[unlikely]]
+	mem_cell* cell = this->size_array[this->get_size_index(size)];
+	if (!cell) [[unlikely]]
 	{
-		this->add_free_cell(this->create_new_block());
+		this->add_free_cell(cell = this->create_new_block());
+		if (!cell) [[unlikely]] { return nullptr; }
 	}
 	if (cell->desc.size == size)
 	{
@@ -230,9 +232,9 @@ size_t default_heap::get_next_free_block_index()
 mem_cell* default_heap::create_new_block()
 {
 	void* address = util::winapi_malloc(default_heap_block_size);
-	if (!address) { HR_MSGBOX("DHM failed to create new block!"); return nullptr; }
+	if (!address) { HR_PRINTF("Default heap failed to create new block!"); return nullptr; }
 	size_t index = this->get_next_free_block_index();
-	if (index == default_heap_block_count) { HR_MSGBOX("DHM no more free blocks"); return nullptr; }
+	if (index == default_heap_block_count) { HR_PRINTF("Default heap no more free blocks!"); return nullptr; }
 
 	this->block_desc[index] = { address, default_heap_block_size, index };
 	this->addr_clist[index] = new cell_list();

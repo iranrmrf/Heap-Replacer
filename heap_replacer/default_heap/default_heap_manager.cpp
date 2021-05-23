@@ -18,7 +18,7 @@ default_heap_manager::~default_heap_manager()
 void* default_heap_manager::malloc(size_t size)
 {
 	mem_cell* cell = this->heap.get_free_cell(size);
-	if (!cell) [[unlikely]] { return nullptr; }
+	if (!cell) [[unlikely]] { HR_PRINTF("DHM OOM"); return nullptr; }
 	this->heap.add_used(cell);
 	void* address = cell->desc.addr;
 #ifdef HR_USE_GUI
@@ -49,7 +49,7 @@ bool default_heap_manager::free(void* address)
 	if (size_t size = this->heap.rmv_used(address, index))
 	{
 #ifdef HR_ZERO_MEM
-		util::memset32(address, 0u, (size + 3u) >> 2u);
+		util::cmemset32(address, 0u, (size + 3u) >> 2u);
 #endif
 #ifdef HR_USE_GUI
 		this->frees++;
