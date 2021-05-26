@@ -232,7 +232,8 @@ size_t default_heap::get_next_free_block_index()
 mem_cell* default_heap::create_new_block()
 {
 	void* address = util::winapi_malloc(default_heap_block_size);
-	if (!address) { HR_PRINTF("Default heap failed to create new block!"); return nullptr; }
+	if (!address) { HR_PRINTF("Default heap failed to allocate new block!"); return nullptr; }
+
 	size_t index = this->get_next_free_block_index();
 	if (index == default_heap_block_count) { HR_PRINTF("Default heap no more free blocks!"); return nullptr; }
 

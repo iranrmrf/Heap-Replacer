@@ -10,7 +10,8 @@ class cell_desc
 public:
 
 	void* addr;
-	size_t size : size_bits, index : index_bits;
+	size_t size;
+	size_t index;
 
 public:
 

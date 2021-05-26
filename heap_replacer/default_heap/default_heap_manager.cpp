@@ -18,7 +18,7 @@ default_heap_manager::~default_heap_manager()
 void* default_heap_manager::malloc(size_t size)
 {
 	mem_cell* cell = this->heap.get_free_cell(size);
-	if (!cell) [[unlikely]] { HR_PRINTF("DHM OOM"); return nullptr; }
+	if (!cell) [[unlikely]] { HR_PRINTF("Default heap out of memory!"); return nullptr; }
 	this->heap.add_used(cell);
 	void* address = cell->desc.addr;
 #ifdef HR_USE_GUI

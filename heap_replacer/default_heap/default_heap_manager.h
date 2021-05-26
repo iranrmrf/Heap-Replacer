@@ -18,9 +18,6 @@ private:
 	size_t allocs;
 	size_t frees;
 
-	size_t total_allocs;
-	size_t total_frees;
-
 #endif
 
 public:
@@ -41,11 +38,8 @@ public:
 
 	size_t get_cell_count() { return default_heap_cell_count; }
 
-	size_t get_allocs() { size_t retval = this->allocs; this->total_allocs += this->allocs; this->allocs = 0u; return retval; }
-	size_t get_frees() { size_t retval = this->frees; this->total_frees += this->frees; this->frees = 0u; return retval; }
-
-	size_t get_total_allocs() { return this->total_allocs; }
-	size_t get_total_frees() { return this->total_frees; }
+	size_t get_allocs() { size_t retval = this->allocs; this->allocs = 0u; return retval; }
+	size_t get_frees() { size_t retval = this->frees; this->frees = 0u; return retval; }
 
 	size_t get_used_size() { return this->heap.get_used_size(); }
 	size_t get_free_size() { return this->heap.get_free_size(); }
