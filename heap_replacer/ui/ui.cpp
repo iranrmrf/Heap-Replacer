@@ -615,13 +615,14 @@ void ui::render_memory_pool_menu()
 		{
 			ImVec2 s = ImGui::GetItemRectSize();
 
-			for (size_t size = 4u; size <= 2u * KB; size <<= 1u)
+			for (size_t index = 0u; index < hr::get_mpm()->get_pool_count(); index++)
 			{
-				size_t cell_count = hr::get_mpm()->get_pool_cell_count(size);
-				size_t max_cell_count = hr::get_mpm()->get_pool_max_cell_count(size);
+				memory_pool* pool = hr::get_mpm()->get_pool(index);
+				size_t cell_count = pool->get_cell_count();
+				size_t max_cell_count = pool->get_max_cell_count();
 				float perc = (float)cell_count / max_cell_count;
-				float used_size = perc * ((float)hr::get_mpm()->get_pool_max_size(size) / MB);
-				ImGui::Text("Pool: %*d\n", 4u, size);
+				float used_size = perc * ((float)pool->get_max_size() / MB);
+				ImGui::Text("Pool: %*d\n", 4u, pool->get_item_size());
 				sprintf(buff, "%d / %d (%.2f MB)", cell_count, max_cell_count, used_size);
 				ImGui::SameLine(); ImGui::ProgressBar(perc, ImVec2(s.x, 0.0f), buff);
 			}
@@ -819,3 +820,5 @@ HRESULT ui::display_scene_hook(IDirect3DDevice9* self)
 // TODO
 // save theme
 // save order
+// fix progress bar sizes
+// fix crashing on insert press (lock?)

@@ -35,9 +35,8 @@ namespace hr
 
 	void* hr_malloc(size_t size)
 	{
-		if (size < 4u) [[unlikely]] { size = 4u; }
-		if (size <= 2u * KB) [[likely]] { if (void* address = mpm->malloc(size)) [[likely]] { return address; } }
-		if (size >= 64u * MB) [[unlikely]] { HR_PRINTF("Alloc > 64 MB"); return util::winapi_malloc(size); }
+		if (size <= pool_max_size) [[likely]] { if (void* address = mpm->malloc(size)) [[likely]] { return address; } }
+		if (size >= default_heap_block_size) [[unlikely]] { return util::winapi_malloc(size); }
 		if (void* address = dhm->malloc(size)) [[likely]] { return address; }
 		return util::winapi_malloc(size);
 	}
@@ -45,9 +44,8 @@ namespace hr
 	void* hr_calloc(size_t count, size_t size)
 	{
 		size *= count;
-		if (size < 4u) [[unlikely]] { size = 4u; }
-		if (size <= 2u * KB) [[likely]] { if (void* address = mpm->calloc(size)) [[likely]] { return address; } }
-		if (size >= 64u * MB) [[unlikely]] { HR_PRINTF("Alloc > 64 MB"); return util::winapi_malloc(size); }
+		if (size <= pool_max_size) [[likely]] { if (void* address = mpm->calloc(size)) [[likely]] { return address; } }
+		if (size >= default_heap_block_size) [[unlikely]] { return util::winapi_malloc(size); }
 		if (void* address = dhm->calloc(size)) [[likely]] { return address; }
 		return util::winapi_malloc(size);
 	}
@@ -167,9 +165,6 @@ namespace hr
 
 	void __cdecl queue_io_request(io_req* req)
 	{
-		size_t(__cdecl* f_fseek)(FILE*, int, int) = decltype(f_fseek)(0xECB65A);
-		size_t(__cdecl* f_fread)(void*, size_t, size_t, FILE*) = decltype(f_fread)(0xECB3A8);
-		size_t(__cdecl* f_fwrite)(void*, size_t, size_t, FILE*) = decltype(f_fwrite)(0xECB086);
 		size_t(__cdecl* f_fseek)(FILE*, int, int) = decltype(f_fseek)(0x00ECB65A);
 		size_t(__cdecl* f_fread)(void*, size_t, size_t, FILE*) = decltype(f_fread)(0x00ECB3A8);
 		size_t(__cdecl* f_fwrite)(void*, size_t, size_t, FILE*) = decltype(f_fwrite)(0x00ECB086);

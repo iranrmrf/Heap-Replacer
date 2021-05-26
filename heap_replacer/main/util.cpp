@@ -23,25 +23,6 @@ void __cdecl operator delete[](void* address)
 namespace util
 {
 
-	size_t get_highest_bit(size_t n)
-	{
-		DWORD index;
-		_BitScanReverse(&index, n);
-		return index;
-	}
-
-	size_t round_pow2(size_t n)
-	{
-		return (1u << (get_highest_bit(--n) + 1u));
-	}
-
-	size_t round_pow2(size_t n, size_t* b)
-	{
-		size_t bit = get_highest_bit(--n) + 1u;
-		*b = bit;
-		return (1u << bit);
-	}
-
 	void* winapi_alloc(size_t size)
 	{
 		return VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);

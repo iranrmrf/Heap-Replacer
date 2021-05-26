@@ -30,9 +30,6 @@
 template<size_t N, typename T>
 constexpr size_t countof(T(&)[N]) { return N; }
 
-constexpr size_t highest_bit(size_t v) { return ((v / ((v % 255u) + 1u) / 255u) % 255u) * 8u - 86u / ((v % 255u) + 12u) + 7u; }
-constexpr size_t bit_index(size_t v) { return highest_bit(v - 1u); }
-
 constexpr size_t KB = 1024u * 1u;
 constexpr size_t MB = 1024u * KB;
 constexpr size_t GB = 1024u * MB;
@@ -53,10 +50,6 @@ namespace util
 
 	template <typename O, typename I>
 	O force_cast(I i) { union { I i; O o; } u = { i }; return u.o; };
-
-	size_t get_highest_bit(size_t n);
-	size_t round_pow2(size_t n);
-	size_t round_pow2(size_t n, size_t* b);
 
 	void* winapi_alloc(size_t size);
 	void* winapi_malloc(size_t size);
