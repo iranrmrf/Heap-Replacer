@@ -4,7 +4,7 @@
 
 #include "locks/nonreentrant_lock.h"
 
-#define INITIAL_ALLOCATOR_SIZE (0x00001000u)
+#define INITIAL_ALLOCATOR_SIZE (8u * KB)
 
 class initial_allocator
 {

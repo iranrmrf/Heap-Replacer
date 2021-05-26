@@ -35,7 +35,11 @@ void* scrap_heap::alloc(size_t size, size_t alignment)
 	header->prev = this->last;
 	this->last = header++;
 	this->sh_cur = VPTRSUM(header, size);
-	if (this->sh_cur > this->sh_end) [[unlikely]] { HR_PRINTF("Scrap heap block out of memory!"); return nullptr; }
+	if (this->sh_cur > this->sh_end) [[unlikely]]
+	{
+		HR_PRINTF("Scrap heap block out of memory!");
+		return nullptr;
+	}
 	return header;
 }
 
