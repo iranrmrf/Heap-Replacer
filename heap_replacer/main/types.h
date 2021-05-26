@@ -21,6 +21,7 @@ namespace hr
 	void* hr_ina_calloc(size_t count, size_t size);
 	size_t hr_ina_mem_size(void* address);
 	void hr_ina_free(void* address);
+
 	void* hr_malloc(size_t size);
 	void* hr_calloc(size_t count, size_t size);
 	void* hr_realloc(void* address, size_t size);

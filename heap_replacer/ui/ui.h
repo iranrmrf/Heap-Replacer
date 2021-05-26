@@ -128,13 +128,19 @@ private:
 
 	void set_imgui_mouse_state(bool enabled);
 
+private:
+
 	void load_settings();
 	void save_settings();
+
+private:
 
 	void render();
 
 	void update_graphs();
 	void clear_graphs();
+
+private:
 
 	void render_ui();
 

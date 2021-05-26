@@ -170,6 +170,9 @@ namespace hr
 		size_t(__cdecl* f_fseek)(FILE*, int, int) = decltype(f_fseek)(0xECB65A);
 		size_t(__cdecl* f_fread)(void*, size_t, size_t, FILE*) = decltype(f_fread)(0xECB3A8);
 		size_t(__cdecl* f_fwrite)(void*, size_t, size_t, FILE*) = decltype(f_fwrite)(0xECB086);
+		size_t(__cdecl* f_fseek)(FILE*, int, int) = decltype(f_fseek)(0x00ECB65A);
+		size_t(__cdecl* f_fread)(void*, size_t, size_t, FILE*) = decltype(f_fread)(0x00ECB3A8);
+		size_t(__cdecl* f_fwrite)(void*, size_t, size_t, FILE*) = decltype(f_fwrite)(0x00ECB086);
 		switch (req->type)
 		{
 			case io_req::IOMode::SEEK: req->bytes = f_fseek(req->file, req->offset, req->whence); break;
@@ -187,104 +190,105 @@ namespace hr
 
 #if defined(FNV)
 
-		util::patch_jmp(0xECD1C7, &crt_malloc);
-		util::patch_jmp(0xED0CDF, &crt_malloc);
-		util::patch_jmp(0xEDDD7D, &crt_calloc);
-		util::patch_jmp(0xED0D24, &crt_calloc);
-		util::patch_jmp(0xECCF5D, &crt_realloc);
-		util::patch_jmp(0xED0D70, &crt_realloc);
-		util::patch_jmp(0xEE1700, &crt_recalloc);
-		util::patch_jmp(0xED0DBE, &crt_recalloc);
-		util::patch_jmp(0xECD31F, &crt_msize);
-		util::patch_jmp(0xECD291, &crt_free);
+		util::patch_jmp(0x00ECD1C7, &crt_malloc);
+		util::patch_jmp(0x00ED0CDF, &crt_malloc);
+		util::patch_jmp(0x00EDDD7D, &crt_calloc);
+		util::patch_jmp(0x00ED0D24, &crt_calloc);
+		util::patch_jmp(0x00ECCF5D, &crt_realloc);
+		util::patch_jmp(0x00ED0D70, &crt_realloc);
+		util::patch_jmp(0x00EE1700, &crt_recalloc);
+		util::patch_jmp(0x00ED0DBE, &crt_recalloc);
+		util::patch_jmp(0x00ECD31F, &crt_msize);
+		util::patch_jmp(0x00ECD291, &crt_free);
 
-		util::patch_jmp(0xAA3E40, &game_heap_allocate);
-		util::patch_jmp(0xAA4150, &game_heap_reallocate);
-		util::patch_jmp(0xAA4200, &game_heap_reallocate);
-		util::patch_jmp(0xAA44C0, &game_heap_msize);
-		util::patch_jmp(0xAA4060, &game_heap_free);
+		util::patch_jmp(0x00AA3E40, &game_heap_allocate);
+		util::patch_jmp(0x00AA4150, &game_heap_reallocate);
+		util::patch_jmp(0x00AA4200, &game_heap_reallocate);
+		util::patch_jmp(0x00AA44C0, &game_heap_msize);
+		util::patch_jmp(0x00AA4060, &game_heap_free);
 
-		util::patch_ret(0xAA6840);
-		util::patch_ret(0x866E00);
-		util::patch_ret(0x866770);
+		util::patch_ret(0x00AA6840);
+		util::patch_ret(0x00866E00);
+		util::patch_ret(0x00866770);
 
-		util::patch_ret(0xAA6F90);
-		util::patch_ret(0xAA7030);
-		util::patch_ret(0xAA7290);
-		util::patch_ret(0xAA7300);
+		util::patch_ret(0x00AA6F90);
+		util::patch_ret(0x00AA7030);
+		util::patch_ret(0x00AA7290);
+		util::patch_ret(0x00AA7300);
 
-		util::patch_jmp(0x40FBF0, util::force_cast<void*>(&reentrant_lock::lock_game));
-		//util::patch_jmp(0x78D200, util::force_cast<void*>(&reentrant_lock::try_lock));
-		util::patch_jmp(0x40FBA0, util::force_cast<void*>(&reentrant_lock::unlock));
+		util::patch_jmp(0x0040FBF0, util::force_cast<void*>(&reentrant_lock::lock_game));
+		util::patch_jmp(0x0040FBA0, util::force_cast<void*>(&reentrant_lock::unlock));
 
-		util::patch_ret(0xAA58D0);
-		util::patch_ret(0x866D10);
-		util::patch_ret(0xAA5C80);
+		util::patch_ret(0x00AA58D0);
+		util::patch_ret(0x00866D10);
+		util::patch_ret(0x00AA5C80);
 
-		util::patch_jmp(0xAA53F0, util::force_cast<void*>(&scrap_heap::init_0x10000));
-		util::patch_jmp(0xAA5410, util::force_cast<void*>(&scrap_heap::init_var));
-		util::patch_jmp(0xAA54A0, util::force_cast<void*>(&scrap_heap::alloc));
-		util::patch_jmp(0xAA5610, util::force_cast<void*>(&scrap_heap::free));
-		util::patch_jmp(0xAA5460, util::force_cast<void*>(&scrap_heap::purge));
+		util::patch_jmp(0x00AA53F0, util::force_cast<void*>(&scrap_heap::init_0x10000));
+		util::patch_jmp(0x00AA5410, util::force_cast<void*>(&scrap_heap::init_var));
+		util::patch_jmp(0x00AA54A0, util::force_cast<void*>(&scrap_heap::alloc));
+		util::patch_jmp(0x00AA5610, util::force_cast<void*>(&scrap_heap::free));
+		util::patch_jmp(0x00AA5460, util::force_cast<void*>(&scrap_heap::purge));
 
-		util::patch_nops(0xAA38CA, 0xAA38E8 - 0xAA38CA);
-		util::patch_jmp(0xAA42E0, util::force_cast<void*>(&scrap_heap::get_thread_scrap_heap));
+		util::patch_nops(0x00AA38CA, 0x00AA38E8 - 0x00AA38CA);
+		util::patch_jmp(0x00AA42E0, util::force_cast<void*>(&scrap_heap::get_thread_scrap_heap));
 
-		util::patch_nop_call(0xAA3060);
+		util::patch_nop_call(0x00AA3060);
 
-		util::patch_nop_call(0x86C56F);
-		util::patch_nop_call(0xC42EB1);
-		util::patch_nop_call(0xEC1701);
+		util::patch_nop_call(0x0086C56F);
+		util::patch_nop_call(0x00C42EB1);
+		util::patch_nop_call(0x00EC1701);
 
-		util::patch_bytes(0x86EED4, (BYTE*)"\xEB\x55", 2);
+		util::patch_bytes(0x0086EED4, (BYTE*)"\xEB\x55", 2);
 
-		util::patch_nops(0xAA306A, 5);
-		util::patch_call(0xAA85FF, &queue_io_request);
-		util::patch_call(0xAA864F, &queue_io_request);
-		util::patch_call(0xAA869F, &queue_io_request);
+#ifdef HR_IO_HOOKS
+		util::patch_nops(0x00AA306A, 5);
+		util::patch_call(0x00AA85FF, &queue_io_request);
+		util::patch_call(0x00AA864F, &queue_io_request);
+		util::patch_call(0x00AA869F, &queue_io_request);
+#endif
 
 #elif defined(FO3)
 
-		util::patch_jmp(0xC063F5, &crt_malloc);
-		util::patch_jmp(0xC0AB3F, &crt_malloc);
-		util::patch_jmp(0xC1843C, &crt_calloc);
-		util::patch_jmp(0xC0AB7F, &crt_calloc);
-		util::patch_jmp(0xC06546, &crt_realloc);
-		util::patch_jmp(0xC0ABC7, &crt_realloc);
-		util::patch_jmp(0xC06761, &crt_recalloc);
-		util::patch_jmp(0xC0AC12, &crt_recalloc);
-		util::patch_jmp(0xC067DA, &crt_msize);
-		util::patch_jmp(0xC064B8, &crt_free);
+		util::patch_jmp(0x00C063F5, &crt_malloc);
+		util::patch_jmp(0x00C0AB3F, &crt_malloc);
+		util::patch_jmp(0x00C1843C, &crt_calloc);
+		util::patch_jmp(0x00C0AB7F, &crt_calloc);
+		util::patch_jmp(0x00C06546, &crt_realloc);
+		util::patch_jmp(0x00C0ABC7, &crt_realloc);
+		util::patch_jmp(0x00C06761, &crt_recalloc);
+		util::patch_jmp(0x00C0AC12, &crt_recalloc);
+		util::patch_jmp(0x00C067DA, &crt_msize);
+		util::patch_jmp(0x00C064B8, &crt_free);
 
-		util::patch_jmp(0x86B930, &game_heap_allocate);
-		util::patch_jmp(0x86BAE0, &game_heap_reallocate);
-		util::patch_jmp(0x86BB50, &game_heap_reallocate);
-		util::patch_jmp(0x86B8C0, &game_heap_msize);
-		util::patch_jmp(0x86BA60, &game_heap_free);
+		util::patch_jmp(0x0086B930, &game_heap_allocate);
+		util::patch_jmp(0x0086BAE0, &game_heap_reallocate);
+		util::patch_jmp(0x0086BB50, &game_heap_reallocate);
+		util::patch_jmp(0x0086B8C0, &game_heap_msize);
+		util::patch_jmp(0x0086BA60, &game_heap_free);
 
-		util::patch_ret(0x86D670);
-		util::patch_ret(0x6E21F0);
-		util::patch_ret(0x6E1E10);
+		util::patch_ret(0x0086D670);
+		util::patch_ret(0x006E21F0);
+		util::patch_ret(0x006E1E10);
 
-		util::patch_jmp(0x409A80, util::force_cast<void*>(&reentrant_lock::lock_game));
-		//util::patch_jmp(0x0, util::force_cast<void*>(&reentrant_lock::unlock));
+		util::patch_jmp(0x00409A80, util::force_cast<void*>(&reentrant_lock::lock_game));
+		//util::patch_jmp(0x00000000, util::force_cast<void*>(&reentrant_lock::unlock));
 
-		util::patch_ret(0x86C600);
-		util::patch_ret(0x6E1CD0);
-		util::patch_ret(0x86CA30);
+		util::patch_ret(0x0086C600);
+		util::patch_ret(0x006E1CD0);
+		util::patch_ret(0x0086CA30);
 
-		util::patch_jmp(0x86CB70, util::force_cast<void*>(&scrap_heap::init_0x10000));
-		util::patch_jmp(0x86CB90, util::force_cast<void*>(&scrap_heap::init_var));
-		util::patch_jmp(0x86C710, util::force_cast<void*>(&scrap_heap::alloc));
-		util::patch_jmp(0x86C7B0, util::force_cast<void*>(&scrap_heap::free));
-		util::patch_jmp(0x86CAA0, util::force_cast<void*>(&scrap_heap::purge));
+		util::patch_jmp(0x0086CB70, util::force_cast<void*>(&scrap_heap::init_0x10000));
+		util::patch_jmp(0x0086CB90, util::force_cast<void*>(&scrap_heap::init_var));
+		util::patch_jmp(0x0086C710, util::force_cast<void*>(&scrap_heap::alloc));
+		util::patch_jmp(0x0086C7B0, util::force_cast<void*>(&scrap_heap::free));
+		util::patch_jmp(0x0086CAA0, util::force_cast<void*>(&scrap_heap::purge));
 
-		util::patch_nops(0x86C038, 0x86C086 - 0x86C038);
-		util::patch_jmp(0x86BCB0, util::force_cast<void*>(&scrap_heap::get_thread_scrap_heap));
+		util::patch_nops(0x0086C038, 0x0086C086 - 0x0086C038);
+		util::patch_jmp(0x0086BCB0, util::force_cast<void*>(&scrap_heap::get_thread_scrap_heap));
 
-		util::patch_nop_call(0x6E9B30);
-		util::patch_nop_call(0x7FACDB);
-		util::patch_nop_call(0xAA6534);
+		util::patch_nop_call(0x006E9B30);
+		util::patch_nop_call(0x007FACDB);
+		util::patch_nop_call(0x00AA6534);
 
 #endif
 
@@ -300,22 +304,22 @@ namespace hr
 		uim = new ui();
 
 #if defined(FNV)
-			
-		util::patch_bytes(0x4DA942, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
-		util::patch_bytes(0x4DA937, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+		
+		util::patch_bytes(0x004DA942, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+		util::patch_bytes(0x004DA937, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
 
-		util::patch_detour(0xFDF2B8, &ui::create_window_hook, (void**)&ui::create_window);
-		util::patch_detour(0xFDF294, &ui::dispatch_message_hook, (void**)&ui::dispatch_message);
-		util::patch_detour(0x10EE640, &ui::display_scene_hook, (void**)&ui::display_scene);
+		util::patch_detour(0x00FDF2B8, &ui::create_window_hook, (void**)&ui::create_window);
+		util::patch_detour(0x00FDF294, &ui::dispatch_message_hook, (void**)&ui::dispatch_message);
+		util::patch_detour(0x010EE640, &ui::display_scene_hook, (void**)&ui::display_scene);
 
 #elif defined(FO3)
 
-		util::patch_bytes(0x4905C7, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
-		util::patch_bytes(0x4905B7, (PBYTE)"\xBA\x00\x00\x00\x00\x90", 6);
+		util::patch_bytes(0x004905C7, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
+		util::patch_bytes(0x004905B7, (PBYTE)"\xBA\x00\x00\x00\x00\x90", 6);
 
-		util::patch_detour(0xD9B2CC, &ui::create_window_hook, (void**)&ui::create_window);
-		util::patch_detour(0xD9B284, &ui::dispatch_message_hook, (void**)&ui::dispatch_message);
-		util::patch_detour(0xE29188, &ui::display_scene_hook, (void**)&ui::display_scene);
+		util::patch_detour(0x00D9B2CC, &ui::create_window_hook, (void**)&ui::create_window);
+		util::patch_detour(0x00D9B284, &ui::dispatch_message_hook, (void**)&ui::dispatch_message);
+		util::patch_detour(0x00E29188, &ui::display_scene_hook, (void**)&ui::display_scene);
 
 #endif
 

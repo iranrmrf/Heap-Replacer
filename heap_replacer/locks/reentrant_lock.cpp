@@ -19,10 +19,7 @@ void reentrant_lock::lock_game(const char* msg)
 	}
 	else
 	{
-		while (InterlockedCompareExchange(&this->thread_id, id, 0u))
-		{
-			Sleep(0u);
-		}
+		while (InterlockedCompareExchange(&this->thread_id, id, 0u)) { Sleep(0u); }
 		this->lock_count = 1u;
 	}
 }
