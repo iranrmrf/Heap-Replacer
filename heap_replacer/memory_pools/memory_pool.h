@@ -75,6 +75,7 @@ public:
 
 	size_t get_cell_count() { return this->cell_count; }
 	size_t get_max_cell_count() { return this->max_cell_count; }
+	size_t get_item_size() { return this->item_size; }
 	size_t get_max_size() { return this->max_size; }
 
 public:

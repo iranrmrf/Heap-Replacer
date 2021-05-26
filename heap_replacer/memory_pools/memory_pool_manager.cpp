@@ -29,37 +29,33 @@ void memory_pool_manager::init_all_pools()
 {
 	struct pool_data { size_t item_size; size_t max_size; } pool_desc[pool_count] =
 	{
-#if defined(FNV)
-			{ 4u	, 4u * MB },
-			{ 8u	, 32u * MB },
-			{ 16u	, 64u * MB },
-			{ 32u	, 128u * MB },
-			{ 64u	, 64u * MB },
-			{ 128u	, 256u * MB },
-			{ 256u	, 128u * MB },
-			{ 512u	, 128u * MB },
-			{ 1024u	, 128u * MB },
-			{ 2048u	, 128u * MB },
-			// 1060 MB
-#elif defined(FO3)
-			{ 4u	, 4u * MB },
-			{ 8u	, 32u * MB },
-			{ 16u	, 64u * MB },
-			{ 32u	, 128u * MB },
-			{ 64u	, 64u * MB },
-			{ 128u	, 256u * MB },
-			{ 256u	, 128u * MB },
-			{ 512u	, 128u * MB },
-			{ 1024u	, 128u * MB },
-			{ 2048u	, 128u * MB },
-			// 1060 MB
-#endif
+		{ 4u	, 4u	* MB },
+		{ 8u	, 32u	* MB },
+		{ 12u	, 32u	* MB },
+		{ 16u	, 32u	* MB },
+		{ 24u	, 64u	* MB },
+		{ 32u	, 32u	* MB },
+		{ 48u	, 64u	* MB },
+		{ 64u	, 32u	* MB },
+		{ 96u	, 128u	* MB },
+		{ 128u	, 64u	* MB },
+		{ 196u	, 128u	* MB },
+		{ 256u	, 32u	* MB },
+		{ 384u	, 64u	* MB },
+		{ 512u	, 64u	* MB },
+		{ 768u	, 64u	* MB },
+		{ 1024u	, 32u	* MB },
+		{ 1536u	, 64u	* MB },
+		{ 2048u	, 32u	* MB },
+		{ 3072u	, 64u	* MB },
+		// 1028 MB
 	};
 	for (size_t i = 0u; i < pool_count; i++)
 	{
 		pool_data* pd = &pool_desc[i];
 		memory_pool* pool = new memory_pool(pd->item_size, pd->max_size, i);
 		void* address = pool->memory_pool_init();
+		if (i == 0u) { this->pools_by_size[0] = pool; }
 		this->pools_by_indx[i] = pool;
 		for (size_t j = pd->item_size >> 2u; j && !this->pools_by_size[j]; j--)
 		{
@@ -98,12 +94,12 @@ void* memory_pool_manager::malloc(size_t size)
 	memory_pool* pool = this->pool_from_size(size);
 	if (void* address = pool->malloc()) [[likely]] { return address; }
 	size_t index = pool->get_index();
-	while (++index < pool_count)
+	while (++index < pool_count) [[likely]]
 	{
 		if (void* address = this->pool_from_indx(index)->malloc()) [[likely]] { return address; }
 	}
 	[[unlikely]]
-	HR_PRINTF("Memory pools out of memory!");
+	HR_PRINTF("Memory pool manager out of memory!");
 	return nullptr;
 }
 
@@ -115,12 +111,12 @@ void* memory_pool_manager::calloc(size_t size)
 	memory_pool* pool = this->pool_from_size(size);
 	if (void* address = pool->calloc()) [[likely]] { return address; }
 	size_t index = pool->get_index();
-	while (++index < pool_count)
+	while (++index < pool_count) [[likely]]
 	{
 		if (void* address = this->pool_from_indx(index)->calloc()) [[likely]] { return address; }
 	}
 	[[unlikely]]
-	HR_PRINTF("Memory pools out of memory!");
+	HR_PRINTF("Memory pool manager out of memory!");
 	return nullptr;
 }
 

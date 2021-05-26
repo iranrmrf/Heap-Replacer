@@ -50,9 +50,8 @@ public:
 	size_t get_allocs() { size_t retval = this->allocs; this->allocs = 0u; return retval; }
 	size_t get_frees() { size_t retval = this->frees; this->frees = 0u; return retval; }
 
-	size_t get_pool_cell_count(size_t size) { return this->pool_from_size(size)->get_cell_count(); }
-	size_t get_pool_max_cell_count(size_t size) { return this->pool_from_size(size)->get_max_cell_count(); }
-	size_t get_pool_max_size(size_t size) { return this->pool_from_size(size)->get_max_size(); }
+	size_t get_pool_count() { return pool_count; }
+	memory_pool* get_pool(size_t index) { return this->pool_from_indx(index); }
 
 #endif
 
