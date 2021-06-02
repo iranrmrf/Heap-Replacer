@@ -101,10 +101,6 @@ namespace util
 	template <size_t A>
 	void* align(void* address) { return (void*)align<A>((uintptr_t)address); }
 
-	// for primitives
-	template <typename T>
-	void swap(T& a, T& b) { T t = a; a = b; b = t; }
-
 	void* get_IAT_address(BYTE* base, const char* dll_name, const char* search);
 	bool is_LAA(BYTE* base);
 	bool file_exists(const char* name);
