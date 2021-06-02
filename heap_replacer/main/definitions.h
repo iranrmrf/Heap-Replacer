@@ -24,7 +24,6 @@
 #endif
 
 //#define HR_USE_GUI
-//#define HR_IO_HOOKS
 //#define HR_ZERO_MEM
 
 #pragma warning(disable : 5105)
