@@ -86,26 +86,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (FNV)|Win32'">
     <TargetName>d3dx9_38</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)</IntDir>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)</OutDir>
+    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
+    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (FO3)|Win32'">
     <TargetName>d3dx9_38</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)</IntDir>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)</OutDir>
+    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
+    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FNV)|Win32'">
     <TargetName>d3dx9_38</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)</IntDir>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)</OutDir>
+    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
+    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FO3)|Win32'">
     <TargetName>d3dx9_38</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)</IntDir>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)</OutDir>
+    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
+    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (FNV)|Win32'">
     <ClCompile>

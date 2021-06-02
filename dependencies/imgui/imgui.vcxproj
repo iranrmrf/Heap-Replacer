@@ -48,14 +48,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)</OutDir>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)</IntDir>
+    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
+    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)</OutDir>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)</IntDir>
+    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
+    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

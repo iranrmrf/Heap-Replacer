@@ -49,14 +49,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)</OutDir>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)</IntDir>
+    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
+    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)</OutDir>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)</IntDir>
+    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
+    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
