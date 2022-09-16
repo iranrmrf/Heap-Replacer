@@ -55,8 +55,6 @@ void clist_remove_node(struct clist *list, struct cnode *__restrict node)
 {
     node->prev->next = node->next;
     node->next->prev = node->prev;
-    node->next = NULL;
-    node->prev = NULL;
 }
 
 int clist_is_empty(struct clist *list)
