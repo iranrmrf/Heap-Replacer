@@ -1,460 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug (FNV)|Win32">
-      <Configuration>Debug (FNV)</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug (FO3)|Win32">
-      <Configuration>Debug (FO3)</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release (FNV)|Win32">
-      <Configuration>Release (FNV)</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release (FO3)|Win32">
-      <Configuration>Release (FO3)</Configuration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{8B4BEA3C-8ED2-4E05-819B-95155A9B58FC}</ProjectGuid>
-    <RootNamespace>heap_replacer</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{b7641a6b-8a63-42e6-84fe-ff4d0c871df1}</ProjectGuid>
+    <RootNamespace>heapreplacer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (FNV)|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <CLRSupport>false</CLRSupport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (FO3)|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <CLRSupport>false</CLRSupport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FNV)|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <CLRSupport>false</CLRSupport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FO3)|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-    <CLRSupport>false</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release (FNV)|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="udm.props" />
-    <Import Project="..\arch.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release (FO3)|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="udm.props" />
-    <Import Project="..\arch.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FNV)|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="udm.props" />
-    <Import Project="..\arch.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FO3)|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="udm.props" />
-    <Import Project="..\arch.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (FNV)|Win32'">
-    <TargetName>d3dx9_38</TargetName>
-    <TargetExt>.dll</TargetExt>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release (FO3)|Win32'">
-    <TargetName>d3dx9_38</TargetName>
-    <TargetExt>.dll</TargetExt>
     <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FNV)|Win32'">
     <TargetName>d3dx9_38</TargetName>
-    <TargetExt>.dll</TargetExt>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FO3)|Win32'">
-    <TargetName>d3dx9_38</TargetName>
-    <TargetExt>.dll</TargetExt>
-    <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
-    <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (FNV)|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessorDefinitions>FNV;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\SystemInfo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\imgui;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <CallingConvention>FastCall</CallingConvention>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <ExceptionHandling>false</ExceptionHandling>
-      <CallingConvention>FastCall</CallingConvention>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <ControlFlowGuard>false</ControlFlowGuard>
-      <FloatingPointExceptions>false</FloatingPointExceptions>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AssemblerOutput>All</AssemblerOutput>
-      <DisableSpecificWarnings>
-      </DisableSpecificWarnings>
-      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /Zc:preprocessor /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <ShowIncludes>false</ShowIncludes>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-      <GenerateMapFile>true</GenerateMapFile>
-      <MapExports>true</MapExports>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <LargeAddressAware>true</LargeAddressAware>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <ShowProgress>LinkVerbose</ShowProgress>
-      <LinkStatus>true</LinkStatus>
-      <Version>
-      </Version>
-      <DataExecutionPrevention>false</DataExecutionPrevention>
-    </Link>
-    <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(FalloutNVPath)$(TargetFileName)"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release (FO3)|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessorDefinitions>FO3;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\SystemInfo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\imgui;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>true</OmitFramePointers>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <CompileAs>CompileAsC</CompileAs>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
-      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <ExceptionHandling>false</ExceptionHandling>
-      <CallingConvention>FastCall</CallingConvention>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <ControlFlowGuard>false</ControlFlowGuard>
-      <FloatingPointExceptions>false</FloatingPointExceptions>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AssemblerOutput>All</AssemblerOutput>
-      <DisableSpecificWarnings>
-      </DisableSpecificWarnings>
-      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /Zc:preprocessor /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <ShowIncludes>false</ShowIncludes>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-      <GenerateMapFile>true</GenerateMapFile>
-      <MapExports>true</MapExports>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <LargeAddressAware>true</LargeAddressAware>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <ShowProgress>LinkVerbose</ShowProgress>
-      <LinkStatus>true</LinkStatus>
-      <Version>
-      </Version>
-      <DataExecutionPrevention>false</DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(Fallout3Path)$(TargetFileName)"</Command>
+      <Command>copy "$(TargetPath)" "C:\Games\Fallout New Vegas\$(TargetFileName)"</Command>
     </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FNV)|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessorDefinitions>FNV;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\SystemInfo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\imgui;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <OmitFramePointers>false</OmitFramePointers>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <ExceptionHandling>false</ExceptionHandling>
-      <CallingConvention>FastCall</CallingConvention>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <ControlFlowGuard>false</ControlFlowGuard>
-      <FloatingPointExceptions>false</FloatingPointExceptions>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AssemblerOutput>All</AssemblerOutput>
-      <DisableSpecificWarnings>
-      </DisableSpecificWarnings>
-      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /Zc:preprocessor /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ShowIncludes>false</ShowIncludes>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>false</OptimizeReferences>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-      <GenerateMapFile>true</GenerateMapFile>
-      <MapExports>true</MapExports>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <LargeAddressAware>true</LargeAddressAware>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <ShowProgress>LinkVerbose</ShowProgress>
-      <LinkStatus>true</LinkStatus>
-      <Version>
-      </Version>
-      <DataExecutionPrevention>false</DataExecutionPrevention>
-    </Link>
-    <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(FalloutNVPath)$(TargetFileName)"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (FO3)|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <PreprocessToFile>false</PreprocessToFile>
-      <PreprocessorDefinitions>FO3;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\system_info\SystemInfo\include;$(SolutionDir)dependencies\imgui;$(SolutionDir)dependencies\imgui\imgui;$(SolutionDir)dependencies\minhook\minhook\include;$(SolutionDir)dependencies\simple_ini;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
-      <OmitFramePointers>false</OmitFramePointers>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
-      <BufferSecurityCheck>false</BufferSecurityCheck>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
-      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <ExceptionHandling>false</ExceptionHandling>
-      <CallingConvention>FastCall</CallingConvention>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessKeepComments>false</PreprocessKeepComments>
-      <StructMemberAlignment>Default</StructMemberAlignment>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <ControlFlowGuard>false</ControlFlowGuard>
-      <FloatingPointExceptions>false</FloatingPointExceptions>
-      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AssemblerOutput>All</AssemblerOutput>
-      <DisableSpecificWarnings>
-      </DisableSpecificWarnings>
-      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <AdditionalOptions>/Qvec-report:2 /Zc:throwingNew /Zc:preprocessor /arch:$(Arch) %(AdditionalOptions)</AdditionalOptions>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ShowIncludes>false</ShowIncludes>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>false</OptimizeReferences>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-      <GenerateMapFile>true</GenerateMapFile>
-      <MapExports>true</MapExports>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <LargeAddressAware>true</LargeAddressAware>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <ShowProgress>LinkVerbose</ShowProgress>
-      <LinkStatus>true</LinkStatus>
-      <Version>
-      </Version>
-      <DataExecutionPrevention>false</DataExecutionPrevention>
-    </Link>
-    <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(Fallout3Path)$(TargetFileName)"</Command>
-    </PostBuildEvent>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="default_heap\cell_desc.cpp" />
-    <ClCompile Include="default_heap\cell_list.cpp" />
-    <ClCompile Include="default_heap\cell_node.cpp" />
-    <ClCompile Include="default_heap\default_heap.cpp" />
-    <ClCompile Include="default_heap\default_heap_manager.cpp" />
-    <ClCompile Include="default_heap\mem_cell.cpp" />
-    <ClCompile Include="locks\nonreentrant_lock.cpp" />
-    <ClCompile Include="main\dllmain.cpp" />
-    <ClCompile Include="scrap_heap\scrap_heap.cpp" />
-    <ClCompile Include="ui\color_array.cpp" />
-    <ClCompile Include="ui\graph_data.cpp" />
-    <ClCompile Include="ui\ui.cpp" />
-    <ClCompile Include="initial_allocator\initial_allocator.cpp" />
-    <ClCompile Include="main\d3dx9_exports.cpp" />
-    <ClCompile Include="main\util.cpp" />
-    <ClCompile Include="memory_pools\memory_pool.cpp" />
-    <ClCompile Include="memory_pools\memory_pool_manager.cpp" />
-    <ClCompile Include="locks\reentrant_lock.cpp" />
+    <ClCompile Include="main\d3dx9_38_exports.c" />
+    <ClCompile Include="main\main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="default_heap\cell_desc.h" />
-    <ClInclude Include="default_heap\cell_list.h" />
-    <ClInclude Include="default_heap\cell_node.h" />
-    <ClInclude Include="default_heap\default_heap_constants.h" />
-    <ClInclude Include="locks\nonreentrant_lock.h" />
-    <ClInclude Include="main\definitions.h" />
-    <ClInclude Include="scrap_heap\scrap_heap.h" />
-    <ClInclude Include="ui\color_array.h" />
-    <ClInclude Include="ui\graph_data.h" />
-    <ClInclude Include="ui\ui.h" />
-    <ClInclude Include="initial_allocator\initial_allocator.h" />
+    <ClInclude Include="dheap\cdesc.h" />
+    <ClInclude Include="dheap\clist.h" />
+    <ClInclude Include="dheap\cnode.h" />
+    <ClInclude Include="dheap\dheap.h" />
+    <ClInclude Include="dheap\dheap_defs.h" />
+    <ClInclude Include="dheap\mcell.h" />
+    <ClInclude Include="locks\nlock.h" />
+    <ClInclude Include="locks\rlock.h" />
+    <ClInclude Include="main\defs.h" />
     <ClInclude Include="main\heap_replacer.h" />
-    <ClInclude Include="default_heap\default_heap_manager.h" />
-    <ClInclude Include="main\types.h" />
-    <ClInclude Include="memory_pools\memory_pool.h" />
-    <ClInclude Include="memory_pools\memory_pool_constants.h" />
-    <ClInclude Include="memory_pools\memory_pool_manager.h">
-      <FileType>CppHeader</FileType>
-    </ClInclude>
-    <ClInclude Include="default_heap\default_heap.h" />
-    <ClInclude Include="default_heap\mem_cell.h" />
-    <ClInclude Include="locks\reentrant_lock.h" />
-    <ClInclude Include="scrap_heap\scrap_heap_constants.h" />
     <ClInclude Include="main\util.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
-    <None Include="exports.def" />
-    <None Include="udm.props" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\dependencies\imgui\imgui.vcxproj">
-      <Project>{c168044e-4054-4418-a544-2b1afad7baca}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\dependencies\minhook\minhook.vcxproj">
-      <Project>{873bb540-f977-428b-b67a-bfb8862a8503}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\dependencies\simple_ini\simple_ini.vcxproj">
-      <Project>{a228a8a1-9375-4587-adce-38e49ec9848b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\dependencies\system_info\system_info.vcxproj">
-      <Project>{5e9d9c90-e477-41d0-86e5-36c1ff384556}</Project>
-    </ProjectReference>
+    <ClInclude Include="mheap\mheap.h" />
+    <ClInclude Include="mheap\mheap_defs.h" />
+    <ClInclude Include="mheap\mpool.h" />
+    <ClInclude Include="sheap\sheap.h" />
+    <ClInclude Include="sheap\sheap_defs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

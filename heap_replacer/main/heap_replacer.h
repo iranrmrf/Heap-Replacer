@@ -1,302 +1,323 @@
 #pragma once
 
-#include "definitions.h"
-#include "types.h"
-#include "util.h"
+#include <stddef.h>
 
-#include "initial_allocator/initial_allocator.h"
+#include "defs.h"
 
-#include "memory_pools/memory_pool_manager.h"
-#include "default_heap/default_heap_manager.h"
+void *hr_malloc(size_t size);
+void *hr_calloc(size_t count, size_t size);
+void *hr_realloc(void *addr, size_t size);
+void *hr_recalloc(void *addr, size_t size, size_t count);
+size_t hr_mem_size(void *addr);
+void hr_free(void *addr);
 
-#include "scrap_heap/scrap_heap.h"
+#include "dheap/dheap.h"
+#include "mheap/mheap.h"
+#include "sheap/sheap.h"
 
-#include "locks/reentrant_lock.h"
-#include "locks/nonreentrant_lock.h"
+struct mheap m;
+struct dheap d;
 
-#include "ui/ui.h"
-
-namespace hr
+void *hr_malloc(size_t size)
 {
+    void *addr;
 
-	initial_allocator ina(INITIAL_ALLOCATOR_SIZE);
+    if (size <= POOL_MAX_ALLOC_SIZE)
+    {
+        if (addr = mheap_malloc(&m, size))
+        {
+            goto end;
+        }
+    }
 
-	memory_pool_manager* mpm;
-	default_heap_manager* dhm;
-#ifdef HR_USE_GUI
-	ui* uim;
-#endif
+    if (size <= DHEAP_BLOCK_SIZE)
+    {
+        if (addr = dheap_malloc(&d, size))
+        {
+            goto end;
+        }
+    }
 
-	memory_pool_manager* get_mpm() { return mpm; }
-	default_heap_manager* get_dhm() { return dhm; }
-#ifdef HR_USE_GUI
-	ui* get_uim() { return uim; }
-#endif
+    addr = hr_winapi_malloc(size);
 
-	void* hr_malloc(size_t size)
-	{
-		if (size <= pool_max_size) [[likely]] { if (void* address = mpm->malloc(size)) [[likely]] { return address; } }
-		if (size >= default_heap_block_size) [[unlikely]] { return util::winapi_malloc(size); }
-		if (void* address = dhm->malloc(size)) [[likely]] { return address; }
-		return util::winapi_malloc(size);
-	}
+end:
+    return addr;
+}
 
-	void* hr_calloc(size_t count, size_t size)
-	{
-		size *= count;
-		if (size <= pool_max_size) [[likely]] { if (void* address = mpm->calloc(size)) [[likely]] { return address; } }
-		if (size >= default_heap_block_size) [[unlikely]] { return util::winapi_malloc(size); }
-		if (void* address = dhm->calloc(size)) [[likely]] { return address; }
-		return util::winapi_malloc(size);
-	}
+void *hr_calloc(size_t count, size_t size)
+{
+    void *addr;
 
-	void* hr_realloc(void* address, size_t size)
-	{
-		if (!address) [[unlikely]] { return hr_malloc(size); }
-		size_t old_size, new_size;
-		if ((old_size = hr_mem_size(address)) >= (new_size = size)) { return address; }
-		void* new_address = hr_malloc(size);
-		util::cmemcpy(new_address, address, new_size < old_size ? new_size : old_size);
-		hr_free(address);
-		return new_address;
-	}
+    size *= count;
 
-	void* hr_recalloc(void* address, size_t count, size_t size)
-	{
-		if (!address) [[unlikely]] { return hr_calloc(count, size); }
-		size_t old_size, new_size;;
-		if ((old_size = hr_mem_size(address)) >= (new_size = size * count))
-		{
-			util::cmemset8(address, 0u, new_size);
-			return address;
-		}
-		void* new_address = hr_calloc(count, size);
-		hr_free(address);
-		return new_address;
-	}
+    if (size <= POOL_MAX_ALLOC_SIZE)
+    {
+        if (addr = mheap_calloc(&m, size))
+        {
+            goto end;
+        }
+    }
 
-	size_t hr_mem_size(void* address)
-	{
-		if (!address) [[unlikely]] { return 0u; }
-		if (size_t size = mpm->mem_size(address)) [[likely]] { return size; }
-		if (size_t size = dhm->mem_size(address)) [[likely]] { return size; }
-		return 0u;
-	}
+    if (size <= DHEAP_BLOCK_SIZE)
+    {
+        if (addr = dheap_calloc(&d, size))
+        {
+            goto end;
+        }
+    }
 
-	void hr_free(void* address)
-	{
-		if (!address) [[unlikely]] { return; }
-		if (mpm->free(address)) [[likely]] { return; }
-		if (dhm->free(address)) [[likely]] { return; }
-		util::winapi_free(address);
-	}
+    addr = hr_winapi_malloc(size);
 
-	void* game_heap_allocate(TFPARAM(size_t size))
-	{
-		return hr_malloc(size);
-	}
+end:
+    return addr;
+}
 
-	void* game_heap_reallocate(TFPARAM(void* address, size_t size))
-	{
-		return hr_realloc(address, size);
-	}
+void *hr_realloc(void *addr, size_t size)
+{
+    void *new_addr;
+    size_t old_size, new_size;
 
-	size_t game_heap_msize(TFPARAM(void* address))
-	{
-		return hr_mem_size(address);
-	}
+    if (!addr)
+    {
+        new_addr = hr_malloc(size);
+        goto end;
+    }
 
-	void game_heap_free(TFPARAM(void* address))
-	{
-		hr_free(address);
-	}
+    if ((old_size = hr_mem_size(addr)) >= (new_size = size))
+    {
+        new_addr = addr;
+        goto end;
+    }
 
-	void* __cdecl crt_malloc(size_t size)
-	{
-		return hr_malloc(size);
-	}
+    new_addr = hr_malloc(size);
+    memcpy(new_addr, addr, old_size);
+    hr_free(addr);
 
-	void* __cdecl crt_calloc(size_t count, size_t size)
-	{
-		return hr_calloc(count, size);
-	}
+end:
+    return new_addr;
+}
 
-	void* __cdecl crt_realloc(void* address, size_t size)
-	{
-		return hr_realloc(address, size);
-	}
+void *hr_recalloc(void *addr, size_t count, size_t size)
+{
+    void *new_addr;
+    size_t old_size, new_size;
 
-	void* __cdecl crt_recalloc(void* address, size_t count, size_t size)
-	{
-		return hr_recalloc(address, count, size);
-	}
+    if (!addr)
+    {
+        new_addr = hr_calloc(count, size);
+        goto end;
+    }
 
-	size_t __cdecl crt_msize(void* address)
-	{
-		return hr_mem_size(address);
-	}
+    if ((old_size = hr_mem_size(addr)) >= (new_size = size * count))
+    {
+        hr_memset8(VSUM(addr, new_size), 0, old_size - new_size);
+        new_addr = addr;
+        goto end;
+    }
 
-	void __cdecl crt_free(void* address)
-	{
-		hr_free(address);
-	}
+    new_addr = hr_calloc(count, size);
+    memcpy(new_addr, addr, old_size);
+    hr_free(addr);
 
-	void* hr_ina_malloc(size_t size)
-	{
-		return ina.malloc(size);
-	}
+end:
+    return new_addr;
+}
 
-	void* hr_ina_calloc(size_t count, size_t size)
-	{
-		return ina.calloc(count, size);
-	}
+size_t hr_mem_size(void *addr)
+{
+    size_t size = 0;
 
-	size_t hr_ina_mem_size(void* address)
-	{
-		return ina.mem_size(address);
-	}
+    if (!addr)
+    {
+        goto end;
+    }
 
-	void hr_ina_free(void* address)
-	{
-		ina.free(address);
-	}
+    if (size = mheap_mem_size(&m, addr))
+    {
+        goto end;
+    }
 
-	void apply_heap_hooks()
-	{
+    if (size = dheap_mem_size(&d, addr))
+    {
+        goto end;
+    }
 
-		mpm = new memory_pool_manager();
-		dhm = new default_heap_manager();
+end:
+    return size;
+}
+
+void hr_free(void *addr)
+{
+    if (!addr)
+    {
+        goto end;
+    }
+
+    if (mheap_free(&m, addr))
+    {
+        goto end;
+    }
+
+    if (dheap_free(&d, addr))
+    {
+        goto end;
+    }
+
+    hr_winapi_free(addr);
+
+end:
+    return;
+}
+
+void *game_heap_allocate(void *self, void *edx, size_t size)
+{
+    return hr_malloc(size);
+}
+
+void *game_heap_reallocate(void *self, void *edx, void *addr, size_t size)
+{
+    return hr_realloc(addr, size);
+}
+
+size_t game_heap_msize(void *self, void *edx, void *addr)
+{
+    return hr_mem_size(addr);
+}
+
+void game_heap_free(void *self, void *edx, void *addr)
+{
+    hr_free(addr);
+}
+
+void *__cdecl crt_malloc(size_t size)
+{
+    return hr_malloc(size);
+}
+
+void *__cdecl crt_calloc(size_t count, size_t size)
+{
+    return hr_calloc(count, size);
+}
+
+void *__cdecl crt_realloc(void *addr, size_t size)
+{
+    return hr_realloc(addr, size);
+}
+
+void *__cdecl crt_recalloc(void *addr, size_t count, size_t size)
+{
+    return hr_recalloc(addr, count, size);
+}
+
+size_t __cdecl crt_msize(void *addr)
+{
+    return hr_mem_size(addr);
+}
+
+void __cdecl crt_free(void *addr)
+{
+    hr_free(addr);
+}
+
+void apply_hr_hooks()
+{
+    mheap_init(&m);
+    dheap_init(&d);
 
 #if defined(FNV)
 
-		util::patch_jmp(0x00ECD1C7, &crt_malloc);
-		util::patch_jmp(0x00ED0CDF, &crt_malloc);
-		util::patch_jmp(0x00EDDD7D, &crt_calloc);
-		util::patch_jmp(0x00ED0D24, &crt_calloc);
-		util::patch_jmp(0x00ECCF5D, &crt_realloc);
-		util::patch_jmp(0x00ED0D70, &crt_realloc);
-		util::patch_jmp(0x00EE1700, &crt_recalloc);
-		util::patch_jmp(0x00ED0DBE, &crt_recalloc);
-		util::patch_jmp(0x00ECD31F, &crt_msize);
-		util::patch_jmp(0x00ECD291, &crt_free);
+    patch_jmp((void *)0x00ECD1C7, &crt_malloc);
+    patch_jmp((void *)0x00ED0CDF, &crt_malloc);
+    patch_jmp((void *)0x00EDDD7D, &crt_calloc);
+    patch_jmp((void *)0x00ED0D24, &crt_calloc);
+    patch_jmp((void *)0x00ECCF5D, &crt_realloc);
+    patch_jmp((void *)0x00ED0D70, &crt_realloc);
+    patch_jmp((void *)0x00EE1700, &crt_recalloc);
+    patch_jmp((void *)0x00ED0DBE, &crt_recalloc);
+    patch_jmp((void *)0x00ECD31F, &crt_msize);
+    patch_jmp((void *)0x00ECD291, &crt_free);
 
-		util::patch_jmp(0x00AA3E40, &game_heap_allocate);
-		util::patch_jmp(0x00AA4150, &game_heap_reallocate);
-		util::patch_jmp(0x00AA4200, &game_heap_reallocate);
-		util::patch_jmp(0x00AA44C0, &game_heap_msize);
-		util::patch_jmp(0x00AA4060, &game_heap_free);
+    patch_jmp((void *)0x00AA3E40, &game_heap_allocate);
+    patch_jmp((void *)0x00AA4150, &game_heap_reallocate);
+    patch_jmp((void *)0x00AA4200, &game_heap_reallocate);
+    patch_jmp((void *)0x00AA44C0, &game_heap_msize);
+    patch_jmp((void *)0x00AA4060, &game_heap_free);
 
-		util::patch_ret(0x00AA6840);
-		util::patch_ret(0x00866E00);
-		util::patch_ret(0x00866770);
+    patch_ret((void *)0x00AA6840);
+    patch_ret((void *)0x00866E00);
+    patch_ret((void *)0x00866770);
 
-		util::patch_ret(0x00AA6F90);
-		util::patch_ret(0x00AA7030);
-		util::patch_ret(0x00AA7290);
-		util::patch_ret(0x00AA7300);
+    patch_ret((void *)0x00AA6F90);
+    patch_ret((void *)0x00AA7030);
+    patch_ret((void *)0x00AA7290);
+    patch_ret((void *)0x00AA7300);
 
-		util::patch_jmp(0x0040FBF0, util::force_cast<void*>(&reentrant_lock::lock_game));
-		util::patch_jmp(0x0040FBA0, util::force_cast<void*>(&reentrant_lock::unlock));
+    patch_jmp((void *)0x0040FBF0, &rlock_lock_game);
+    patch_jmp((void *)0x0040FBA0, &rlock_unlock);
 
-		util::patch_ret(0x00AA58D0);
-		util::patch_ret(0x00866D10);
-		util::patch_ret(0x00AA5C80);
+    patch_ret((void *)0x00AA58D0);
+    patch_ret((void *)0x00866D10);
+    patch_ret((void *)0x00AA5C80);
 
-		util::patch_jmp(0x00AA53F0, util::force_cast<void*>(&scrap_heap::init_0x10000));
-		util::patch_jmp(0x00AA5410, util::force_cast<void*>(&scrap_heap::init_var));
-		util::patch_jmp(0x00AA54A0, util::force_cast<void*>(&scrap_heap::alloc));
-		util::patch_jmp(0x00AA5610, util::force_cast<void*>(&scrap_heap::free));
-		util::patch_jmp(0x00AA5460, util::force_cast<void*>(&scrap_heap::purge));
+    patch_jmp((void *)0x00AA53F0, &sheap_init_fix);
+    patch_jmp((void *)0x00AA5410, &sheap_init_var);
+    patch_jmp((void *)0x00AA54A0, &sheap_alloc);
+    patch_jmp((void *)0x00AA5610, &sheap_free);
+    patch_jmp((void *)0x00AA5460, &sheap_purge);
 
-		util::patch_nops(0x00AA38CA, 0x00AA38E8 - 0x00AA38CA);
-		util::patch_jmp(0x00AA42E0, util::force_cast<void*>(&scrap_heap::get_thread_scrap_heap));
+    patch_nops((void *)0x00AA38CA, 0x00AA38E8 - 0x00AA38CA);
+    patch_jmp((void *)0x00AA42E0, &sheap_get_thread_local);
 
-		util::patch_nop_call(0x00AA3060);
+    patch_nop_call((void *)0x00AA3060);
 
-		util::patch_nop_call(0x0086C56F);
-		util::patch_nop_call(0x00C42EB1);
-		util::patch_nop_call(0x00EC1701);
+    patch_nop_call((void *)0x0086C56F);
+    patch_nop_call((void *)0x00C42EB1);
+    patch_nop_call((void *)0x00EC1701);
 
-		util::patch_bytes(0x0086EED4, (BYTE*)"\xEB\x55", 2);
+    patch_bytes((void *)0x0086EED4, (BYTE *)"\xEB\x55", 2);
 
 #elif defined(FO3)
 
-		util::patch_jmp(0x00C063F5, &crt_malloc);
-		util::patch_jmp(0x00C0AB3F, &crt_malloc);
-		util::patch_jmp(0x00C1843C, &crt_calloc);
-		util::patch_jmp(0x00C0AB7F, &crt_calloc);
-		util::patch_jmp(0x00C06546, &crt_realloc);
-		util::patch_jmp(0x00C0ABC7, &crt_realloc);
-		util::patch_jmp(0x00C06761, &crt_recalloc);
-		util::patch_jmp(0x00C0AC12, &crt_recalloc);
-		util::patch_jmp(0x00C067DA, &crt_msize);
-		util::patch_jmp(0x00C064B8, &crt_free);
+    patch_jmp((void *)0x00C063F5, &crt_malloc);
+    patch_jmp((void *)0x00C0AB3F, &crt_malloc);
+    patch_jmp((void *)0x00C1843C, &crt_calloc);
+    patch_jmp((void *)0x00C0AB7F, &crt_calloc);
+    patch_jmp((void *)0x00C06546, &crt_realloc);
+    patch_jmp((void *)0x00C0ABC7, &crt_realloc);
+    patch_jmp((void *)0x00C06761, &crt_recalloc);
+    patch_jmp((void *)0x00C0AC12, &crt_recalloc);
+    patch_jmp((void *)0x00C067DA, &crt_msize);
+    patch_jmp((void *)0x00C064B8, &crt_free);
 
-		util::patch_jmp(0x0086B930, &game_heap_allocate);
-		util::patch_jmp(0x0086BAE0, &game_heap_reallocate);
-		util::patch_jmp(0x0086BB50, &game_heap_reallocate);
-		util::patch_jmp(0x0086B8C0, &game_heap_msize);
-		util::patch_jmp(0x0086BA60, &game_heap_free);
+    patch_jmp((void *)0x0086B930, &game_heap_allocate);
+    patch_jmp((void *)0x0086BAE0, &game_heap_reallocate);
+    patch_jmp((void *)0x0086BB50, &game_heap_reallocate);
+    patch_jmp((void *)0x0086B8C0, &game_heap_msize);
+    patch_jmp((void *)0x0086BA60, &game_heap_free);
 
-		util::patch_ret(0x0086D670);
-		util::patch_ret(0x006E21F0);
-		util::patch_ret(0x006E1E10);
+    patch_ret((void *)0x0086D670);
+    patch_ret((void *)0x006E21F0);
+    patch_ret((void *)0x006E1E10);
 
-		util::patch_jmp(0x00409A80, util::force_cast<void*>(&reentrant_lock::lock_game));
-		//util::patch_jmp(0x00000000, util::force_cast<void*>(&reentrant_lock::unlock));
+    patch_jmp((void *)0x00409A80, &rlock_lock_game);
+    patch_jmp((void *)0x00000000, &rlock_unlock);
 
-		util::patch_ret(0x0086C600);
-		util::patch_ret(0x006E1CD0);
-		util::patch_ret(0x0086CA30);
+    patch_ret((void *)0x0086C600);
+    patch_ret((void *)0x006E1CD0);
+    patch_ret((void *)0x0086CA30);
 
-		util::patch_jmp(0x0086CB70, util::force_cast<void*>(&scrap_heap::init_0x10000));
-		util::patch_jmp(0x0086CB90, util::force_cast<void*>(&scrap_heap::init_var));
-		util::patch_jmp(0x0086C710, util::force_cast<void*>(&scrap_heap::alloc));
-		util::patch_jmp(0x0086C7B0, util::force_cast<void*>(&scrap_heap::free));
-		util::patch_jmp(0x0086CAA0, util::force_cast<void*>(&scrap_heap::purge));
+    patch_jmp((void *)0x0086CB70, &sheap_init_fix);
+    patch_jmp((void *)0x0086CB90, &sheap_init_var);
+    patch_jmp((void *)0x0086C710, &sheap_alloc);
+    patch_jmp((void *)0x0086C7B0, &sheap_free);
+    patch_jmp((void *)0x0086CAA0, &sheap_purge);
 
-		util::patch_nops(0x0086C038, 0x0086C086 - 0x0086C038);
-		util::patch_jmp(0x0086BCB0, util::force_cast<void*>(&scrap_heap::get_thread_scrap_heap));
+    patch_nops((void *)0x0086C038, 0x0086C086 - 0x0086C038);
+    patch_jmp((void *)0x0086BCB0, &sheap_get_thread_local);
 
-		util::patch_nop_call(0x006E9B30);
-		util::patch_nop_call(0x007FACDB);
-		util::patch_nop_call(0x00AA6534);
-
-#endif
-
-		HR_PRINTF("Hooks applied.");
-
-	}
-
-#ifdef HR_USE_GUI
-
-	void apply_imgui_hooks()
-	{
-		
-		uim = new ui();
-
-#if defined(FNV)
-		
-		util::patch_bytes(0x004DA942, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
-		util::patch_bytes(0x004DA937, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
-
-		util::patch_detour(0x00FDF2B8, &ui::create_window_hook, (void**)&ui::create_window);
-		util::patch_detour(0x00FDF294, &ui::dispatch_message_hook, (void**)&ui::dispatch_message);
-		util::patch_detour(0x010EE640, &ui::display_scene_hook, (void**)&ui::display_scene);
-
-#elif defined(FO3)
-
-		util::patch_bytes(0x004905C7, (PBYTE)"\xB8\x00\x00\x00\x00", 5);
-		util::patch_bytes(0x004905B7, (PBYTE)"\xBA\x00\x00\x00\x00\x90", 6);
-
-		util::patch_detour(0x00D9B2CC, &ui::create_window_hook, (void**)&ui::create_window);
-		util::patch_detour(0x00D9B284, &ui::dispatch_message_hook, (void**)&ui::dispatch_message);
-		util::patch_detour(0x00E29188, &ui::display_scene_hook, (void**)&ui::display_scene);
+    patch_nop_call((void *)0x006E9B30);
+    patch_nop_call((void *)0x007FACDB);
+    patch_nop_call((void *)0x00AA6534);
 
 #endif
-
-	}
-
-#endif
-
 }

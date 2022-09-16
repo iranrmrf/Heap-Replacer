@@ -1,109 +1,255 @@
 #pragma once
 
-#define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
+
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
 #include <windows.h>
 
-#include <cstdlib>
-#include <stdio.h>
+#define KB (1024u * 1u)
+#define MB (1024u * KB)
+#define GB (1024u * MB)
 
-#include <intrin.h>
+#define USUM(a, b) ((unsigned int)(a) + (unsigned int)(b))
+#define USUB(a, b) ((unsigned int)(a) - (unsigned int)(b))
 
-#include "types.h"
-#include "MinHook.h"
+#define VSUM(a, b) ((void *)(USUM(a, b)))
+#define VSUB(a, b) ((void *)(USUB(a, b)))
 
-#define TFPARAM(...) void* self, void* _, __VA_ARGS__
+#define ROUND_UP(x, y) (USUM(((USUB((x), 1)) | (USUB((y), 1))), 1))
+#define ROUND_DOWN(x, y) ((unsigned int)(x) & ~(USUB((y), 1))))
 
-#define BIT_SET(w, m, s) w = ((w & ~(m)) | (-(s) & (m)))
-#define BIT_ON(w, m) BIT_SET(w, m, true)
-#define BIT_OFF(w, m) BIT_SET(w, m, false)
+#define countof(a) (sizeof(a) / sizeof(a[0]))
 
-#define UPTRSUM(x, y) ((uintptr_t)(x) + (uintptr_t)(y))
-#define UPTRDIFF(x, y) ((uintptr_t)(x) - (uintptr_t)(y))
-
-#define VPTRSUM(x, y) (void*)UPTRSUM((x), (y))
-#define VPTRDIFF(x, y) (void*)UPTRDIFF((x), (y))
-
-#define DEBUG_BREAK __asm { int 3 }
-#define NOINLINE __declspec(noinline)
-
-template<size_t N, typename T>
-constexpr size_t countof(T(&)[N]) { return N; }
-
-constexpr size_t KB = 1024u * 1u;
-constexpr size_t MB = 1024u * KB;
-constexpr size_t GB = 1024u * MB;
-
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long int ulong;
-typedef unsigned long long int ullong;
-
-void* __cdecl operator new(size_t size);
-void* __cdecl operator new[](size_t size);
-void __cdecl operator delete(void* address);
-void __cdecl operator delete[](void* address);
-
-namespace util
+void *hr_winapi_alloc(size_t size)
 {
+    return VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+}
 
-	template <typename O, typename I>
-	O force_cast(I i) { union { I i; O o; } u = { i }; return u.o; };
+void *hr_winapi_malloc(size_t size)
+{
+    return hr_winapi_alloc(size);
+}
 
-	void* winapi_alloc(size_t size);
-	void* winapi_malloc(size_t size);
-	void* winapi_calloc(size_t count, size_t size);
-	void winapi_free(void* address);
+void *hr_winapi_calloc(size_t count, size_t size)
+{
+    return hr_winapi_alloc(count * size);
+}
 
-	char ctoupper(char c);
-	char ctolower(char c);
-	int cstrcmp(const char* s1, const char* s2);
-	int cstricmp(const char* s1, const char* s2);
-	void cmemcpy(void* dst, const void* src, size_t cnt);
+void hr_winapi_free(void *address)
+{
+    VirtualFree(address, 0, MEM_RELEASE);
+}
 
-	void cmemset8(void* dst, BYTE val, size_t cnt);
-	void cmemset16(void* dst, WORD val, size_t cnt);
-	void cmemset32(void* dst, DWORD val, size_t cnt);
+void hr_memset8(void *dst, BYTE val, size_t cnt)
+{
+    for (BYTE *pos = (BYTE *)dst; cnt--; *pos++ = val)
+    {
+    }
+}
 
-	void patch_bytes(void* address, BYTE* data, DWORD size);
-	void patch_bytes(uintptr_t address, BYTE* data, DWORD size);
-	void patch_BYTE(void* address, BYTE data);
-	void patch_WORD(void* address, WORD data);
-	void patch_DWORD(void* address, DWORD data);
-	void patch_func_ptr(void* address, void* ptr);
-	void patch_func_ptr(uintptr_t address, void* ptr);
-	void patch_detour(void* address, void* new_func, void** old_func);
-	void patch_detour(uintptr_t address, void* new_func, void** old_func);
+void hr_memset16(void *dst, WORD val, size_t cnt)
+{
+    for (WORD *pos = (WORD *)dst; cnt--; *pos++ = val)
+    {
+    }
+}
 
-	void patch_call(void* address, void* destination);
-	void patch_call(uintptr_t address, void* destination);
-	void patch_call(void* address, void* destination, size_t nops);
-	void patch_jmp(void* address, void* destination);
-	void patch_jmp(uintptr_t address, void* destination);
-	void patch_ret(void* address);
-	void patch_ret(uintptr_t address);
-	void patch_ret_nullptr(void* address);
-	void patch_ret_nullptr(void* address, size_t argc);
-	void patch_ret(void* address, size_t argc);
-	void patch_bp(void* address);
+void hr_memset32(void *dst, DWORD val, size_t cnt)
+{
+    for (DWORD *pos = (DWORD *)dst; cnt--; *pos++ = val)
+    {
+    }
+}
 
-	void patch_nops(void* address, size_t count);
-	void patch_nops(uintptr_t address, size_t count);
-	void patch_nop_call(void* address);
-	void patch_nop_call(uintptr_t address);
+void patch_bytes(void *addr, BYTE *data, DWORD size)
+{
+    DWORD p;
+    VirtualProtect(addr, size, PAGE_EXECUTE_READWRITE, &p);
+    memcpy(addr, data, size);
+    VirtualProtect(addr, size, p, &p);
+    FlushInstructionCache(GetCurrentProcess(), addr, size);
+}
 
-	void detour_vtable(void* obj, size_t index, void* new_func, void** old_func);
+void patch_BYTE(void *addr, BYTE data)
+{
+    patch_bytes(addr, &data, 1u);
+}
 
-	template <size_t A>
-	size_t align(size_t size) { return (size + A - 1u) & ~(A - 1u); }
+void patch_WORD(void *addr, WORD data)
+{
+    BYTE bytes[2];
+    *(WORD *)bytes = data;
+    patch_bytes(addr, bytes, 2u);
+}
 
-	template <size_t A>
-	void* align(void* address) { return (void*)align<A>((uintptr_t)address); }
+void patch_DWORD(void *addr, DWORD data)
+{
+    BYTE bytes[4];
+    *(DWORD *)bytes = data;
+    patch_bytes(addr, bytes, 4u);
+}
 
-	void* get_IAT_address(BYTE* base, const char* dll_name, const char* search);
-	bool is_LAA(BYTE* base);
-	bool file_exists(const char* name);
-	void create_console();
+void patch_func_ptr(void *addr, void *ptr)
+{
+    patch_DWORD(addr, (DWORD)ptr);
+}
 
+void patch_detour(void *addr, void *new_func, void **old_func)
+{
+    *old_func = *(void **)addr;
+    patch_func_ptr(addr, new_func);
+}
+
+void patch_call(void *addr, void *dst)
+{
+    BYTE bytes[5];
+    bytes[0] = 0xE8u;
+    *(DWORD *)((DWORD)bytes + 1u) = (DWORD)dst - (DWORD)addr - 5u;
+    patch_bytes(addr, bytes, 5u);
+}
+
+void patch_jmp(void *addr, void *dst)
+{
+    BYTE bytes[5];
+    bytes[0] = 0xE9u;
+    *(DWORD *)((DWORD)bytes + 1u) = (DWORD)dst - (DWORD)addr - 5u;
+    patch_bytes(addr, bytes, 5u);
+}
+
+void patch_ret(void *addr)
+{
+    BYTE bytes = 0xC3u;
+    patch_bytes(addr, &bytes, 1u);
+}
+
+void patch_ret_argc(void *addr, size_t argc)
+{
+    BYTE bytes = 0xC2u;
+    patch_bytes(addr, &bytes, 1u);
+    patch_WORD(VSUM(addr, 1u), (WORD)(4u * argc));
+}
+
+void patch_bp(void *addr)
+{
+    BYTE bytes = 0xCCu;
+    patch_bytes(addr, &bytes, 1u);
+}
+
+void patch_nops(void *addr, size_t count)
+{
+    BYTE *bytes = _alloca(count);
+    memset(bytes, 0x90u, count);
+    patch_bytes(addr, bytes, count);
+}
+
+void patch_nop_call(void *addr)
+{
+    patch_nops(addr, 5u);
+}
+
+void patch_call_nops(void *addr, void *dst, size_t nops)
+{
+    patch_call(addr, dst);
+    patch_nops(VSUM(addr, 5u), nops);
+}
+
+void detour_vtable(void *obj, size_t index, void *new_func, void **old_func)
+{
+    void **vtable = *(void ***)obj;
+    *old_func = vtable[index];
+    patch_func_ptr(&vtable[index], new_func);
+}
+
+void *get_import_address(HMODULE hmd, const char *dll_name,
+                         const char *func_name)
+{
+    char *base = (char *)hmd;
+    int i;
+    const char *loaded_dll;
+    char *import_name;
+
+    IMAGE_THUNK_DATA *name_table;
+    IMAGE_THUNK_DATA *import_table;
+    IMAGE_DOS_HEADER *dos_header = (IMAGE_DOS_HEADER *)base;
+    IMAGE_NT_HEADERS *nt_headers =
+        (IMAGE_NT_HEADERS *)(base + dos_header->e_lfanew);
+    IMAGE_DATA_DIRECTORY section =
+        nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
+    IMAGE_IMPORT_DESCRIPTOR *import_descriptor =
+        (IMAGE_IMPORT_DESCRIPTOR *)(base + section.VirtualAddress);
+
+    for (i = 0; import_descriptor[i].Name; i++)
+    {
+        loaded_dll = (const char *)(base + import_descriptor[i].Name);
+
+        if (!_stricmp(loaded_dll, dll_name))
+        {
+            if (!import_descriptor[i].FirstThunk)
+            {
+                return NULL;
+            }
+            name_table =
+                (IMAGE_THUNK_DATA *)(base +
+                                     import_descriptor[i].OriginalFirstThunk);
+            import_table =
+                (IMAGE_THUNK_DATA *)(base + import_descriptor[i].FirstThunk);
+            while (name_table->u1.Ordinal)
+            {
+                if (!IMAGE_SNAP_BY_ORDINAL(name_table->u1.Ordinal))
+                {
+                    import_name =
+                        ((IMAGE_IMPORT_BY_NAME *)(base + name_table->u1
+                                                             .ForwarderString))
+                            ->Name;
+
+                    if (!_stricmp(import_name, func_name))
+                    {
+                        return &import_table->u1.AddressOfData;
+                    }
+                }
+                name_table++;
+                import_table++;
+            }
+        }
+    }
+    return NULL;
+}
+
+int is_large_address_aware(HMODULE hmd)
+{
+    char *base = (char *)hmd;
+    IMAGE_DOS_HEADER *dos_header = (IMAGE_DOS_HEADER *)base;
+    IMAGE_NT_HEADERS *nt_headers =
+        (IMAGE_NT_HEADERS *)(base + dos_header->e_lfanew);
+    return (nt_headers->FileHeader.Characteristics &
+            IMAGE_FILE_LARGE_ADDRESS_AWARE) == IMAGE_FILE_LARGE_ADDRESS_AWARE;
+}
+
+int file_exists(const char *name)
+{
+    int ret = 0;
+    FILE *file;
+
+    if (file = fopen(name, "r"))
+    {
+        fclose(file);
+        ret = 1;
+        goto end;
+    }
+
+end:
+    return ret;
+}
+
+void create_console(void)
+{
+    FILE *f;
+    if (AllocConsole())
+    {
+        f = freopen("CONIN$", "r", stdin);
+        f = freopen("CONOUT$", "w", stdout);
+        f = freopen("CONOUT$", "w", stderr);
+    }
 }

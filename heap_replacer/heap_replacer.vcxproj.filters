@@ -3,11 +3,11 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -15,134 +15,61 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main\d3dx9_exports.cpp">
+    <ClCompile Include="main\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="default_heap\cell_list.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="default_heap\cell_node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="default_heap\mem_cell.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main\util.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="default_heap\cell_desc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="default_heap\default_heap_manager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="default_heap\default_heap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="initial_allocator\initial_allocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memory_pools\memory_pool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memory_pools\memory_pool_manager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="locks\reentrant_lock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\color_array.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scrap_heap\scrap_heap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\graph_data.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="locks\nonreentrant_lock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main\dllmain.cpp">
+    <ClCompile Include="main\d3dx9_38_exports.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="default_heap\cell_list.h">
+    <ClInclude Include="main\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default_heap\default_heap.h">
+    <ClInclude Include="dheap\mcell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default_heap\default_heap_manager.h">
+    <ClInclude Include="dheap\cnode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default_heap\mem_cell.h">
+    <ClInclude Include="dheap\clist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="main\heap_replacer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="memory_pools\memory_pool.h">
+    <ClInclude Include="dheap\dheap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="memory_pools\memory_pool_manager.h">
+    <ClInclude Include="locks\rlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="main\util.h">
+    <ClInclude Include="mheap\mheap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default_heap\cell_node.h">
+    <ClInclude Include="sheap\sheap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default_heap\cell_desc.h">
+    <ClInclude Include="main\defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="initial_allocator\initial_allocator.h">
+    <ClInclude Include="mheap\mheap_defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="memory_pools\memory_pool_constants.h">
+    <ClInclude Include="mheap\mpool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="default_heap\default_heap_constants.h">
+    <ClInclude Include="dheap\dheap_defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrap_heap\scrap_heap_constants.h">
+    <ClInclude Include="dheap\cdesc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="locks\reentrant_lock.h">
+    <ClInclude Include="locks\nlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="main\types.h">
+    <ClInclude Include="sheap\sheap_defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ui\ui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\color_array.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scrap_heap\scrap_heap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="main\definitions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\graph_data.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="locks\nonreentrant_lock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="exports.def">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="cpp.hint" />
-    <None Include="udm.props" />
   </ItemGroup>
 </Project>
