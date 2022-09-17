@@ -28,7 +28,7 @@ enum
 const char *iset_names[] = {
     [IA32] = HR_NAME_LOWER "_ia32.dll", [SSE] = HR_NAME_LOWER "_sse.dll",
     [SSE2] = HR_NAME_LOWER "_sse2.dll", [AVX] = HR_NAME_LOWER "_avx.dll",
-    [AVX2] = HR_NAME_LOWER "_avx2.dll", [AVX512] = HR_NAME_LOWER "_axvx512.dll",
+    [AVX2] = HR_NAME_LOWER "_avx2.dll", [AVX512] = HR_NAME_LOWER "_avx512.dll",
 };
 
 int get_min_iset(void)
