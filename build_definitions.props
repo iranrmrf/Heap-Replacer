@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros">
     <GAME>FNV</GAME>
     <HR_NAME>NVHR</HR_NAME>
-    <ARCH>AVX512</ARCH>
+    <ARCH>AVX2</ARCH>
     <GAME_DIR>"C:/Games/Fallout New Vegas"</GAME_DIR>
   </PropertyGroup>
   <PropertyGroup />
