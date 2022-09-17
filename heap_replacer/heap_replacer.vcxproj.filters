@@ -18,9 +18,6 @@
     <ClCompile Include="main\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main\d3dx9_38_exports.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main\util.h">

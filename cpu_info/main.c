@@ -1,6 +1,9 @@
 #include <intrin.h>
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
+
+#include "util.h"
 
 #define btos(b) (b) ? "Y" : "N"
 
@@ -9,15 +12,30 @@ enum
     EAX,
     EBX,
     ECX,
-    EDX
+    EDX,
 };
 
-int main(int argc, char **argv)
+enum
 {
-    int f1_ECX = 0, f1_EDX = 0, f7_EBX = 0;
+    IA32,
+    SSE,
+    SSE2,
+    AVX,
+    AVX2,
+    AVX512,
+};
+
+const char *iset_names[] = {
+    [IA32] = "IA32.dll", [SSE] = "SSE.dll",   [SSE2] = "SSE2.dll",
+    [AVX] = "AVX.dll",   [AVX2] = "AVX2.dll", [AVX512] = "AVX512.dll"};
+
+int get_min_iset(void)
+{
+    int f1_ecx = 0, f1_edx = 0, f7_ebx = 0;
     int regs[4];
     char brand[0x30];
     int i, c;
+    int ret;
 
     __cpuid(regs, 0);
     c = regs[EAX];
@@ -26,12 +44,12 @@ int main(int argc, char **argv)
         __cpuidex(regs, i, 0);
         if (i == 1)
         {
-            f1_ECX = regs[ECX];
-            f1_EDX = regs[EDX];
+            f1_ecx = regs[ECX];
+            f1_edx = regs[EDX];
         }
         if (i == 7)
         {
-            f7_EBX = regs[EBX];
+            f7_ebx = regs[EBX];
         }
     }
 
@@ -58,42 +76,88 @@ int main(int argc, char **argv)
     printf("%s\n", brand);
     printf("\n");
 
-    printf("SSE\t: %s\n", btos(f1_EDX & (1 << 25)));
-    printf("SSE2\t: %s\n", btos(f1_EDX & (1 << 26)));
-    printf("SSE3\t: %s\n", btos(f1_ECX & (1 << 0)));
-    printf("SSSE3\t: %s\n", btos(f1_ECX & (1 << 9)));
-    printf("SSE4.1\t: %s\n", btos(f1_ECX & (1 << 19)));
-    printf("SSE4.2\t: %s\n", btos(f1_ECX & (1 << 20)));
-    printf("AVX\t: %s\n", btos(f1_ECX & (1 << 28)));
-    printf("AVX2\t: %s\n", btos(f7_EBX & (1 << 5)));
-    printf("AVX512\t: %s\n", btos(f7_EBX & (1 << 16)));
+    printf("SSE\t: %s\n", btos(f1_edx & (1 << 25)));
+    printf("SSE2\t: %s\n", btos(f1_edx & (1 << 26)));
+    printf("SSE3\t: %s\n", btos(f1_ecx & (1 << 0)));
+    printf("SSSE3\t: %s\n", btos(f1_ecx & (1 << 9)));
+    printf("SSE4.1\t: %s\n", btos(f1_ecx & (1 << 19)));
+    printf("SSE4.2\t: %s\n", btos(f1_ecx & (1 << 20)));
+    printf("AVX\t: %s\n", btos(f1_ecx & (1 << 28)));
+    printf("AVX2\t: %s\n", btos(f7_ebx & (1 << 5)));
+    printf("AVX512\t: %s\n", btos(f7_ebx & (1 << 16)));
 
     printf("\n => ");
-    if (f7_EBX & (1 << 16))
+    if (f7_ebx & (1 << 16))
     {
         printf("Use AVX512");
+        ret = AVX512;
+        goto end;
     }
-    else if (f7_EBX & (1 << 05))
+    else if (f7_ebx & (1 << 05))
     {
         printf("Use AVX2");
+        ret = AVX2;
+        goto end;
     }
-    else if (f1_ECX & (1 << 28))
+    else if (f1_ecx & (1 << 28))
     {
         printf("Use AVX");
+        ret = AVX;
+        goto end;
     }
-    else if (f1_EDX & (1 << 26))
+    else if (f1_edx & (1 << 26))
     {
         printf("Use SSE2");
+        ret = SSE2;
+        goto end;
     }
-    else if (f1_EDX & (1 << 25))
+    else if (f1_edx & (1 << 25))
     {
         printf("Use SSE");
+        ret = SSE;
+        goto end;
     }
     else
     {
         printf("Use IA32");
+        ret = IA32;
+        goto end;
     }
-    printf(" <= \n");
 
-    c = getchar();
+end:
+    printf(" <= \n");
+    return ret;
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
+{
+    int iset;
+    char buff[256] = "Data\\" HR_NAME "\\";
+
+    if (fdwReason == DLL_PROCESS_ATTACH)
+    {
+        if (!file_exists("d3dx9_38.tmp"))
+        {
+            create_console();
+        }
+
+        DisableThreadLibraryCalls(hModule);
+
+        iset = get_min_iset();
+        strcat(buff, iset_names[iset]);
+        printf("\nsearching for %s... ", buff);
+        if (file_exists(buff))
+        {
+            printf("found!\n\n");
+            LoadLibraryA(buff);
+        }
+        else
+        {
+            printf("not found!\n\n");
+            HR_MSGBOX("No valid HR binary found in Data/" HR_NAME "!",
+                      MB_ICONERROR);
+        }
+    }
+
+    return TRUE;
 }

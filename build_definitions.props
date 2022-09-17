@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <GAME>FNV</GAME>
+    <HR_NAME>NVHR</HR_NAME>
+    <ARCH>AVX512</ARCH>
+    <GAME_DIR>"C:/Games/Fallout New Vegas"</GAME_DIR>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;HR_NAME="$(HR_NAME)";$(GAME);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="GAME">
+      <Value>$(GAME)</Value>
+    </BuildMacro>
+    <BuildMacro Include="HR_NAME">
+      <Value>$(HR_NAME)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ARCH">
+      <Value>$(ARCH)</Value>
+    </BuildMacro>
+    <BuildMacro Include="GAME_DIR">
+      <Value>$(GAME_DIR)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
