@@ -53,6 +53,7 @@ void *sheap_alloc(struct sheap *heap, void *edx, size_t size, size_t align)
         ++i;
         if (i == SHEAP_MAX_BLOCKS)
         {
+            HR_LOG("no more block space available");
             return NULL;
         }
 
@@ -61,11 +62,15 @@ void *sheap_alloc(struct sheap *heap, void *edx, size_t size, size_t align)
             heap->blocks[i] = hr_malloc(SHEAP_BUFF_SIZE);
             if (!heap->blocks[i])
             {
+                HR_LOG("failed to allocate new block");
                 return NULL;
             }
         }
 
         heap->cur = heap->blocks[i];
+
+        HR_LOG("0x%08X created new block %d at 0x%08X", (DWORD)heap, i,
+               (DWORD)heap->blocks[i]);
     }
 
     hdr = (struct schnk *)ROUND_UP(heap->cur, 4);
@@ -120,12 +125,22 @@ void sheap_purge(struct sheap *heap, void *edx)
 struct sheap *sheap_get_thread_local(void)
 {
     static __declspec(thread) struct sheap *heap = NULL;
+    DWORD id;
 
     if (!heap)
     {
         heap = (struct sheap *)hr_malloc(sizeof(struct sheap));
+        if (!heap)
+        {
+            HR_LOG("failed to allocate new sheap");
+            goto end;
+        }
         sheap_init(heap);
+
+        id = GetCurrentThreadId();
+        HR_LOG("new sheap for %d allocated at 0x%08X", id, (DWORD)heap);
     }
 
+end:
     return heap;
 }

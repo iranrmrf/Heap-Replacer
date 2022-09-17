@@ -1,10 +1,9 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
-
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include <windows.h>
 
 #define KB (1024u * 1u)
@@ -37,9 +36,9 @@ void *hr_winapi_calloc(size_t count, size_t size)
     return hr_winapi_alloc(count * size);
 }
 
-void hr_winapi_free(void *address)
+void hr_winapi_free(void *addr)
 {
-    VirtualFree(address, 0, MEM_RELEASE);
+    VirtualFree(addr, 0, MEM_RELEASE);
 }
 
 void hr_memset8(void *dst, BYTE val, size_t cnt)
@@ -217,7 +216,7 @@ void *get_import_address(HMODULE hmd, const char *dll_name,
     return NULL;
 }
 
-int is_large_address_aware(HMODULE hmd)
+int is_large_addr_aware(HMODULE hmd)
 {
     char *base = (char *)hmd;
     IMAGE_DOS_HEADER *dos_header = (IMAGE_DOS_HEADER *)base;
@@ -243,13 +242,10 @@ end:
     return ret;
 }
 
-void create_console(void)
+char *get_time(char *buff, size_t size)
 {
-    FILE *f;
-    if (AllocConsole())
-    {
-        f = freopen("CONIN$", "r", stdin);
-        f = freopen("CONOUT$", "w", stdout);
-        f = freopen("CONOUT$", "w", stderr);
-    }
+    time_t timet;
+    time(&timet);
+    strftime(buff, size, "%H:%M:%S", localtime(&timet));
+    return buff + size;
 }

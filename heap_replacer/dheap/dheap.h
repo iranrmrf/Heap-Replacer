@@ -226,7 +226,7 @@ struct mcell *dheap_get_free_cell(struct dheap *heap, size_t size)
         cell = dheap_create_new_block(heap);
         if (!cell)
         {
-            HR_MSGBOX(L"OUT OF MEMORY!", MB_ICONERROR);
+            HR_LOG("failed to create new block");
             goto end;
         }
         dheap_add_free_cell(heap, cell);
@@ -243,7 +243,7 @@ struct mcell *dheap_get_free_cell(struct dheap *heap, size_t size)
 
         split = mcell_split(cell, rsize);
 
-#ifdef DHEAP_ALLOC_FRONT
+#ifdef DHEAP_ALLOC_FRONT /* test */
         index = dheap_get_addr_index_from_cell(heap, cell);
         size = index - cell->addr_node->array_index;
         cmemset32(
@@ -258,9 +258,8 @@ struct mcell *dheap_get_free_cell(struct dheap *heap, size_t size)
         cell = split;
     }
 
-    rlock_unlock(&heap->lock);
-
 end:
+    rlock_unlock(&heap->lock);
     return cell;
 }
 
@@ -306,14 +305,18 @@ struct mcell *dheap_create_new_block(struct dheap *heap)
 
     if (index == DHEAP_BLOCK_COUNT)
     {
+        HR_LOG("no more blocks available");
         goto end;
     }
 
     addr = hr_winapi_malloc(DHEAP_BLOCK_SIZE);
     if (!addr)
     {
+        HR_LOG("failed to allocate new block");
         goto end;
     }
+
+    HR_LOG("new block %d allocated at 0x%08X", index, (DWORD)addr);
 
     heap->block_desc[index] = (struct cdesc){addr, DHEAP_BLOCK_SIZE, index};
     clist_init(&heap->addr_list[index]);
@@ -326,6 +329,7 @@ struct mcell *dheap_create_new_block(struct dheap *heap)
     cell = (struct mcell *)hr_malloc(sizeof(struct mcell));
     if (!cell)
     {
+        HR_LOG("failed to allocate new cell");
         goto end;
     }
     cell->desc = (struct cdesc){addr, DHEAP_BLOCK_SIZE, index};

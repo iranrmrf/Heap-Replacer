@@ -10,18 +10,17 @@ struct pool_data
     size_t max_size;
 };
 
-// POOLS SIZE MUST BE A MULTIPLE OF POOL_ALIGN!!!
+/* POOLS SIZE MUST BE A MULTIPLE OF POOL_ALIGN !!! */
 struct pool_data pool_desc[] = {
     {8u, 32u * MB},    {12u, 32u * MB},   {16u, 32u * MB},   {20u, 16u * MB},
-    {24u, 16u * MB},   {28u, 16u * MB},   {32u, 16u * MB}, // 160
-    {40u, 16u * MB},   {48u, 16u * MB},   {56u, 16u * MB},   {64u, 16u * MB},
-    {80u, 128u * MB},  {96u, 128u * MB},  {112u, 32u * MB}, // 352
-    {128u, 32u * MB},  {160u, 32u * MB},  {192u, 32u * MB},  {224u, 32u * MB},
-    {256u, 16u * MB},  {320u, 32u * MB},  {384u, 16u * MB}, // 176
-    {448u, 64u * MB},  {512u, 32u * MB},  {640u, 64u * MB},  {768u, 16u * MB},
-    {896u, 16u * MB},  {1024u, 32u * MB}, {1280u, 64u * MB}, // 304
+    {24u, 16u * MB},   {28u, 16u * MB},   {32u, 16u * MB},   {40u, 16u * MB},
+    {48u, 16u * MB},   {56u, 16u * MB},   {64u, 16u * MB},   {80u, 128u * MB},
+    {96u, 128u * MB},  {112u, 32u * MB},  {128u, 32u * MB},  {160u, 32u * MB},
+    {192u, 32u * MB},  {224u, 32u * MB},  {256u, 16u * MB},  {320u, 32u * MB},
+    {384u, 16u * MB},  {448u, 64u * MB},  {512u, 32u * MB},  {640u, 64u * MB},
+    {768u, 16u * MB},  {896u, 16u * MB},  {1024u, 32u * MB}, {1280u, 64u * MB},
     {1536u, 64u * MB}, {1792u, 16u * MB}, {2048u, 32u * MB}, {2560u, 16u * MB},
-    {3072u, 32u * MB}, {3584u, 32u * MB}, // 192
+    {3072u, 32u * MB}, {3584u, 32u * MB},
 };
 
 struct mheap
@@ -54,6 +53,14 @@ void mheap_init_pools(struct mheap *heap)
         struct pool_data *pd = &pool_desc[p];
         struct mpool *pool =
             (struct mpool *)hr_winapi_malloc(sizeof(struct mpool));
+
+        HR_LOG("pool %d at 0x%08X", pd->item_size, (DWORD)pool);
+
+        if (!pool)
+        {
+            continue;
+        }
+
         mpool_init(pool, pd->item_size, pd->max_size, p);
         void *addr = mpool_setup(pool);
         if (p == 0)
@@ -109,6 +116,8 @@ void *mheap_malloc(struct mheap *heap, size_t size)
         }
     }
 
+    HR_LOG("pool %d returned NULL", pool->item_size);
+
 end:
     return addr;
 }
@@ -116,10 +125,16 @@ end:
 void *mheap_calloc(struct mheap *heap, size_t size)
 {
     void *addr = mheap_malloc(heap, size);
+    struct mpool *pool;
 
     if (addr)
     {
         hr_memset32(addr, 0, (size + 3u) >> 2u);
+    }
+    else
+    {
+        pool = mheap_pool_from_size(heap, size);
+        HR_LOG("pool %d returned NULL", pool->item_size);
     }
 
     return addr;

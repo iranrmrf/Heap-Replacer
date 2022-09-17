@@ -3,6 +3,11 @@
 #include <stddef.h>
 
 #include "defs.h"
+#include "locks/nlock.h"
+
+FILE *log_file;
+struct nlock log_lock;
+char time_buff[32];
 
 void *hr_malloc(size_t size);
 void *hr_calloc(size_t count, size_t size);
@@ -40,6 +45,11 @@ void *hr_malloc(size_t size)
 
     addr = hr_winapi_malloc(size);
 
+    if (!addr)
+    {
+        HR_LOG("%s returned NULL\n", __FUNCTION__);
+    }
+
 end:
     return addr;
 }
@@ -67,6 +77,11 @@ void *hr_calloc(size_t count, size_t size)
     }
 
     addr = hr_winapi_malloc(size);
+
+    if (!addr)
+    {
+        HR_LOG("%s returned NULL\n", __FUNCTION__);
+    }
 
 end:
     return addr;
@@ -221,7 +236,10 @@ void __cdecl crt_free(void *addr)
 
 void apply_hr_hooks()
 {
+    HR_LOG("initializing mheap");
     mheap_init(&m);
+
+    HR_LOG("initializing dheap");
     dheap_init(&d);
 
 #if defined(FNV)

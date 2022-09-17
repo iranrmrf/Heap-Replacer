@@ -122,6 +122,7 @@ void *mpool_malloc(struct mpool *pool, size_t size)
         if (pool->cur == pool->end)
         {
             nlock_unlock(&pool->lock);
+            /* HR_LOG("pool %d oom", pool->item_size); */
             return NULL;
         }
         mpool_setup_new_block(pool);
