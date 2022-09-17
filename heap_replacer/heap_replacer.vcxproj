@@ -35,7 +35,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)binaries\$(Configuration)\$(ProjectName)\$(Arch)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\$(Configuration)\$(ProjectName)\$(Arch)\</IntDir>
-    <TargetName>$(ARCH)</TargetName>
+    <TargetName>$(HR_NAME_LOWER)_$(ARCH_LOWER)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -74,7 +74,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" $(GAME_DIR)\Data\$(HR_NAME)\$(TargetFileName)"</Command>
+      <Command>copy "$(TargetPath)" "$(HR_GAME_DIR)\Data\$(HR_NAME)\$(TargetFileName)"</Command>
     </PostBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>

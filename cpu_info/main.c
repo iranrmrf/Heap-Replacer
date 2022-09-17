@@ -26,8 +26,10 @@ enum
 };
 
 const char *iset_names[] = {
-    [IA32] = "IA32.dll", [SSE] = "SSE.dll",   [SSE2] = "SSE2.dll",
-    [AVX] = "AVX.dll",   [AVX2] = "AVX2.dll", [AVX512] = "AVX512.dll"};
+    [IA32] = HR_NAME_LOWER "_ia32.dll", [SSE] = HR_NAME_LOWER "_sse.dll",
+    [SSE2] = HR_NAME_LOWER "_sse2.dll", [AVX] = HR_NAME_LOWER "_avx.dll",
+    [AVX2] = HR_NAME_LOWER "_avx2.dll", [AVX512] = HR_NAME_LOWER "_axvx512.dll",
+};
 
 int get_min_iset(void)
 {
@@ -132,7 +134,7 @@ end:
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 {
     int iset;
-    char buff[256] = "Data\\" HR_NAME "\\";
+    char buff[MAX_PATH] = "Data\\" HR_NAME "\\";
 
     if (fdwReason == DLL_PROCESS_ATTACH)
     {

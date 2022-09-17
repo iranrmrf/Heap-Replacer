@@ -2,29 +2,37 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <GAME>FNV</GAME>
+    <HR_GAME>FNV</HR_GAME>
+    <HR_GAME_DIR>C:/Games/Fallout New Vegas</HR_GAME_DIR>
     <HR_NAME>NVHR</HR_NAME>
+    <HR_NAME_LOWER>nvhr</HR_NAME_LOWER>
     <ARCH>AVX2</ARCH>
-    <GAME_DIR>"C:/Games/Fallout New Vegas"</GAME_DIR>
+    <ARCH_LOWER>avx2</ARCH_LOWER>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;HR_NAME="$(HR_NAME)";$(GAME);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;$(HR_GAME);HR_NAME="$(HR_NAME)";HR_NAME_LOWER="$(HR_NAME_LOWER)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <BuildMacro Include="GAME">
-      <Value>$(GAME)</Value>
+    <BuildMacro Include="HR_GAME">
+      <Value>$(HR_GAME)</Value>
+    </BuildMacro>
+    <BuildMacro Include="HR_GAME_DIR">
+      <Value>$(HR_GAME_DIR)</Value>
     </BuildMacro>
     <BuildMacro Include="HR_NAME">
       <Value>$(HR_NAME)</Value>
     </BuildMacro>
+    <BuildMacro Include="HR_NAME_LOWER">
+      <Value>$(HR_NAME_LOWER)</Value>
+    </BuildMacro>
     <BuildMacro Include="ARCH">
       <Value>$(ARCH)</Value>
     </BuildMacro>
-    <BuildMacro Include="GAME_DIR">
-      <Value>$(GAME_DIR)</Value>
+    <BuildMacro Include="ARCH_LOWER">
+      <Value>$(ARCH_LOWER)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>
