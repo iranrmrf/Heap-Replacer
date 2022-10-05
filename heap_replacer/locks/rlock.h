@@ -25,15 +25,10 @@ void rlock_lock(struct rlock *lock)
     {
         while (InterlockedCompareExchange(&lock->thread_id, id, 0))
         {
-            Sleep(0);
+            YieldProcessor();
         };
         lock->lock_count = 1;
     }
-}
-
-void rlock_lock_game(struct rlock *lock, void *edx, char *msg)
-{
-    rlock_lock(lock);
 }
 
 void rlock_unlock(struct rlock *lock)

@@ -270,9 +270,6 @@ void apply_hr_hooks()
     patch_ret((void *)0x00AA7290);
     patch_ret((void *)0x00AA7300);
 
-    patch_jmp((void *)0x0040FBF0, &rlock_lock_game);
-    patch_jmp((void *)0x0040FBA0, &rlock_unlock);
-
     patch_ret((void *)0x00AA58D0);
     patch_ret((void *)0x00866D10);
     patch_ret((void *)0x00AA5C80);
@@ -316,9 +313,6 @@ void apply_hr_hooks()
     patch_ret((void *)0x0086D670);
     patch_ret((void *)0x006E21F0);
     patch_ret((void *)0x006E1E10);
-
-    patch_jmp((void *)0x00409A80, &rlock_lock_game);
-    patch_jmp((void *)0x00000000, &rlock_unlock);
 
     patch_ret((void *)0x0086C600);
     patch_ret((void *)0x006E1CD0);
