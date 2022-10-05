@@ -47,7 +47,7 @@ void *hr_malloc(size_t size)
 
     if (!addr)
     {
-        HR_LOG("%s returned NULL\n", __FUNCTION__);
+        HR_LOG("returned NULL");
     }
 
 end:
@@ -80,7 +80,7 @@ void *hr_calloc(size_t count, size_t size)
 
     if (!addr)
     {
-        HR_LOG("%s returned NULL\n", __FUNCTION__);
+        HR_LOG("returned NULL");
     }
 
 end:

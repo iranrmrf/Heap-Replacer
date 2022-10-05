@@ -314,8 +314,19 @@ struct mcell *dheap_create_new_block(struct dheap *heap)
 
     heap->addr_array[index] = (struct mcell **)hr_winapi_calloc(
         DHEAP_CELLS_PER_BLOCK, sizeof(struct mcell *));
+    if (!heap->addr_array[index])
+    {
+        HR_LOG("failed to allocate new addr array");
+        goto end;
+    }
+
     heap->used_cells[index] = (struct mcell **)hr_winapi_calloc(
         DHEAP_CELLS_PER_BLOCK, sizeof(struct mcell *));
+    if (!heap->used_cells[index])
+    {
+        HR_LOG("failed to allocate new used cells array");
+        goto end;
+    }
 
     cell = (struct mcell *)hr_malloc(sizeof(struct mcell));
     if (!cell)
