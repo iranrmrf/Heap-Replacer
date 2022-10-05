@@ -1,7 +1,7 @@
 #pragma once
 
 #define POOL_ALIGN (0x01000000u)
-#define POOL_BLOCK_SIZE (0x00400000u)
+#define POOL_BLOCK_SIZE (0x00100000u)
 
 #define POOL_MAX_ALLOC_SIZE (3584u)
 

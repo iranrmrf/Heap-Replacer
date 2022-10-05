@@ -54,15 +54,22 @@ void mheap_init_pools(struct mheap *heap)
         struct mpool *pool =
             (struct mpool *)hr_winapi_malloc(sizeof(struct mpool));
 
-        HR_LOG("pool %d at 0x%08X", pd->item_size, (DWORD)pool);
-
         if (!pool)
         {
             continue;
         }
 
         mpool_init(pool, pd->item_size, pd->max_size, p);
+
         void *addr = mpool_setup(pool);
+
+        if (!addr)
+        {
+            continue;
+        }
+
+        HR_LOG("pool %d at 0x%08X", pd->item_size, (DWORD)addr);
+
         if (p == 0)
         {
             heap->pools_by_size[0] = pool;
