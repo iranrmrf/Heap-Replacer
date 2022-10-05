@@ -96,9 +96,11 @@ void sheap_free(struct sheap *heap, void *edx, void *addr)
              heap->last && (heap->last->size & SHEAP_FREE);
              heap->last = heap->last->prev)
         {
-            i = heap->last->index + 2;
+            i = heap->last->index + 1;
             if ((i != j) && heap->blocks[i])
             {
+                HR_LOG("0x%08X deleted old block %d at 0x%08X", (DWORD)heap, i,
+                       (DWORD)heap->blocks[i]);
                 hr_free(heap->blocks[i]);
                 heap->blocks[i] = NULL;
                 j = i;
@@ -118,7 +120,17 @@ void sheap_purge(struct sheap *heap, void *edx)
     for (i = 0; i < SHEAP_MAX_BLOCKS && heap->blocks[i]; i++)
     {
         hr_free(heap->blocks[i]);
+        heap->blocks[i] = NULL;
     }
+
+    for (; i < SHEAP_MAX_BLOCKS; i++)
+    {
+        if (heap->blocks[i])
+        {
+            HR_LOG("leak detected %d", i);
+        }
+    }
+
     hr_free(heap->blocks);
 }
 
