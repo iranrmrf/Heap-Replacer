@@ -179,28 +179,31 @@ void dheap_rmv_free_cell(struct dheap *heap, struct mcell *cell)
 
 void dheap_add_free_cell(struct dheap *heap, struct mcell *cell)
 {
+    size_t index = dheap_get_addr_index_from_cell(heap, cell);
+    struct mcell *next;
+    struct mcell *prev;
+
     rlock_lock(&heap->lock);
 
+    next = heap->addr_array[cell->desc.index][index];
+    prev = next ? next->addr_node.prev : NULL;
+
+    if (next && mcell_precedes(next, cell))
+    {
+        dheap_rmv_free_cell(heap, next);
+        cell->desc.addr = next->desc.addr;
+        cell->desc.size += next->desc.size;
+        cell->addr_node.array_index = next->addr_node.array_index;
+        hr_free(next);
+    }
+    if (prev && mcell_precedes(cell, prev))
+    {
+        dheap_rmv_free_cell(heap, prev);
+        cell->desc.size += prev->desc.size;
+        hr_free(prev);
+    }
+
     dheap_add_cell_to_addr_list(heap, cell);
-
-    struct mcell *__restrict temp;
-    if ((temp = get_mcell(cell->addr_node.prev, addr_node)) &&
-        mcell_precedes(temp, cell))
-    {
-        dheap_rmv_free_cell(heap, temp);
-        cell->desc.addr = temp->desc.addr;
-        cell->desc.size += temp->desc.size;
-        cell->addr_node.array_index = temp->addr_node.array_index;
-        hr_free(temp);
-    }
-    if ((temp = get_mcell(cell->addr_node.next, addr_node)) &&
-        mcell_precedes(cell, temp))
-    {
-        dheap_rmv_free_cell(heap, temp);
-        cell->desc.size += temp->desc.size;
-        hr_free(temp);
-    }
-
     dheap_add_cell_to_addr_array(heap, cell);
     dheap_add_cell_to_size_list(heap, cell);
     dheap_add_cell_to_size_array(heap, cell);
