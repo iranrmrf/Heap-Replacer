@@ -350,7 +350,6 @@ void *dheap_malloc(struct dheap *heap, size_t size)
 
     dheap_put_used_cell(heap, cell);
     addr = cell->desc.addr;
-    cell->desc.addr = (void *)size;
 
 end:
     return addr;
@@ -380,7 +379,7 @@ size_t dheap_mem_size(struct dheap *heap, void *addr)
     }
 
     cell = dheap_get_used_cell(heap, addr, index);
-    size = (size_t)cell->desc.addr;
+    size = cell->desc.size;
 
 end:
     return size;
@@ -401,7 +400,6 @@ int dheap_free(struct dheap *heap, void *addr)
 
     if (cell = dheap_rmv_used_cell(heap, addr, index))
     {
-        cell->desc.addr = addr;
         dheap_add_free_cell(heap, cell);
     }
 

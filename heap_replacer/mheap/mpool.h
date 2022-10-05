@@ -135,7 +135,7 @@ void *mpool_malloc(struct mpool *pool, size_t size)
 
     nlock_unlock(&pool->lock);
 
-    old_free->next = (struct cell *)size;
+    old_free->next = NULL;
     addr = mpool_free_ptr_to_real(pool, old_free);
 
     return addr;
@@ -143,10 +143,7 @@ void *mpool_malloc(struct mpool *pool, size_t size)
 
 size_t mpool_mem_size(struct mpool *pool, void *addr)
 {
-    struct cell *c = (struct cell *)mpool_real_to_free_ptr(pool, addr);
-    size_t size = (size_t)c->next;
-
-    return size;
+    return pool->item_size;
 }
 
 void mpool_free(struct mpool *pool, void *addr)
@@ -155,7 +152,7 @@ void mpool_free(struct mpool *pool, void *addr)
 
     nlock_lock(&pool->lock);
 
-    if ((size_t)c->next <= pool->item_size)
+    if (!c->next)
     {
         c->next = pool->next_free;
         pool->next_free = c;
