@@ -243,15 +243,6 @@ struct mcell *dheap_get_free_cell(struct dheap *heap, size_t size)
 
         split = mcell_split(cell, rsize);
 
-#ifdef DHEAP_ALLOC_FRONT /* test */
-        index = dheap_get_addr_index_from_cell(heap, cell);
-        size = index - cell->addr_node->array_index;
-        cmemset32(
-            &heap->addr_array[cell->desc.index][cell->addr_node->array_index],
-            (DWORD)cell, size);
-        cell->addr_node->array_index = index;
-#endif
-
         dheap_add_cell_to_size_list(heap, cell);
         dheap_add_cell_to_size_array(heap, cell);
 

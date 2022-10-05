@@ -24,17 +24,10 @@ struct mcell *mcell_split(struct mcell *cell, size_t size)
     struct mcell *__restrict new_cell =
         (struct mcell *)hr_malloc(sizeof(struct mcell));
 
-#ifdef DHEAP_ALLOC_FRONT
-    new_cell->desc = (struct cdesc){cell->desc.addr, size, cell->desc.index};
-
-    cell->desc.size -= size;
-    cell->desc.addr = cdesc_get_end(&new_cell->desc);
-#else
     cell->desc.size -= size;
 
     new_cell->desc =
         (struct cdesc){cdesc_get_end(&cell->desc), size, cell->desc.index};
-#endif
 
     return new_cell;
 }
