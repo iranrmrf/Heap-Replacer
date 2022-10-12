@@ -57,8 +57,7 @@ void dheap_add_cell_to_size_array(struct dheap *heap, struct mcell *cell)
     }
 
     for (curr = cell->size_node.prev;
-         cnode_is_valid(curr) &&
-         mcell_is_smaller(cell, get_mcell_safe(curr, size_node));
+         (elem = get_mcell(curr, size_node)) && mcell_is_smaller(cell, elem);
          curr = curr->prev)
     {
     }
@@ -70,10 +69,10 @@ void dheap_add_cell_to_size_array(struct dheap *heap, struct mcell *cell)
 void dheap_add_cell_to_addr_array(struct dheap *heap, struct mcell *cell)
 {
     struct cnode *curr;
+    struct mcell *elem;
 
     for (curr = cell->addr_node.prev;
-         cnode_is_valid(curr) &&
-         mcell_is_before(cell, get_mcell_safe(curr, addr_node));
+         (elem = get_mcell(curr, addr_node)) && mcell_is_before(cell, elem);
          curr = curr->prev)
     {
     }

@@ -1,10 +1,7 @@
 #pragma once
 
-#define get_mcell_safe(node, type)                                             \
-    ((struct mcell *)(((DWORD)node - offsetof(struct mcell, type))))
-
 #define get_mcell(node, type)                                                  \
-    ((struct mcell *)((DWORD)get_mcell_safe(node, type) &                      \
+    ((struct mcell *)(((DWORD)node - offsetof(struct mcell, type)) &           \
                       (!cnode_is_valid(node) - 1)))
 
 struct cnode
