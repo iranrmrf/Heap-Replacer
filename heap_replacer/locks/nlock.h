@@ -16,7 +16,7 @@ void nlock_lock(struct nlock *lock)
 {
     while (InterlockedCompareExchange(&lock->locked, 1, 0))
     {
-        Sleep(0);
+        YieldProcessor();
     };
 }
 

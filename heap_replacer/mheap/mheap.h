@@ -123,7 +123,6 @@ void *mheap_malloc(struct mheap *heap, size_t size)
         }
     }
 
-
 end:
     return addr;
 }

@@ -12,7 +12,6 @@ struct schnk
     };
     struct schnk *prev;
 };
-static_assert(sizeof(struct schnk) == 8, "");
 
 struct sheap
 {
