@@ -185,21 +185,21 @@ void dheap_add_free_cell(struct dheap *heap, struct mcell *cell)
     rlock_lock(&heap->lock);
 
     next = heap->addr_array[cell->desc.index][index];
-    prev = next ? next->addr_node.prev : NULL;
+    prev = next ? get_mcell(next->addr_node.prev, addr_node) : NULL;
 
-    if (next && mcell_precedes(next, cell))
-    {
-        dheap_rmv_free_cell(heap, next);
-        cell->desc.addr = next->desc.addr;
-        cell->desc.size += next->desc.size;
-        cell->addr_node.array_index = next->addr_node.array_index;
-        hr_free(next);
-    }
-    if (prev && mcell_precedes(cell, prev))
+    if (prev && mcell_precedes(prev, cell))
     {
         dheap_rmv_free_cell(heap, prev);
+        cell->desc.addr = prev->desc.addr;
         cell->desc.size += prev->desc.size;
+        cell->addr_node.array_index = prev->addr_node.array_index;
         hr_free(prev);
+    }
+    if (next && mcell_precedes(cell, next))
+    {
+        dheap_rmv_free_cell(heap, next);
+        cell->desc.size += next->desc.size;
+        hr_free(next);
     }
 
     dheap_add_cell_to_addr_list(heap, cell);
