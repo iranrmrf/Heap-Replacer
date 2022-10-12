@@ -123,7 +123,6 @@ void *mheap_malloc(struct mheap *heap, size_t size)
         }
     }
 
-    HR_LOG("pool %d returned NULL", pool->item_size);
 
 end:
     return addr;
@@ -132,16 +131,10 @@ end:
 void *mheap_calloc(struct mheap *heap, size_t size)
 {
     void *addr = mheap_malloc(heap, size);
-    struct mpool *pool;
 
     if (addr)
     {
         hr_memset32(addr, 0, (size + 3u) >> 2u);
-    }
-    else
-    {
-        pool = mheap_pool_from_size(heap, size);
-        HR_LOG("pool %d returned NULL", pool->item_size);
     }
 
     return addr;
